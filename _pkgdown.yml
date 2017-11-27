@@ -22,7 +22,7 @@ navbar:
   right:
     - icon: fa-github
       href: https://github.com/rauschenberger/palasso
-    - icon: fa-download
+    - icon: https://www.bioconductor.org/images/logo_bioconductor.gif
       href: http://bioconductor.org/packages/palasso/
 
 reference:
