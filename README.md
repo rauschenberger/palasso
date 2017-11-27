@@ -7,7 +7,7 @@
 Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](https://cran.r-project.org/web/packages/devtools/README.html):
 
 ``` r
-devtools::install_github("rauschenberger/semisup",build_vignettes=TRUE)
+devtools::install_github("rauschenberger/palasso",build_vignettes=TRUE)
 ```
 
 <!-- [html]
