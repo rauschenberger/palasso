@@ -3,7 +3,7 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- Modify xxx.Rmd, not xxx.md! -->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -22,6 +22,9 @@ Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](ht
 ```{r eval=FALSE}
 devtools::install_github("rauschenberger/palasso",build_vignettes=TRUE)
 ```
+
+[![Bioconductor](https://www.bioconductor.org/images/logo/jpg/bioconductor_logo_grey.jpg){width=70px}](https://doi.org/10.18129/B9.bioc.globalSeq)
+[![Github](https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png){width=50px}](https://doi.org/10.18129/B9.bioc.globalSeq)
 
 <!-- [html]
 <script>

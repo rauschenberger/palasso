@@ -28,6 +28,10 @@
 #' development mode\strong{:}
 #' logical (temporary argument)
 #' 
+#' @param ext
+#' external weights\strong{:}
+#' vector of length \eqn{p}
+#' 
 #' @param ...
 #' Further arguments for \link[glmnet]{cv.glmnet}
 #' or \link[glmnet]{glmnet}.
@@ -48,20 +52,21 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' reg <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,oser=FALSE,trial=FALSE,...){
+palasso <- function(y,X,oser=FALSE,trial=FALSE,ext=NULL,...){
+    
+    # checks
+    base <- list(...)
+    #funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
+    #formals <- unlist(lapply(funs,function(x) formals(x)))
+    #formals <- unlist(lapply(funs,function(x) names(formals(x))))
+    #if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
     
     # arguments
-    base <- list(...)
     base$y <- y
     base$x <- do.call(what="cbind",args=X)
     default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
     base <- c(base,default[!names(default) %in% names(base)])
-    
-    # checks
-    funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
-    formals <- unlist(lapply(funs,function(x) formals(x)))
-    if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
-    
+
     # dimensionality
     n <- length(y)
     k <- ifelse(is.list(X),length(X),1)
@@ -88,37 +93,52 @@ palasso <- function(y,X,oser=FALSE,trial=FALSE,...){
     args$pmax <- 0
     null <- do.call(what=glmnet::cv.glmnet,args=args)$cvm[1]
     
-    # simple models
-    args <- base
-    args$alpha <- 0
-    weights <- model <- coef <- list()
-    for(i in seq_len(k)){
-        weights[[i]] <- rep(1*(seq_len(k)==i),each=p)
-        args$penalty.factor <- 1/weights[[i]]
-        model[[i]] <- do.call(glmnet::cv.glmnet,args=args)
-        if(i==1){args$lambda <- model[[1]]$lambda}
+    if(is.null(ext)){
+    
+        # simple models
+        args <- base
+        args$alpha <- 0
+        weights <- model <- coef <- list()
+        for(i in seq_len(k)){
+            weights[[i]] <- rep(1*(seq_len(k)==i),each=p)
+            args$penalty.factor <- 1/weights[[i]]
+            model[[i]] <- do.call(glmnet::cv.glmnet,args=args)
+            if(i==1){args$lambda <- model[[1]]$lambda}
+        }
+        cvm <- lapply(model,function(x) x$cvm)
+        num <- min(sapply(cvm,length))
+        cvm <- rowSums(sapply(cvm,function(x) x[seq_len(num)]))
+        min <- which.min(cvm)
+        for(i in seq_len(k)){
+            coef[[i]] <- abs(stats::coef(model[[i]]$glmnet.fit))[seq(from=(i-1)*p+2,to=i*p+1,by=1),min]
+        }
+        
+        # equal weights
+        weights[[k+1]] <- rep(1/k,times=k*p)
+        
+        # between-group weights
+        alt <- sapply(model,function(x) x$cvm[x$lambda==x$lambda.min])
+        prop <- (null-alt)/sum(null-alt)
+        weights[[k+2]] <- rep(prop,each=p)
+        
+        # within-pair weights
+        a <- do.call(what="c",args=coef)
+        b <- rowSums(do.call(what="cbind",args=coef))
+        weights[[k+3]] <- a / b
+        weights[[k+3]][b==0] <- 0
+    
+    } else {
+        # external weights
+        weights <- model <- list()
+        for(i in seq_len(k)){
+            weights[[i]] <- rep(1*(seq_len(k)==i),each=p)
+        }
+        weights[[k+1]] <- rep(1/k,times=k*p)
+        if(!is.list(ext)){ext <- list(ext)}
+        for(i in seq_len(ext)){
+            weights[[k+1+i]] <- ext[[i]]
+        }
     }
-    cvm <- lapply(model,function(x) x$cvm)
-    num <- min(sapply(cvm,length))
-    cvm <- rowSums(sapply(cvm,function(x) x[seq_len(num)]))
-    min <- which.min(cvm)
-    for(i in seq_len(k)){
-        coef[[i]] <- abs(stats::coef(model[[i]]$glmnet.fit))[seq(from=(i-1)*p+2,to=i*p+1,by=1),min]
-    }
-    
-    # equal weights
-    weights[[k+1]] <- rep(1/k,times=k*p)
-    
-    # between-group weights
-    alt <- sapply(model,function(x) x$cvm[x$lambda==x$lambda.min])
-    prop <- (null-alt)/sum(null-alt)
-    weights[[k+2]] <- rep(prop,each=p)
-    
-    # within-pair weights
-    a <- do.call(what="c",args=coef)
-    b <- rowSums(do.call(what="cbind",args=coef))
-    weights[[k+3]] <- a / b
-    weights[[k+3]][b==0] <- 0
 
     # cross-validation
     args <- base

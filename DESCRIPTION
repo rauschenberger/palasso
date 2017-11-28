@@ -1,5 +1,5 @@
 Package: palasso
-Version: 0.0.0
+Version: 0.0.1
 Title: Pairwise-adaptive lasso
 Description: This R package adapts penalised regression to paired covariates.
 biocViews: Classification, Regression, miRNA

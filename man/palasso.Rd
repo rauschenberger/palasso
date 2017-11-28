@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Pairwise-adaptive lasso}
 \usage{
-palasso(y, X, oser = FALSE, trial = FALSE, ...)
+palasso(y, X, oser = FALSE, trial = FALSE, ext = NULL, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -19,6 +19,9 @@ logical (temporary argument)}
 
 \item{trial}{development mode\strong{:}
 logical (temporary argument)}
+
+\item{ext}{external weights\strong{:}
+vector of length \eqn{p}}
 
 \item{...}{Further arguments for \link[glmnet]{cv.glmnet}
 or \link[glmnet]{glmnet}.}
