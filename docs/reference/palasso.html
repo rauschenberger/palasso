@@ -111,7 +111,7 @@ Use this regression technique if
 the covariates are numerous and occur in pairs.</p>
     
 
-    <pre class="usage"><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>oser</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>trial</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ext</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>trial</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ext</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -128,11 +128,6 @@ list of matrices with \(n\) rows (samples)
 and \(p\) columns (variables)</p></td>
     </tr>
     <tr>
-      <th>oser</th>
-      <td><p>one-standard-error rule<strong>:</strong>
-logical (temporary argument)</p></td>
-    </tr>
-    <tr>
       <th>trial</th>
       <td><p>development mode<strong>:</strong>
 logical (temporary argument)</p></td>
@@ -146,6 +141,11 @@ vector of length \(p\)</p></td>
       <th>...</th>
       <td><p>Further arguments for <a href='http://www.rdocumentation.org/packages/glmnet/topics/cv.glmnet'>cv.glmnet</a>
 or <a href='http://www.rdocumentation.org/packages/glmnet/topics/glmnet'>glmnet</a>.</p></td>
+    </tr>
+    <tr>
+      <th>oser</th>
+      <td><p>one-standard-error rule<strong>:</strong>
+logical (temporary argument)</p></td>
     </tr>
     </table>
     
@@ -166,9 +166,9 @@ specifications of <code>y</code> and <code>x</code>.</p>
     <pre class="examples"><div class='input'><span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>200</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>rbinom</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>prob</span><span class='kw'>=</span><span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>))
-<span class='no'>reg</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>)</div><div class='output co'>#&gt; 
-#&gt;  i = 5 </div><div class='input'>
-</div><div class='img'><img src='palasso-1.png' alt='' width='700' height='432.632880098887' /></div></pre>
+<span class='no'>reg</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>)</div><div class='img'><img src='palasso-1.png' alt='' width='700' height='432.632880098887' /></div><div class='output co'>#&gt; 
+#&gt;  i = 8</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

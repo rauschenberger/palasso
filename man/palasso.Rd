@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Pairwise-adaptive lasso}
 \usage{
-palasso(y, X, oser = FALSE, trial = FALSE, ext = NULL, ...)
+palasso(y, X, trial = FALSE, ext = NULL, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -14,9 +14,6 @@ vector of length \eqn{n}}
 list of matrices with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
-\item{oser}{one-standard-error rule\strong{:}
-logical (temporary argument)}
-
 \item{trial}{development mode\strong{:}
 logical (temporary argument)}
 
@@ -25,6 +22,9 @@ vector of length \eqn{p}}
 
 \item{...}{Further arguments for \link[glmnet]{cv.glmnet}
 or \link[glmnet]{glmnet}.}
+
+\item{oser}{one-standard-error rule\strong{:}
+logical (temporary argument)}
 }
 \value{
 This function returns an object
