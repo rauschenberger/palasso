@@ -2,3 +2,4 @@
 
 export(palasso)
 export(scales)
+export(scatter)

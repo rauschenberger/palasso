@@ -20,10 +20,6 @@
 #' list of matrices with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
-#' @param oser
-#' one-standard-error rule\strong{:}
-#' logical (temporary argument)
-#' 
 #' @param trial
 #' development mode\strong{:}
 #' logical (temporary argument)
@@ -218,5 +214,82 @@ scales <- function(x,y=NULL,...){
     graphics::mtext(text="X",side=1,line=2,at=-1,col=args$col[1])
     graphics::mtext(text="Z",side=1,line=2,at=+1,col=args$col[2])
     graphics::mtext(text=args$main,side=3,line=0,at=0)
+}
+
+#' @title
+#' Set comparison
+#' 
+#' @export
+#' @keywords internal
+#' 
+#' @description
+#' The function \code{scatter} plots the difference
+#' between two sets of measurements.
+#' 
+#' @param x
+#' vector of length \eqn{n}
+#' 
+#' @param y
+#' vector of length \eqn{n}
+#' 
+#' @param p
+#' confidence interval\strong{:}
+#' numeric between \eqn{0} and \eqn{1}
+#' 
+#' @param ...
+#' Graphical arguments
+#' 
+#' @return
+#' This function returns a plot.
+#' 
+#' @examples
+#' x <- runif(100)
+#' y <- runif(100)
+#' scatter(x,y)
+#' 
+scatter <- function(x,y,p=0.95,...){
+    
+    # difference
+    diff <- x - y
+    cutoff <- stats::quantile(abs(diff),p=p,na.rm=TRUE)
+    index <- sign(diff)*(abs(diff) > cutoff) + 2
+    pch <- c(16,1,16)[index]
+    col <- c("blue","grey","red")[index]
+    
+    # visualisation
+    graphics::par(mar=c(4,4,1,1))
+    ylim <- 1.2*range(c(-diff,diff),na.rm=TRUE)
+    graphics::plot(x=diff,ylim=ylim,
+                   ylab="difference",col=col,pch=pch)
+    graphics::abline(h=c(-1,0,1)*cutoff,lty=2)
+    
+    # legend: distribution
+    mean <- signif(mean(diff,na.rm=TRUE),digits=3)
+    median <- signif(median(diff,na.rm=TRUE),digits=3)
+    sd <- signif(sd(diff,na.rm=TRUE),digits=3)
+    m <- sum(!is.na(diff))
+    l1 <- as.expression(bquote(bar(X)==.(mean)))
+    l2 <- as.expression(bquote(tilde(X)==.(median)))
+    l3 <- as.expression(bquote(hat(sigma)==.(sd)))
+    l4 <- as.expression(bquote(ring(m)==.(m)))
+    graphics::legend(x="topright",legend=c(l1,l2,l3,l4),bty="n")
+    
+    # legend: outliers
+    nblue <- sum(col=="blue",na.rm=TRUE)
+    nred <- sum(col=="red",na.rm=TRUE)
+    graphics::legend(x="bottomleft",
+                     legend=c(nblue," +",nred," =",nblue+nred),
+                     text.col=c("blue","black","red","black","black"),
+                     bty="n",
+                     horiz=TRUE,
+                     x.intersp=0.5,
+                     text.width=1)
+    
+    # legend: p-values
+    wilcox <- suppressWarnings(signif(stats::wilcox.test(diff,alternative="less",na.rm=TRUE)$p.value,digits=2))
+    adhoc <- signif(1-stats::pbinom(q=nblue-1,size=nblue+nred,prob=0.5),digits=2)
+    l1 <- paste0("wilcox = ",wilcox)
+    l2 <- paste0("binom = ",adhoc)
+    graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
 }
 

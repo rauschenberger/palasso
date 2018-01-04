@@ -22,9 +22,6 @@ vector of length \eqn{p}}
 
 \item{...}{Further arguments for \link[glmnet]{cv.glmnet}
 or \link[glmnet]{glmnet}.}
-
-\item{oser}{one-standard-error rule\strong{:}
-logical (temporary argument)}
 }
 \value{
 This function returns an object
