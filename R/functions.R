@@ -114,7 +114,14 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
     args <- base
     for(i in seq_along(weights)){
         args$penalty.factor <- 1/weights[[i]]
-        model[[i]] <- do.call(what=glmnet::cv.glmnet,args=args)
+        model[[i]] <- tryCatch(do.call(what=glmnet::cv.glmnet,args=args),
+                               error=function(x) NA)
+        if(class(model[[i]])!="cv.glmnet"){
+            # intercept-only model (verify this)
+            temp <- base
+            temp$lambda <- c(99e99,99e98)
+            model[[i]] <- do.call(what=glmnet::cv.glmnet,args=temp)
+        }
     }
     
     if(!trial){
