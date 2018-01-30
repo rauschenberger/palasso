@@ -1,4 +1,6 @@
 
+#--- Workhorse function --------------------------------------------------------
+
 #' @title
 #' Pairwise-adaptive lasso
 #' 
@@ -139,6 +141,7 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
     if(!trial){
         # optimal choice
         cvm <- sapply(model,function(x) x$cvm[x$lambda==x$lambda.min])
+        # try: cvm <- sapply(model,function(x) min(x$cvm))
         if(base$type.measure=="auc"){
             i <- which.max(cvm)
         } else {
@@ -165,9 +168,29 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
                           "adaptive_x",
                           "adaptive_z",
                           "adaptive_xz")
+        class(model) <- "palasso"
         return(model)
     }
 }
+
+#--- Generic functions ---------------------------------------------------------
+
+# coef.palasso
+# deviance.palasso
+# plot.palasso
+# predict.palasso
+# print.palasso
+# summary.palasso
+# residuals.palasso
+# fitted.palasso
+
+# min.palasso <- function(x,...){
+#    cat("This is a test function!")
+#    cvm <- sapply(x,function(x) min(x$cvm))
+#    names(which.min(cvm))
+# }
+
+#--- Visualisation -------------------------------------------------------------
 
 #' @title
 #' Weight scales
