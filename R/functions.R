@@ -46,7 +46,7 @@
 #' n <- 100; p <- 200
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' reg <- palasso(y=y,X=X,family="binomial")
+#' reg <- palasso(y=y,X=X,family="binomial",trial=TRUE)
 #' 
 palasso <- function(y,X,trial=FALSE,ext=NULL,...){
 
@@ -55,16 +55,18 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
     funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
     formals <- unlist(lapply(funs,function(x) formals(x)))
     if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
-    
+ 
     # arguments
     base$y <- y
     base$x <- do.call(what="cbind",args=X)
     default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
     base <- c(base,default[!names(default) %in% names(base)])
-
+    if(!base$family %in% c("gaussian","binomial","poisson")){stop("Invalid family.")}
+    
     # dimensionality
-    n <- length(y)
+    # n <- length(y) # Watch out! Object y must be a vector!
     k <- ifelse(is.list(X),length(X),1)
+    n <- nrow(X[[1]])
     p <- ncol(X[[1]])
     
     # fold identifier
@@ -82,16 +84,26 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
     
     weights <- model <- list()
     
-    # weights
-    if(is.null(ext)){
-        cor <- list()
-        for(i in seq_len(k)){
-            cor[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
-            cor[[i]][is.na(cor[[i]])] <- 0
-        }
-    } else {
-        cor <- ext
+    ## weights (original)
+    # if(is.null(ext)){
+    #     cor <- list()
+    #     for(i in seq_len(k)){
+    #         cor[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
+    #         cor[[i]][is.na(cor[[i]])] <- 0
+    #     }
+    # } else {
+    #     cor <- ext
+    # }
+    
+    # weights (trial start)
+    family <- eval(parse(text=base$family))()
+    mar <- list()
+    for(i in seq_len(k)){
+        mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+        mar[[i]][is.na(mar[[i]])] <- 0
     }
+    cor <- mar
+    # weights (trial end)
         
     # standard lasso
     for(i in seq_len(k)){

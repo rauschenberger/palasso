@@ -43,7 +43,7 @@ specifications of \code{y} and \code{x}.
 n <- 100; p <- 200
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-reg <- palasso(y=y,X=X,family="binomial")
+reg <- palasso(y=y,X=X,family="binomial",trial=TRUE)
 
 }
 \keyword{methods}
