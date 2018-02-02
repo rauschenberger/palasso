@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Pairwise-adaptive lasso}
 \usage{
-palasso(y, X, trial = FALSE, ext = NULL, ...)
+palasso(y, X, trial = FALSE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -17,16 +17,11 @@ and \eqn{p} columns (variables)}
 \item{trial}{development mode\strong{:}
 logical (temporary argument)}
 
-\item{ext}{external weights\strong{:}
-vector of length \eqn{p}}
-
-\item{...}{Further arguments for \link[glmnet]{cv.glmnet}
-or \link[glmnet]{glmnet}.}
+\item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}}
+or \code{\link[glmnet]{glmnet}}}
 }
 \value{
-This function returns an object
-of type \link[glmnet]{cv.glmnet},
-with the additional slot \code{weights}.
+This function returns an object of class \code{palasso}.
 }
 \description{
 The function \code{palasso} cross-validates
@@ -40,10 +35,21 @@ See \link[glmnet]{glmnet} for alternative
 specifications of \code{y} and \code{x}.
 }
 \examples{
+set.seed(1)
 n <- 100; p <- 200
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-reg <- palasso(y=y,X=X,family="binomial",trial=TRUE)
+fit <- palasso(y=y,X=X,family="binomial",trial=TRUE)
 
+}
+\seealso{
+Available \code{\link[palasso]{methods}} for class \code{palasso}:
+\code{\link[=predict.palasso]{predict}},
+\code{\link[=coef.palasso]{coef}},
+\code{\link[=fitted.palasso]{fitted}},
+\code{\link[=weights.palasso]{weights}},
+\code{\link[=deviance.palasso]{deviance}},
+\code{\link[=summary.palasso]{summary}},
+\code{\link[=subset.palasso]{subset}}
 }
 \keyword{methods}

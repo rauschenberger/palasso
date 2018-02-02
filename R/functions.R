@@ -4,8 +4,8 @@
 #' @title
 #' Pairwise-adaptive lasso
 #' 
-#' @export
 #' @keywords methods
+#' @export
 #' 
 #' @description
 #' The function \code{palasso} cross-validates
@@ -26,13 +26,9 @@
 #' development mode\strong{:}
 #' logical (temporary argument)
 #' 
-#' @param ext
-#' external weights\strong{:}
-#' vector of length \eqn{p}
-#' 
 #' @param ...
-#' Further arguments for \link[glmnet]{cv.glmnet}
-#' or \link[glmnet]{glmnet}.
+#' further arguments for \code{\link[glmnet]{cv.glmnet}}
+#' or \code{\link[glmnet]{glmnet}}
 #' 
 #' @details
 #' Let \code{x} denote one entry of the list \code{X}.
@@ -40,17 +36,26 @@
 #' specifications of \code{y} and \code{x}.
 #' 
 #' @return
-#' This function returns an object
-#' of type \link[glmnet]{cv.glmnet},
-#' with the additional slot \code{weights}.
+#' This function returns an object of class \code{palasso}.
+#' 
+#' @seealso
+#' Available \code{\link[palasso]{methods}} for class \code{palasso}:
+#' \code{\link[=predict.palasso]{predict}},
+#' \code{\link[=coef.palasso]{coef}},
+#' \code{\link[=fitted.palasso]{fitted}},
+#' \code{\link[=weights.palasso]{weights}},
+#' \code{\link[=deviance.palasso]{deviance}},
+#' \code{\link[=summary.palasso]{summary}},
+#' \code{\link[=subset.palasso]{subset}}
 #' 
 #' @examples
+#' set.seed(1)
 #' n <- 100; p <- 200
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' reg <- palasso(y=y,X=X,family="binomial",trial=TRUE)
+#' fit <- palasso(y=y,X=X,family="binomial",trial=TRUE)
 #' 
-palasso <- function(y,X,trial=FALSE,ext=NULL,...){
+palasso <- function(y,X,trial=FALSE,...){
 
     # checks
     base <- list(...)
@@ -84,50 +89,47 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
             length.out=sum(y==1)))
     }
     
-    weights <- model <- list()
+    weight <- model <- list()
     
-    ## weights (original)
-    # if(is.null(ext)){
-    #     cor <- list()
-    #     for(i in seq_len(k)){
-    #         cor[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
-    #         cor[[i]][is.na(cor[[i]])] <- 0
-    #     }
-    # } else {
-    #     cor <- ext
-    # }
-    
-    # weights (trial start)
-    family <- eval(parse(text=base$family))()
+    # weight (correlation)
     mar <- list()
     for(i in seq_len(k)){
-        mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+        mar[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
         mar[[i]][is.na(mar[[i]])] <- 0
     }
-    cor <- mar
-    # weights (trial end)
-        
+    
+    # # marginal effects (univariate regression)
+    # family <- eval(parse(text=base$family))()
+    # mar <- list()
+    # for(i in seq_len(k)){
+    #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+    #     mar[[i]][is.na(mar[[i]])] <- 0
+    # }
+    
+    # # marginal effects (external)
+    # mar <- ext
+    
     # standard lasso
     for(i in seq_len(k)){
-        weights[[i]] <- rep(1*(seq_len(k)==i),each=p)
+        weight[[i]] <- rep(1*(seq_len(k)==i),each=p)
     }
-    weights[[k+1]] <- rep(1/k,times=k*p)
+    weight[[k+1]] <- rep(1/k,times=k*p)
     
     # paired lasso
-    weights[[k+2]] <- rep(0.5*sapply(cor,mean)/mean(unlist(cor)),each=p)
-    weights[[k+3]] <- unlist(cor)/rowSums(do.call(cbind,cor))
-    weights[[k+3]][is.na(weights[[k+3]])] <- 0
+    weight[[k+2]] <- rep(0.5*sapply(mar,mean)/mean(unlist(mar)),each=p)
+    weight[[k+3]] <- unlist(mar)/rowSums(do.call(cbind,mar))
+    weight[[k+3]][is.na(weight[[k+3]])] <- 0
     
     # adaptive lasso
     for(i in seq_len(k)){
-        weights[[k+3+i]] <- weights[[i]]*cor[[i]]
+        weight[[k+3+i]] <- weight[[i]]*mar[[i]]
     }
-    weights[[2*k+4]] <- unlist(cor)
+    weight[[2*k+4]] <- unlist(mar)
     
     # cross-validation
     args <- base
-    for(i in seq_along(weights)){
-        args$penalty.factor <- 1/weights[[i]]
+    for(i in seq_along(weight)){
+        args$penalty.factor <- 1/weight[[i]]
         model[[i]] <- tryCatch(do.call(what=glmnet::cv.glmnet,args=args),
                                error=function(x) NA)
         if(class(model[[i]])!="cv.glmnet"){
@@ -141,7 +143,7 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
     if(!trial){
         # optimal choice
         cvm <- sapply(model,function(x) x$cvm[x$lambda==x$lambda.min])
-        # try: cvm <- sapply(model,function(x) min(x$cvm))
+        # try: cvm <- sapply(model,function(x) min(x$cvm)) # not good!
         if(base$type.measure=="auc"){
             i <- which.max(cvm)
         } else {
@@ -149,12 +151,12 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
         }
         # output
         if(k==2){
-            tryCatch(palasso::scales(x=weights[[i]][1:p],
-                                     y=weights[[i]][(p+1):(2*p)],
+            tryCatch(palasso::scales(x=weight[[i]][1:p],
+                                     y=weight[[i]][(p+1):(2*p)],
                                      main=paste0("i = ",i)),error=function(x) NULL)
         }
         cat("\n i =",i)
-        model[[i]]$weights <- weights[[i]]
+        model[[i]]$weight <- weight[[i]]
         return(model[[i]])
     }
     
@@ -175,22 +177,191 @@ palasso <- function(y,X,trial=FALSE,ext=NULL,...){
 
 #--- Generic functions ---------------------------------------------------------
 
-# coef.palasso
-# deviance.palasso
-# plot.palasso
-# predict.palasso
-# print.palasso
-# summary.palasso
-# residuals.palasso
-# fitted.palasso
+#' @title
+#' Methods for class 'palasso'
+#' 
+#' @name methods
+#' @keywords methods
+#' 
+#' @description
+#' generic functions
+#' 
+#' @param object,x \link[palasso]{palasso} object
+#' 
+#' @param newdata covariates\strong{:}
+#' list of matrices with \eqn{n} rows (samples)
+#' and \eqn{p} columns (variables)
+#' 
+#' @param s penalty parameter\strong{:}
+#' character "lambda.min" or "lambda.1se",
+#' or positive numeric
+#' 
+#' @param ... further arguments for \link[glmnet]{predict.cv.glmnet},
+#' \link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}
+#' # model character "paired", "standard", "adaptive"
+#' # groups character "X" or "Z", or NULL (all groups)
+#' 
+#' @details
+#' to do
+#' 
+#' @return
+#' to do
+#' 
+#' @seealso
+#' Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
+#' 
+NULL
+#' @export
+#' @keywords methods
+#' @rdname methods
+subset.palasso <- function(x,...){
+    object <- x
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    
+    if(!inherits(x=object,what="palasso")){
+        warning("Fake palasso object?")
+    }
+    
+    name <- unique(sapply(X=object,FUN=function(x) x$name))
+    if(length(name)!=1){
+        stop("Different loss functions!")
+    }
+    
+    cond <- grepl(pattern="adaptive|between|within",x=names(object))
+    object <- object[cond]
+    
+    if(name=="AUC"){
+        loss <- sapply(object,function(x) max(x$cvm))
+        object <- object[[which.max(loss)]]
+    } else {
+        loss <- sapply(object,function(x) min(x$cvm))
+        object <- object[[which.min(loss)]]
+    }
+    
+    return(object)
+}
+#' @export
+#' @keywords methods
+#' @rdname methods
+predict.palasso <- function(object,newdata,s="lambda.min",...){
+    if(missing(newdata)||is.null(newdata)) {
+        return(palasso:::fitted.palasso(object=object,s=s,...))
+    }
+    object <- palasso:::subset.palasso(object)
+    newx <- do.call(what="cbind",args=newdata)
+    glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
+}
+#' @export
+#' @keywords methods
+#' @rdname methods
+coef.palasso <- function(object,s="lambda.min",...){
+    object <- palasso:::subset.palasso(object)
+    glmnet::coef.cv.glmnet(object=object,s=s,...)
+}
+#' @export
+#' @keywords methods
+#' @rdname methods
+fitted.palasso <- function(object,s="lambda.min",...){
+    object <- palasso:::subset.palasso(object)
+    newx <- object$glmnet.fit$call$x
+    glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
+}
+#' @export
+#' @keywords methods
+#' @rdname methods
+deviance.palasso <- function(object,...){
+    object <- palasso:::subset.palasso(object)
+    glmnet::deviance.glmnet(object$glmnet.fit,...)
+}
+#' @importFrom stats weights
+#' @export
+#' @keywords methods
+#' @rdname methods
+weights.palasso <- function(object,...){
+    object <- palasso:::subset.palasso(object)
+    # Better split weights into X and Z group.
+    # For this, adapt function <<subset.palasso>>.
+    1/object$glmnet.fit$call$penalty.factor
+}
+#' @export
+#' @keywords methods
+#' @rdname methods
+summary.palasso <- function(object,...){
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    
+    object <- palasso:::subset.palasso(object)
+    
+    # head
+    title <- paste(object$glmnet.fit$call$family,"palasso")
+    line <- paste(rep("-",times=nchar(title)),collapse="")
+    cat("",line,"\n",title,"\n",line,"\n\n")
 
-# min.palasso <- function(x,...){
-#    cat("This is a test function!")
-#    cvm <- sapply(x,function(x) min(x$cvm))
-#    names(which.min(cvm))
-# }
+    # dimensionality
+    n <- object$glmnet.fit$dim[2]
+    p <- object$glmnet.fit$dim[1]
+    weight <- 1/object$glmnet.fit$call$penalty.factor
+    p_in <- sum(weight!=0)
+    p_out <- sum(weight==0)
+    cat(paste0("dimensionality: n = ",n,", p = ",p))
+    cat("\n \t       ",paste0("(",p_in," in, ",p_out," out)"),"\n\n")
+
+    # cross-validation
+    id <- list()
+    id$min <- which(object$lambda==object$lambda.min)
+    id$ose <- which(object$lambda==object$lambda.1se)
+    frame <- matrix(NA,nrow=2,ncol=3)
+    frame[,1] <- sapply(id,function(x) object$lambda[x])
+    frame[,2] <- sapply(id,function(x) object$nzero[x])
+    frame[,3] <- sapply(id,function(x) object$cvm[x])
+    rownames(frame) <- c("prediction","explanation")
+    colnames(frame) <- c("lambda","nzero",names(object$name))
+    base::print(round(frame,digits=2))
+    
+    # weights
+    cat("\n")
+    M <- matrix(NA,nrow=1,ncol=3)
+    M[1,1] <- stats::median(weight[weight!=0])
+    M[1,2] <- mean(weight[weight!=0])
+    M[1,3] <- max(weight)
+    rownames(M) <- "weights (>0)"
+    colnames(M) <- c("median","mean","max")
+    base::print(round(M,digits=2))
+    
+    return(invisible("palasso"))
+}
+
 
 #--- Visualisation -------------------------------------------------------------
+
+#' @title
+#' plot matrix
+#' 
+#' @keywords plots
+#' 
+#' @description
+#' generic functions
+#' 
+#' @param x matrix
+#' 
+#' @param ... to do
+#' 
+#' @details
+#' to do
+#' 
+#' @return
+#' to do
+#' 
+#' @export
+#' @keywords plots
+#' @rdname plots
+#' 
+#' @seealso
+#' Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
+plot.matrix <- function(x,...){
+    stats::rnorm(10)
+}
+
+
 
 #' @title
 #' Weight scales
