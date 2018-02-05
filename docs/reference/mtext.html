@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Methods for class "palasso" — methods â€¢ palasso</title>
+<title>Split — mtext â€¢ palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -101,59 +101,29 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Methods for class "palasso"</h1>
+    <h1>Split</h1>
     </div>
 
     
     <p>generic functions</p>
     
 
-    <pre class="usage"><span class='co'># S3 method for palasso</span>
-<span class='fu'>subset</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>weights</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>mtext</span>(<span class='no'>text</span>, <span class='kw'>unit</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>side</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>further arguments for <a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>predict.cv.glmnet</a>,
-<a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>coef.cv.glmnet</a>, or <a href='http://www.rdocumentation.org/packages/glmnet/topics/deviance.glmnet'>deviance.glmnet</a>
-# model character "paired", "standard", "adaptive"
-# groups character "X" or "Z", or NULL (all groups)</p></td>
+      <th>text</th>
+      <td><p>character vector</p></td>
     </tr>
     <tr>
-      <th>object, x</th>
-      <td><p><a href='palasso.html'>palasso</a> object</p></td>
+      <th>unit</th>
+      <td><p>logical</p></td>
     </tr>
     <tr>
-      <th>newdata</th>
-      <td><p>covariates<strong>:</strong>
-list of matrices with \(n\) rows (samples)
-and \(p\) columns (variables)</p></td>
-    </tr>
-    <tr>
-      <th>s</th>
-      <td><p>penalty parameter<strong>:</strong>
-character "lambda.min" or "lambda.1se",
-or positive numeric</p></td>
+      <th>side</th>
+      <td><p>to do</p></td>
     </tr>
     </table>
     
@@ -165,10 +135,6 @@ or positive numeric</p></td>
 
     <p>to do</p>
     
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <p>Use <a href='palasso.html'>palasso</a> to fit the pairwise-adaptive lasso.</p>
-    
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -179,8 +145,6 @@ or positive numeric</p></td>
       <li><a href="#value">Value</a></li>
 
       <li><a href="#details">Details</a></li>
-
-      <li><a href="#see-also">See also</a></li>
           </ul>
 
   </div>

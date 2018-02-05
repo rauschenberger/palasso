@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>plot matrix — plot.matrix â€¢ palasso</title>
+<title>Plots for class "palasso" — plots â€¢ palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -101,22 +101,39 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>plot matrix</h1>
+    <h1>Plots for class "palasso"</h1>
     </div>
 
     
     <p>generic functions</p>
     
 
-    <pre class="usage"><span class='co'># S3 method for matrix</span>
-<span class='fu'>plot</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_score</span>(<span class='no'>X</span>, <span class='no'>choice</span>)
+
+<span class='fu'>plot_image</span>(<span class='no'>X</span>, <span class='kw'>margin</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>text</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>matrix</p></td>
+      <th>X, Y</th>
+      <td><p>matrix with \(n\) rows and \(p\) columns</p></td>
+    </tr>
+    <tr>
+      <th>choice</th>
+      <td><p>numeric between \(1\) and \(p\)</p></td>
+    </tr>
+    <tr>
+      <th>x, y</th>
+      <td><p>vector</p></td>
+    </tr>
+    <tr>
+      <th>names</th>
+      <td><p>vector of length \(p\)</p></td>
+    </tr>
+    <tr>
+      <th>groups</th>
+      <td><p>vector of length \(p\)</p></td>
     </tr>
     <tr>
       <th>...</th>

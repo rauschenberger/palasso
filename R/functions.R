@@ -4,7 +4,6 @@
 #' @title
 #' Pairwise-adaptive lasso
 #' 
-#' @keywords methods
 #' @export
 #' 
 #' @description
@@ -177,11 +176,10 @@ palasso <- function(y,X,trial=FALSE,...){
 
 #--- Generic functions ---------------------------------------------------------
 
-#' @title
-#' Methods for class 'palasso'
-#' 
 #' @name methods
-#' @keywords methods
+#' 
+#' @title
+#' Methods for class "palasso"
 #' 
 #' @description
 #' generic functions
@@ -211,9 +209,10 @@ palasso <- function(y,X,trial=FALSE,...){
 #' Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
 #' 
 NULL
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 subset.palasso <- function(x,...){
     object <- x
     if(length(list(...))!=0){warning("Ignoring argument.")}
@@ -240,9 +239,10 @@ subset.palasso <- function(x,...){
     
     return(object)
 }
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 predict.palasso <- function(object,newdata,s="lambda.min",...){
     if(missing(newdata)||is.null(newdata)) {
         return(palasso:::fitted.palasso(object=object,s=s,...))
@@ -251,41 +251,46 @@ predict.palasso <- function(object,newdata,s="lambda.min",...){
     newx <- do.call(what="cbind",args=newdata)
     glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
 }
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 coef.palasso <- function(object,s="lambda.min",...){
     object <- palasso:::subset.palasso(object)
     glmnet::coef.cv.glmnet(object=object,s=s,...)
 }
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 fitted.palasso <- function(object,s="lambda.min",...){
     object <- palasso:::subset.palasso(object)
     newx <- object$glmnet.fit$call$x
     glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
 }
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 deviance.palasso <- function(object,...){
     object <- palasso:::subset.palasso(object)
     glmnet::deviance.glmnet(object$glmnet.fit,...)
 }
-#' @importFrom stats weights
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' @importFrom stats weights
+#' 
 weights.palasso <- function(object,...){
     object <- palasso:::subset.palasso(object)
     # Better split weights into X and Z group.
     # For this, adapt function <<subset.palasso>>.
     1/object$glmnet.fit$call$penalty.factor
 }
-#' @export
-#' @keywords methods
+
 #' @rdname methods
+#' @export
+#' 
 summary.palasso <- function(object,...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
     
@@ -330,18 +335,25 @@ summary.palasso <- function(object,...){
     return(invisible("palasso"))
 }
 
-
 #--- Visualisation -------------------------------------------------------------
 
-#' @title
-#' plot matrix
+#' @name plots
 #' 
-#' @keywords plots
+#' @title
+#' Plots for class "palasso"
 #' 
 #' @description
 #' generic functions
 #' 
-#' @param x matrix
+#' @param X,Y matrix with \eqn{n} rows and \eqn{p} columns
+#' 
+#' @param x,y vector
+#' 
+#' @param names vector of length \eqn{p}
+#' 
+#' @param groups vector of length \eqn{p}
+#' 
+#' @param choice numeric between \eqn{1} and \eqn{p}
 #' 
 #' @param ... to do
 #' 
@@ -351,16 +363,172 @@ summary.palasso <- function(object,...){
 #' @return
 #' to do
 #' 
-#' @export
-#' @keywords plots
-#' @rdname plots
-#' 
 #' @seealso
 #' Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
-plot.matrix <- function(x,...){
-    stats::rnorm(10)
+NULL
+
+#' @rdname plots
+#' @export
+#' 
+plot_score <- function(X,choice){
+    
+    # input
+    n <- nrow(X); p <- ncol(X)-1
+    if(is.character(choice)){choice <- which(colnames(X)==choice)}
+
+    # score
+    y <- list()
+    temp <- X[,choice]
+    y$gain <- apply(X,2,function(x) sum(temp<x))
+    y$equal <- apply(X,2,function(x) sum(temp==x))
+    y$loss <- apply(X,2,function(x) sum(temp>x))
+    y <- lapply(y,function(x) x[-choice])
+    
+    # frame
+    graphics::plot.new()
+    graphics::plot.window(xlim=c(0.5,p+0.5),ylim=c(0,n))
+    graphics::box()
+    graphics::abline(h=n/2,lwd=2,col="grey")
+    graphics::axis(side=2)
+    graphics::title(ylab="count",line=2.5)
+    palasso:::mtext(text=colnames(X)[-choice])
+    
+    # bars
+    for(i in seq_len(p)){
+        graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
+                          y=c(0,y$gain[i],y$gain[i],0),
+                          col="#0000CD")
+        graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
+                          y=c(y$gain[i],
+                              y$gain[i]+y$equal[i],
+                              y$gain[i]+y$equal[i],
+                              y$gain[i]),
+                          col="white")
+        graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
+                          y=c(y$gain[i]+y$equal[i],
+                              y$gain[i]+y$equal[i]+y$loss[i],
+                              y$gain[i]+y$equal[i]+y$loss[i],
+                              y$gain[i]+y$equal[i]),
+                          col="#CD0000")
+    }
 }
 
+
+#' @rdname plots
+#' @export
+#' 
+plot_table <- function(X,margin=2,text=TRUE){
+    
+    n <- nrow(X)
+    p <- ncol(X)
+    
+    v <- 0.5/(n-1)
+    h <- 0.5/(p-1)
+    
+    graphics::plot.new()
+    graphics::plot.window(xlim=c(-h,1+h),ylim=c(-v,1+v))
+    graphics::par(usr=c(-h,1+h,-v,1+v))
+    palasso:::mtext(text=rev(rownames(X)),unit=TRUE,side=2)
+    palasso:::mtext(text=colnames(X),unit=TRUE,side=3)
+    
+    if(margin==0){
+        temp <- matrix(rank(X),nrow=n,ncol=p) # overall rank
+    }
+    if(margin==1){
+        temp <- t(apply(X,1,rank)) # rank per row
+    }
+    if(margin==2){
+        temp <- apply(X,2,rank) # rank per column
+    }
+    
+    image <- t(temp)[,seq(from=n,to=1,by=-1)]
+    col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
+    graphics::image(x=image,col=col,add=TRUE)
+
+    if(margin==1){
+        graphics::segments(x0=-h,x1=1+h,
+                           y0=seq(from=-v,to=1+v,by=2*v),
+                           col="white",lwd=3)
+    }
+    if(margin==2){
+        graphics::segments(x0=seq(from=-h,to=1+h,by=2*h),
+                           y0=1+v,y1=0-v,
+                           col="white",lwd=3)
+    }
+    
+    if(text){
+        labels <- round(as.numeric(X),digits=2)
+        xs <- rep(seq_len(p),each=n)
+        ys <- rep(seq_len(n),times=p)
+        graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
+    }
+    
+}
+
+
+
+
+#' @title
+#' Split
+#' 
+#' @keywords internal
+#' 
+#' @description
+#' generic functions
+#' 
+#' @param text character vector
+#' 
+#' @param unit logical
+#' 
+#' @param side to do
+#' 
+#' @details
+#' to do
+#' 
+#' @return
+#' to do
+#' 
+mtext <- function(text,unit=FALSE,side=1){
+    
+    p <- length(text)
+    # separator
+    pattern <- c("_",".","|","+","-",":","*","^","$"," ")
+    number <- sapply(pattern,function(z) sum(grepl(x=text,pattern=paste0("\\",z))))
+    split <- pattern[which.max(number)]
+    # separation
+    strsplit <- strsplit(x=text,split=split)
+    groups <- sapply(strsplit,function(x) x[1])
+    names <- sapply(strsplit,function(x) paste0(x[-1],collapse=split))
+    names[names==""] <- groups[names==""]
+    groups[groups==names] <- ""
+    # location
+    border <- which(groups[-1]!=groups[-p])+0.5
+    temp <- c(0.5,border,p+0.5)
+    centre <- 0.5*(temp[-1]+temp[-length(temp)])
+    # checks
+    
+    cond <- logical()
+    cond[1] <- length(unique(groups))>1
+    cond[2] <- length(unique(groups))==length(border)+1
+    cond[3] <- length(unique(groups))<p
+    
+    at <- function(x){
+        if(unit){
+            (x-1)/(p-1)
+        } else {
+            x
+        }
+    }
+    
+    if(all(cond)){
+        graphics::mtext(text=names,side=side,at=at(seq_len(p)))
+        graphics::mtext(text="|",side=side,at=at(border),font=2)
+        graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
+    } else {
+        graphics::mtext(text=text,side=side,at=at(seq_len(p)))
+    }
+
+}
 
 
 #' @title
@@ -505,4 +673,6 @@ scatter <- function(x,y,p=0.95,...){
     l2 <- paste0("binom = ",adhoc)
     graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
 }
+
+
 

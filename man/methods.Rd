@@ -9,7 +9,7 @@
 \alias{deviance.palasso}
 \alias{weights.palasso}
 \alias{summary.palasso}
-\title{Methods for class 'palasso'}
+\title{Methods for class "palasso"}
 \usage{
 \method{subset}{palasso}(x, ...)
 
@@ -53,4 +53,3 @@ to do
 \seealso{
 Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
 }
-\keyword{methods}

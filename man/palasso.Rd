@@ -52,4 +52,3 @@ Available \code{\link[palasso]{methods}} for class \code{palasso}:
 \code{\link[=summary.palasso]{summary}},
 \code{\link[=subset.palasso]{subset}}
 }
-\keyword{methods}
