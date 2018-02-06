@@ -3,25 +3,48 @@
 \name{plots}
 \alias{plots}
 \alias{plot_score}
-\alias{plot_image}
-\title{Plots for class "palasso"}
+\alias{plot_table}
+\alias{plot_circle}
+\alias{plot_box}
+\alias{plot_pairs}
+\alias{plot_diff}
+\title{plots}
 \usage{
-plot_score(X, choice)
+plot_score(X, choice = NULL)
 
-plot_image(X, margin = 2, text = TRUE)
+plot_table(X, margin = 2)
+
+plot_circle(b, w, cutoff = NULL, group = NULL)
+
+plot_box(X, choice = NULL)
+
+plot_pairs(x, y = NULL, ...)
+
+plot_diff(x, y, prob = 0.95, ...)
 }
 \arguments{
-\item{X, Y}{matrix with \eqn{n} rows and \eqn{p} columns}
+\item{X}{matrix with \eqn{n} rows and \eqn{p} columns}
 
 \item{choice}{numeric between \eqn{1} and \eqn{p}}
 
-\item{x, y}{vector}
+\item{margin}{\eqn{0} (none), \eqn{1} (rows), or \eqn{2} (columns)}
 
-\item{names}{vector of length \eqn{p}}
+\item{b}{between-group correlation\strong{:}
+vector of length \eqn{p}}
 
-\item{groups}{vector of length \eqn{p}}
+\item{w}{within-group correlation\strong{:}
+matrix with \eqn{p} rows and \eqn{p} columns}
+
+\item{cutoff}{numeric between \eqn{0} and \eqn{1}}
+
+\item{group}{vector of length \eqn{p}}
+
+\item{x, y}{vectors of equal length}
 
 \item{...}{to do}
+
+\item{prob}{confidence interval\strong{:}
+numeric between \eqn{0} and \eqn{1}}
 }
 \value{
 to do
@@ -32,6 +55,49 @@ generic functions
 \details{
 to do
 }
-\seealso{
-Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
+\examples{
+### score ###
+
+n <- 10; p <- 4
+X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+palasso:::plot_score(X)
+
+### table ###
+
+n <- 5; p <- 3
+X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+palasso:::plot_table(X,margin=1)
+
+### circle ###
+
+n <- 50; p <- 100
+X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+Z <- matrix(rnorm(n*p),nrow=n,ncol=p)
+
+b <- sapply(seq_len(p),function(i) abs(cor(X[,i],Z[,i])))
+w <- pmax(abs(cor(X)),abs(cor(Z)),na.rm=TRUE)
+
+palasso:::plot_circle(b,w)
+
+### box ###
+n <- 10; p <- 5
+X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+palasso:::plot_box(X,choice=5)
+
+### pairs ###
+n <- 10
+x <- runif(n)
+y <- runif(n)
+palasso:::plot_pairs(x,y)
+
+### diff ###
+n <- 100
+x <- runif(n)
+y <- runif(n)
+palasso:::plot_diff(x,y)
+
 }
+\seealso{
+Use \link[palasso]{palasso} to fit the paired lasso.
+}
+\keyword{internal}

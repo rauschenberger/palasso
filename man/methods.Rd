@@ -11,21 +11,24 @@
 \alias{summary.palasso}
 \title{Methods for class "palasso"}
 \usage{
-\method{subset}{palasso}(x, ...)
+\method{subset}{palasso}(x, model = "paired", ...)
 
-\method{predict}{palasso}(object, newdata, s = "lambda.min", ...)
+\method{predict}{palasso}(object, newdata, s = "lambda.min",
+  model = "paired", ...)
 
-\method{coef}{palasso}(object, s = "lambda.min", ...)
+\method{coef}{palasso}(object, s = "lambda.min", model = "paired", ...)
 
-\method{fitted}{palasso}(object, s = "lambda.min", ...)
+\method{fitted}{palasso}(object, s = "lambda.min", model = "paired", ...)
 
-\method{deviance}{palasso}(object, ...)
+\method{deviance}{palasso}(object, model = "paired", ...)
 
-\method{weights}{palasso}(object, ...)
+\method{weights}{palasso}(object, model = "paired", ...)
 
-\method{summary}{palasso}(object, ...)
+\method{summary}{palasso}(object, model = "paired", ...)
 }
 \arguments{
+\item{model}{character "paired"}
+
 \item{...}{further arguments for \link[glmnet]{predict.cv.glmnet},
 \link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}
 # model character "paired", "standard", "adaptive"

@@ -31,4 +31,5 @@ reference:
       - palasso
   - title: "Internal functions"
     contents:
-      - scales
+      - plots
+      - extra

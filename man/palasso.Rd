@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{palasso}
 \alias{palasso}
-\title{Pairwise-adaptive lasso}
+\title{Paired lasso}
 \usage{
 palasso(y, X, trial = FALSE, ...)
 }
@@ -25,7 +25,7 @@ This function returns an object of class \code{palasso}.
 }
 \description{
 The function \code{palasso} cross-validates
-the pairwise-adaptive lasso.
+the paired lasso.
 Use this regression technique if
 the covariates are numerous and occur in pairs.
 }
@@ -43,12 +43,16 @@ fit <- palasso(y=y,X=X,family="binomial",trial=TRUE)
 
 }
 \seealso{
-Available \code{\link[palasso]{methods}} for class \code{palasso}:
+Available \code{\link[palasso]{methods}} for class \code{palasso} are
 \code{\link[=predict.palasso]{predict}},
 \code{\link[=coef.palasso]{coef}},
 \code{\link[=fitted.palasso]{fitted}},
 \code{\link[=weights.palasso]{weights}},
 \code{\link[=deviance.palasso]{deviance}},
 \code{\link[=summary.palasso]{summary}},
-\code{\link[=subset.palasso]{subset}}
+and \code{\link[=subset.palasso]{subset}}.
+
+This package also includes hidden functions for
+\code{\link[=extra]{comparing methods}} and
+\code{\link[=plots]{plotting results}}.
 }

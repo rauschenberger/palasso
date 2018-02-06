@@ -2,13 +2,13 @@
 #--- Workhorse function --------------------------------------------------------
 
 #' @title
-#' Pairwise-adaptive lasso
+#' Paired lasso
 #' 
 #' @export
 #' 
 #' @description
 #' The function \code{palasso} cross-validates
-#' the pairwise-adaptive lasso.
+#' the paired lasso.
 #' Use this regression technique if
 #' the covariates are numerous and occur in pairs.
 #' 
@@ -38,14 +38,18 @@
 #' This function returns an object of class \code{palasso}.
 #' 
 #' @seealso
-#' Available \code{\link[palasso]{methods}} for class \code{palasso}:
+#' Available \code{\link[palasso]{methods}} for class \code{palasso} are
 #' \code{\link[=predict.palasso]{predict}},
 #' \code{\link[=coef.palasso]{coef}},
 #' \code{\link[=fitted.palasso]{fitted}},
 #' \code{\link[=weights.palasso]{weights}},
 #' \code{\link[=deviance.palasso]{deviance}},
 #' \code{\link[=summary.palasso]{summary}},
-#' \code{\link[=subset.palasso]{subset}}
+#' and \code{\link[=subset.palasso]{subset}}.
+#' 
+#' This package also includes hidden functions for
+#' \code{\link[=extra]{comparing methods}} and
+#' \code{\link[=plots]{plotting results}}.
 #' 
 #' @examples
 #' set.seed(1)
@@ -150,7 +154,7 @@ palasso <- function(y,X,trial=FALSE,...){
         }
         # output
         if(k==2){
-            tryCatch(palasso::scales(x=weight[[i]][1:p],
+            tryCatch(palasso:::plot_pairs(x=weight[[i]][1:p],
                                      y=weight[[i]][(p+1):(2*p)],
                                      main=paste0("i = ",i)),error=function(x) NULL)
         }
@@ -184,15 +188,20 @@ palasso <- function(y,X,trial=FALSE,...){
 #' @description
 #' generic functions
 #' 
-#' @param object,x \link[palasso]{palasso} object
+#' @param object,x
+#' \link[palasso]{palasso} object
 #' 
-#' @param newdata covariates\strong{:}
+#' @param newdata
+#' covariates\strong{:}
 #' list of matrices with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
 #' @param s penalty parameter\strong{:}
 #' character "lambda.min" or "lambda.1se",
 #' or positive numeric
+#' 
+#' @param model
+#' character "paired"
 #' 
 #' @param ... further arguments for \link[glmnet]{predict.cv.glmnet},
 #' \link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}
@@ -213,7 +222,7 @@ NULL
 #' @rdname methods
 #' @export
 #' 
-subset.palasso <- function(x,...){
+subset.palasso <- function(x,model="paired",...){
     object <- x
     if(length(list(...))!=0){warning("Ignoring argument.")}
     
@@ -226,7 +235,13 @@ subset.palasso <- function(x,...){
         stop("Different loss functions!")
     }
     
-    cond <- grepl(pattern="adaptive|between|within",x=names(object))
+    if(model=="paired"){
+        pattern <- "adaptive|between|within"
+        cond <- grepl(pattern=pattern,x=names(object))
+    } else {
+        cond <- names(object)==model
+    }
+    
     object <- object[cond]
     
     if(name=="AUC"){
@@ -243,11 +258,11 @@ subset.palasso <- function(x,...){
 #' @rdname methods
 #' @export
 #' 
-predict.palasso <- function(object,newdata,s="lambda.min",...){
+predict.palasso <- function(object,newdata,s="lambda.min",model="paired",...){
     if(missing(newdata)||is.null(newdata)) {
-        return(palasso:::fitted.palasso(object=object,s=s,...))
+        return(palasso:::fitted.palasso(object=object,s=s,model=model,...))
     }
-    object <- palasso:::subset.palasso(object)
+    object <- palasso:::subset.palasso(x=object,model=model)
     newx <- do.call(what="cbind",args=newdata)
     glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
 }
@@ -255,16 +270,16 @@ predict.palasso <- function(object,newdata,s="lambda.min",...){
 #' @rdname methods
 #' @export
 #' 
-coef.palasso <- function(object,s="lambda.min",...){
-    object <- palasso:::subset.palasso(object)
+coef.palasso <- function(object,s="lambda.min",model="paired",...){
+    object <- palasso:::subset.palasso(x=object,model=model)
     glmnet::coef.cv.glmnet(object=object,s=s,...)
 }
 
 #' @rdname methods
 #' @export
 #' 
-fitted.palasso <- function(object,s="lambda.min",...){
-    object <- palasso:::subset.palasso(object)
+fitted.palasso <- function(object,s="lambda.min",model="paired",...){
+    object <- palasso:::subset.palasso(x=object,model=model)
     newx <- object$glmnet.fit$call$x
     glmnet::predict.cv.glmnet(object=object,newx=newx,s=s,...)
 }
@@ -272,8 +287,8 @@ fitted.palasso <- function(object,s="lambda.min",...){
 #' @rdname methods
 #' @export
 #' 
-deviance.palasso <- function(object,...){
-    object <- palasso:::subset.palasso(object)
+deviance.palasso <- function(object,model="paired",...){
+    object <- palasso:::subset.palasso(x=object,model=model)
     glmnet::deviance.glmnet(object$glmnet.fit,...)
 }
 
@@ -281,8 +296,8 @@ deviance.palasso <- function(object,...){
 #' @export
 #' @importFrom stats weights
 #' 
-weights.palasso <- function(object,...){
-    object <- palasso:::subset.palasso(object)
+weights.palasso <- function(object,model="paired",...){
+    object <- palasso:::subset.palasso(x=object,model=model)
     # Better split weights into X and Z group.
     # For this, adapt function <<subset.palasso>>.
     1/object$glmnet.fit$call$penalty.factor
@@ -291,10 +306,10 @@ weights.palasso <- function(object,...){
 #' @rdname methods
 #' @export
 #' 
-summary.palasso <- function(object,...){
+summary.palasso <- function(object,model="paired",...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
     
-    object <- palasso:::subset.palasso(object)
+    object <- palasso:::subset.palasso(x=object,model=model)
     
     # head
     title <- paste(object$glmnet.fit$call$family,"palasso")
@@ -340,22 +355,43 @@ summary.palasso <- function(object,...){
 #' @name plots
 #' 
 #' @title
-#' Plots for class "palasso"
+#' plots
 #' 
 #' @description
 #' generic functions
 #' 
-#' @param X,Y matrix with \eqn{n} rows and \eqn{p} columns
+#' @param X
+#' matrix with \eqn{n} rows and \eqn{p} columns
 #' 
-#' @param x,y vector
+#' @param x,y
+#' vectors of equal length
 #' 
-#' @param names vector of length \eqn{p}
+#' @param choice
+#' numeric between \eqn{1} and \eqn{p}
 #' 
-#' @param groups vector of length \eqn{p}
+#' @param b
+#' between-group correlation\strong{:}
+#' vector of length \eqn{p}
 #' 
-#' @param choice numeric between \eqn{1} and \eqn{p}
+#' @param w
+#' within-group correlation\strong{:}
+#' matrix with \eqn{p} rows and \eqn{p} columns
 #' 
-#' @param ... to do
+#' @param group
+#' vector of length \eqn{p}
+#' 
+#' @param prob
+#' confidence interval\strong{:}
+#' numeric between \eqn{0} and \eqn{1}
+#' 
+#' @param cutoff
+#' numeric between \eqn{0} and \eqn{1}
+#' 
+#' @param margin
+#' \eqn{0} (none), \eqn{1} (rows), or \eqn{2} (columns)
+#' 
+#' @param ...
+#' to do
 #' 
 #' @details
 #' to do
@@ -364,16 +400,35 @@ summary.palasso <- function(object,...){
 #' to do
 #' 
 #' @seealso
-#' Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
+#' Use \link[palasso]{palasso} to fit the paired lasso.
 NULL
 
+# Graphical arguments\strong{:}
+# line width \code{lwd},
+# title \code{main},
+# colours \code{col}
+# 
+# The function \code{scatter} plots the difference
+# between two sets of measurements. The function \code{scales} plots weights.
+# This function returns a plot.
+
+
 #' @rdname plots
-#' @export
+#' @keywords internal
+#' @examples
+#' ### score ###
 #' 
-plot_score <- function(X,choice){
+#' n <- 10; p <- 4
+#' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+#' palasso:::plot_score(X)
+#' 
+plot_score <- function(X,choice=NULL){
     
     # input
-    n <- nrow(X); p <- ncol(X)-1
+    n <- nrow(X); p <- ncol(X)
+    if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
+    if(is.null(colnames(X))){colnames(X) <- seq_len(p)}
+    if(is.null(choice)){choice <- p}
     if(is.character(choice)){choice <- which(colnames(X)==choice)}
 
     # score
@@ -386,15 +441,15 @@ plot_score <- function(X,choice){
     
     # frame
     graphics::plot.new()
-    graphics::plot.window(xlim=c(0.5,p+0.5),ylim=c(0,n))
+    graphics::plot.window(xlim=c(0.5,p-0.5),ylim=c(0,n))
     graphics::box()
     graphics::abline(h=n/2,lwd=2,col="grey")
     graphics::axis(side=2)
     graphics::title(ylab="count",line=2.5)
-    palasso:::mtext(text=colnames(X)[-choice])
+    palasso:::mtext(text=colnames(X)[-choice],side=1)
     
     # bars
-    for(i in seq_len(p)){
+    for(i in seq_len(p-1)){
         graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
                           y=c(0,y$gain[i],y$gain[i],0),
                           col="#0000CD")
@@ -413,14 +468,20 @@ plot_score <- function(X,choice){
     }
 }
 
-
 #' @rdname plots
-#' @export
+#' @keywords internal
+#' @examples
+#' ### table ###
 #' 
-plot_table <- function(X,margin=2,text=TRUE){
+#' n <- 5; p <- 3
+#' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+#' palasso:::plot_table(X,margin=1)
+#' 
+plot_table <- function(X,margin=2){
     
-    n <- nrow(X)
-    p <- ncol(X)
+    n <- nrow(X); p <- ncol(X)
+    if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
+    if(is.null(colnames(X))){colnames(X) <- seq_len(p)}
     
     v <- 0.5/(n-1)
     h <- 0.5/(p-1)
@@ -456,113 +517,124 @@ plot_table <- function(X,margin=2,text=TRUE){
                            col="white",lwd=3)
     }
     
-    if(text){
-        labels <- round(as.numeric(X),digits=2)
-        xs <- rep(seq_len(p),each=n)
-        ys <- rep(seq_len(n),times=p)
-        graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
-    }
-    
+    labels <- round(as.numeric(X),digits=2)
+    xs <- rep(seq_len(p),each=n)
+    ys <- rep(seq_len(n),times=p)
+    graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
 }
 
-
-
-
-#' @title
-#' Split
-#' 
+#' @rdname plots
 #' @keywords internal
-#' 
-#' @description
-#' generic functions
-#' 
-#' @param text character vector
-#' 
-#' @param unit logical
-#' 
-#' @param side to do
-#' 
-#' @details
-#' to do
-#' 
-#' @return
-#' to do
-#' 
-mtext <- function(text,unit=FALSE,side=1){
-    
-    p <- length(text)
-    # separator
-    pattern <- c("_",".","|","+","-",":","*","^","$"," ")
-    number <- sapply(pattern,function(z) sum(grepl(x=text,pattern=paste0("\\",z))))
-    split <- pattern[which.max(number)]
-    # separation
-    strsplit <- strsplit(x=text,split=split)
-    groups <- sapply(strsplit,function(x) x[1])
-    names <- sapply(strsplit,function(x) paste0(x[-1],collapse=split))
-    names[names==""] <- groups[names==""]
-    groups[groups==names] <- ""
-    # location
-    border <- which(groups[-1]!=groups[-p])+0.5
-    temp <- c(0.5,border,p+0.5)
-    centre <- 0.5*(temp[-1]+temp[-length(temp)])
-    # checks
-    
-    cond <- logical()
-    cond[1] <- length(unique(groups))>1
-    cond[2] <- length(unique(groups))==length(border)+1
-    cond[3] <- length(unique(groups))<p
-    
-    at <- function(x){
-        if(unit){
-            (x-1)/(p-1)
-        } else {
-            x
-        }
-    }
-    
-    if(all(cond)){
-        graphics::mtext(text=names,side=side,at=at(seq_len(p)))
-        graphics::mtext(text="|",side=side,at=at(border),font=2)
-        graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
-    } else {
-        graphics::mtext(text=text,side=side,at=at(seq_len(p)))
-    }
-
-}
-
-
-#' @title
-#' Weight scales
-#' 
-#' @export
-#' @keywords internal
-#' 
-#' @description
-#' The function \code{scales} plots weights.
-#' 
-#' @param x
-#' weights \strong{:}
-#' vector of length \eqn{n}
-#' 
-#' @param y
-#' weights \strong{:}
-#' vector of length \eqn{n},
-#' or \code{NULL} \eqn{(y=1-x)}
-#' 
-#' @param ...
-#' Graphical arguments\strong{:}
-#' line width \code{lwd},
-#' title \code{main},
-#' colours \code{col}
-#' 
-#' @return
-#' This function returns a plot.
-#' 
 #' @examples
-#' x <- runif(10)
-#' scales(x)
+#' ### circle ###
 #' 
-scales <- function(x,y=NULL,...){
+#' n <- 50; p <- 100
+#' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+#' Z <- matrix(rnorm(n*p),nrow=n,ncol=p)
+#' 
+#' b <- sapply(seq_len(p),function(i) abs(cor(X[,i],Z[,i])))
+#' w <- pmax(abs(cor(X)),abs(cor(Z)),na.rm=TRUE)
+#' 
+#' palasso:::plot_circle(b,w)
+#' 
+plot_circle <- function(b,w,cutoff=NULL,group=NULL){
+    
+    # checks
+    if(any(dim(w)!=length(b))){stop("Invalid dimensions!")}
+    if(any(w!=t(w))){stop("Matrix X is asymmetric!")}
+    w[row(w)>=col(w)] <- NA
+    p <- length(b)
+    if(is.null(cutoff)){
+        cutoff <- numeric()
+        cutoff[1] <- sort(b,decreasing=TRUE)[0.05*p]
+        cutoff[2] <- sort(w,decreasing=TRUE)[0.05*p]
+    }
+    if(length(cutoff)==1){
+        cutoff <- c(cutoff,cutoff)
+    }
+    
+    # cutoff
+    id <- list()
+    id$b <- which(b>cutoff[1])
+    id$w <- as.data.frame(which(w>cutoff[2],arr.ind=TRUE))
+    
+    # coordinates
+    degree <- seq(from=0,to=2*pi,length.out=p+1)
+    y <- sin(degree); x <- cos(degree)
+    
+    # initialisation
+    graphics::plot.new()
+    graphics::plot.window(xlim=1.2*c(-1,1),ylim=1.2*c(-1,1))
+    graphics::par(usr=1.2*c(-1,1,-1,1),mar=c(1,1,1,1))
+    graphics::lines(x=x,y=y)
+    graphics::lines(x=0.8*x,y=0.8*y)
+    
+    # between
+   #  col <- "#0000CD"
+    col <- grDevices::rgb(red=0,green=0,blue=205,maxColorValue=255,alpha=50)
+    graphics::segments(x0=x[id$b],y0=y[id$b],
+                       x1=0.8*x[id$b],y1=0.8*y[id$b],col=col)
+    graphics::segments(x0=0.8*x[id$w[,1]],y0=0.8*y[id$w[,1]],
+                       x1=0.8*x[id$w[,2]],y1=0.8*y[id$w[,2]],col=col)
+    
+    # annotation
+    if(!is.null(group)){
+        names <- unique(group)
+        size <- sapply(names,function(x) sum(x==group))
+        cumsum <- cumsum(size)
+        border <- cumsum+0.5
+        graphics::segments(x0=x[border],y0=y[border],x1=1.1*x[border],y1=1.1*y[border],lwd=2)
+        centre <- 0.5*(c(0,cumsum[-length(cumsum)])+cumsum)
+        graphics::text(x=1.15*x[centre],y=1.15*y[centre],labels=names(cumsum))
+    }
+    
+}
+
+#' @rdname plots
+#' @keywords internal
+#' @examples
+#' ### box ###
+#' n <- 10; p <- 5
+#' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
+#' palasso:::plot_box(X,choice=5)
+#' 
+plot_box <- function(X,choice=NULL){
+    
+    # input
+    n <- nrow(X); p <- ncol(X)
+    if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
+    if(is.null(colnames(X))){colnames(X) <- seq_len(p)}
+    if(is.null(choice)){choice <- p}
+    if(is.character(choice)){choice <- which(colnames(X)==choice)}
+    
+    col <- rep(x="#CD0000",times=p)
+    col[choice] <- "#0000CD"
+
+    graphics::plot.new()
+    graphics::plot.window(xlim=c(0.5,p+0.5),ylim=range(X))
+    graphics::box()
+    graphics::axis(side=2)
+    graphics::title(ylab="",line=2.5)
+    palasso:::mtext(text=colnames(X),side=1)
+    
+    for(i in seq_len(p)){
+        # vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
+        graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
+        graphics::points(y=mean(X[,i]),x=i,col="white",pch=16)
+    }
+    
+}
+
+#' @rdname plots
+#' @keywords internal
+#' @examples
+#' ### pairs ###
+#' n <- 10
+#' x <- runif(n)
+#' y <- runif(n)
+#' palasso:::plot_pairs(x,y)
+#' 
+plot_pairs <- function(x,y=NULL,...){
     
     # arguments
     args <- list(...)
@@ -597,42 +669,20 @@ scales <- function(x,y=NULL,...){
     graphics::mtext(text=args$main,side=3,line=0,at=0)
 }
 
-#' @title
-#' Set comparison
-#' 
-#' @export
+#' @rdname plots
 #' @keywords internal
-#' 
-#' @description
-#' The function \code{scatter} plots the difference
-#' between two sets of measurements.
-#' 
-#' @param x
-#' vector of length \eqn{n}
-#' 
-#' @param y
-#' vector of length \eqn{n}
-#' 
-#' @param p
-#' confidence interval\strong{:}
-#' numeric between \eqn{0} and \eqn{1}
-#' 
-#' @param ...
-#' Graphical arguments
-#' 
-#' @return
-#' This function returns a plot.
-#' 
 #' @examples
-#' x <- runif(100)
-#' y <- runif(100)
-#' scatter(x,y)
+#' ### diff ###
+#' n <- 100
+#' x <- runif(n)
+#' y <- runif(n)
+#' palasso:::plot_diff(x,y)
 #' 
-scatter <- function(x,y,p=0.95,...){
+plot_diff <- function(x,y,prob=0.95,...){
     
     # difference
     diff <- x - y
-    cutoff <- stats::quantile(abs(diff),p=p,na.rm=TRUE)
+    cutoff <- stats::quantile(abs(diff),p=prob,na.rm=TRUE)
     index <- sign(diff)*(abs(diff) > cutoff) + 2
     pch <- c(16,1,16)[index]
     col <- c("blue","grey","red")[index]
@@ -675,4 +725,301 @@ scatter <- function(x,y,p=0.95,...){
 }
 
 
+##--- Internal functions ----
+
+#' @title
+#' Split
+#' 
+#' @keywords internal
+#' 
+#' @description
+#' generic functions
+#' 
+#' @param text character vector
+#' 
+#' @param unit logical
+#' 
+#' @param side to do
+#' 
+#' @details
+#' to do
+#' 
+#' @return
+#' to do
+#' 
+mtext <- function(text,unit=FALSE,side=1){
+    p <- length(text)
+    # separator
+    pattern <- c("_",".","|","+","-",":","*","^","$"," ")
+    number <- sapply(pattern,function(z) sum(grepl(x=text,pattern=paste0("\\",z))))
+    split <- pattern[which.max(number)]
+    # separation
+    strsplit <- strsplit(x=text,split=split)
+    groups <- sapply(strsplit,function(x) x[1])
+    names <- sapply(strsplit,function(x) paste0(x[-1],collapse=split))
+    names[names==""] <- groups[names==""]
+    groups[groups==names] <- ""
+    # location
+    border <- which(groups[-1]!=groups[-p])+0.5
+    temp <- c(0.5,border,p+0.5)
+    centre <- 0.5*(temp[-1]+temp[-length(temp)])
+    # checks
+    cond <- logical()
+    cond[1] <- length(unique(groups))>1
+    cond[2] <- length(unique(groups))==length(border)+1
+    cond[3] <- length(unique(groups))<p
+    at <- function(x){
+        if(unit){
+            (x-1)/(p-1)
+        } else {
+            x
+        }
+    }
+    if(all(cond)){
+        graphics::mtext(text=names,side=side,at=at(seq_len(p)))
+        graphics::mtext(text="|",side=side,at=at(border),font=2)
+        graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
+    } else {
+        graphics::mtext(text=text,side=side,at=at(seq_len(p)))
+    }
+}
+
+#--- Application ---------------------------------------------------------------
+
+#' @title
+#' extra
+#' 
+#' @name extra
+#' 
+#' @description
+#' generic functions
+#' 
+#' @param X
+#' covariates\strong{:}
+#' matrix with \eqn{n} rows and \eqn{p} columns
+#' 
+#' @param x
+#' covariates\strong{:}
+#' list of length \eqn{k},
+#' including matrices with \eqn{n} rows and \eqn{p} columns
+#' 
+#' @param y
+#' response\strong{:}
+#' vector of length \eqn{n}
+#' 
+#' @param effects
+#' number of causal covariates\strong{:}
+#' vector of length \eqn{k}
+#' 
+#' @param index
+#' indices of causal covariates\strong{:}
+#' list of length \eqn{k},
+#' including vectors
+#' 
+#' @param nfolds.ext
+#' number of external folds
+#' 
+#' @param ...
+#' arguments for \link[palasso]{palasso}
+#' 
+#' @details
+#' to do
+#' 
+#' @return
+#' to do
+#' 
+#' @seealso
+#' Use \link[palasso]{palasso} to fit the paired lasso.
+#' 
+#' @examples 
+#' set.seed(1)
+#' n <- 20; p <- 50
+#' X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
+#' x <- .prepare(X)
+#' y <- .simulate(x,effects=c(1,2))
+#' .predict(y,x)
+#' .select(y,x,attributes(y))
+NULL
+
+#' @rdname extra
+#' @keywords internal
+#' @export
+#' @examples
+#' 1+1
+.prepare <- function(X,cutoff=NULL){
+    
+    # checks
+    if(nrow(X)>=ncol(X)){
+        stop("Low-dimensional data!")
+    }
+    if(any(X)<0 | any(X!=round(X))){
+        stop("Raw counts required!")
+    }
+    
+    # Remove features with low abundance.
+    lib.size <- Matrix::rowSums(X)
+    abundance <- Matrix::colSums(X)
+    if(is.null(cutoff)){
+        cutoff <- 0.05*nrow(X) 
+    }
+    X <- X[,abundance>=cutoff]
+    X <- Matrix::as.matrix(X)
+    
+    # Adjust for different library sizes.
+    norm.factors <- edgeR::calcNormFactors(object=t(X),lib.size=lib.size)
+    gamma <- norm.factors*lib.size/mean(lib.size)
+    gamma <- matrix(gamma,nrow=nrow(X),ncol=ncol(X))
+    X <- X / gamma
+    
+    # transform Z
+    Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
+    Z[,] <- X > 0 # zero-indicator
+    # alternative: Z[,] <- X > stats::quantile(X,p=0.8) # quantile
+    prop <- mean(Z==0)
+    
+    # transform X
+    X <- 2*sqrt(X+3/8) # Anscombe transform
+    # alternative: X <- sqrt(X) # square root
+    
+    # scaling X
+    X <- scale(X)
+    cx <- apply(X,2,function(x) all(is.na(x)))
+    X[,cx] <- 0
+    
+    # scaling Z
+    Z <- scale(Z)
+    cz <- apply(Z,2,function(z) all(is.na(z)))
+    Z[,cz] <- 0
+    
+    # return
+    x <- list(X=X,Z=Z)
+    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop)
+    return(x)
+}
+
+#' @rdname extra
+#' @keywords internal
+#' @export
+#' @examples
+#' 1+1
+.simulate <- function(x,effects){
+    
+    # covariates
+    if(length(x)!=length(effects)){stop("Invalid.")}
+    if(ncol(unique(sapply(x,dim),MARGIN=2))!=1){stop("Invalid.")}
+    k <- length(x)
+    n <- nrow(x[[1]])
+    p <- ncol(x[[1]])
+    if(n>=p){warning("Low-dimensional data!")}
+    
+    # coefficients
+    coef <- lapply(seq_len(k),function(i) 
+        sample(rep(x=c(0,1),times=c(p-effects[i],effects[i]))))
+    indices <- lapply(coef,function(x) which(x!=0))
+    names(indices) <- names(x)
+    
+    # response
+    eta <- rowSums(sapply(seq_len(k),function(i) x[[i]] %*% coef[[i]]))
+    y <- stats::rbinom(n=n,size=1,prob=1/(1+exp(-eta)))
+    # y <- stats::rnorm(n=n,mean=eta,sd=1)
+    # y <- stats::rpois(n=n,lambda=exp(eta))
+    
+    attributes(y) <- indices
+    return(y)
+}
+
+#' @rdname extra
+#' @keywords internal
+#' @export
+#' @examples
+#' 1+1
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5){
+    
+    start <- Sys.time()
+    
+    # dimensionality
+    p <- unique(sapply(X,ncol))
+    k <- length(X)
+    if(is.null(pmax)){pmax <- k*p}
+    if(is.na(pmax)){pmax <- k*p}
+    
+    # external folds
+    fold.ext <- rep(NA,times=length(y))
+    fold.ext[y==0] <- sample(rep(seq_len(nfolds.ext),
+                                 length.out=sum(y==0)))
+    fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
+                                 length.out=sum(y==1)))
+    
+    # models
+    names <- c(paste0("standard_",c("x","z","xz")),
+            paste0("adaptive_",c("x","z","xz")),"paired")
+    
+    # predictions
+    pred <- matrix(NA,nrow=length(y),ncol=length(names))
+    deviance <- auc <- rep(NA,times=length(names))
+    colnames(pred) <- names(deviance) <- names(auc) <- names
+
+    # cross-validation
+    for(i in seq_len(nfolds.ext)){
+        
+        y0 <- y[fold.ext!=i]
+        X0 <- lapply(X,function(x) x[fold.ext!=i,,drop=FALSE])
+        X1 <- lapply(X,function(x) x[fold.ext==i,,drop=FALSE])
+        
+        # internal folds
+        fold.int <- rep(NA,times=length(y0))
+        fold.int[y0==0] <- sample(rep(seq_len(nfolds.int),
+                                      length.out=sum(y0==0)))
+        fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
+                                      length.out=sum(y0==1)))
+        
+        object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
+                                  alpha=1,family="binomial",type.measure="deviance",
+                                  pmax=pmax,trial=TRUE)
+        
+        pred[fold.ext==i,] <-  sapply(names,function(x)
+            palasso:::predict.palasso(object=object,newdata=X1,model=x))
+    }
+    
+    for(i in seq_along(names)){
+        y_hat <- pmax(1e-05,pmin(pred[,i],1-1e-05))
+        deviance[i] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
+        auc[i] <- pROC::roc(response=y,predictor=y_hat)$auc
+    }
+    
+    end <- Sys.time()
+    
+    info <- data.frame(nfolds.ext=nfolds.ext,nfolds.int=nfolds.int,
+                       time=format(end-start))
+    list <- list(info=info,deviance=deviance,auc=auc)
+    
+    return(list)
+}
+
+#' @rdname extra
+#' @keywords internal
+#' @export
+#' @examples
+#' 1+1
+.select <- function(y,X,index,pmax=10,nfolds=5){
+    
+    p <- ncol(X[[1]])
+    
+    fit <- palasso::palasso(y=y,X=X,pmax=pmax,nfolds=nfolds,trial=TRUE)
+    
+    names <- c(paste0("standard_",c("x","z","xz")),
+               paste0("adaptive_",c("x","z","xz")),"paired")
+    
+    coef <- sapply(names,function(i) palasso:::coef.palasso(object=fit,model=i)[-1])
+    
+    select <- apply(coef,2,function(x) which(x!=0))
+    select <- sapply(select,function(x) x - p*(x %/% p))
+    
+    shots <- sapply(select,length)
+    hits <- sapply(select,function(x) sum(unique(x) %in% unlist(index)))
+    
+    list <- list(shots=shots,hits=hits)
+    return(list)
+    
+}
 

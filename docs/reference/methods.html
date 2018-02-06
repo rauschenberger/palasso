@@ -109,29 +109,34 @@
     
 
     <pre class="usage"><span class='co'># S3 method for palasso</span>
-<span class='fu'>subset</span>(<span class='no'>x</span>, <span class='no'>...</span>)
+<span class='fu'>subset</span>(<span class='no'>x</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
+<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
+  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
+<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
+<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>weights</span>(<span class='no'>object</span>, <span class='no'>...</span>)
+<span class='fu'>weights</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>model</th>
+      <td><p>character "paired"</p></td>
+    </tr>
     <tr>
       <th>...</th>
       <td><p>further arguments for <a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>predict.cv.glmnet</a>,

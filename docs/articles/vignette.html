@@ -83,31 +83,8 @@
     
 <div class="contents">
 <p>This <code>palasso</code> vignette is in preparation.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">1</span>)
-n &lt;-<span class="st"> </span><span class="dv">10</span>
-x &lt;-<span class="st"> </span><span class="kw">list</span>()
-x[[<span class="dv">1</span>]] &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1</span>,<span class="dt">times=</span>n)
-x[[<span class="dv">2</span>]] &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,<span class="dt">times=</span>n)
-x[[<span class="dv">3</span>]] &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="fl">0.5</span>,<span class="dt">times=</span>n)
-x[[<span class="dv">4</span>]] &lt;-<span class="st"> </span><span class="kw">rep</span>(stats::<span class="kw">runif</span>(<span class="dv">1</span>),<span class="dt">times=</span>n)
-x[[<span class="dv">5</span>]] &lt;-<span class="st"> </span>stats::<span class="kw">runif</span>(n)
-graphics::<span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">5</span>),<span class="dt">mar=</span><span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>))
-<span class="kw">sapply</span>(x,palasso::scales)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="kw">rnorm</span>(<span class="dv">10</span>))</code></pre></div>
 <p><img src="vignette_files/figure-html/unnamed-chunk-1-1.png" width="672"></p>
-<pre><code>## [[1]]
-## NULL
-## 
-## [[2]]
-## NULL
-## 
-## [[3]]
-## NULL
-## 
-## [[4]]
-## NULL
-## 
-## [[5]]
-## NULL</code></pre>
 </div>
   </div>
 

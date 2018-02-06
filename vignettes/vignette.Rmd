@@ -10,15 +10,6 @@ vignette: >
 This `palasso` vignette is in preparation.
 
 ```{r}
-set.seed(1)
-n <- 10
-x <- list()
-x[[1]] <- rep(1,times=n)
-x[[2]] <- rep(0,times=n)
-x[[3]] <- rep(0.5,times=n)
-x[[4]] <- rep(stats::runif(1),times=n)
-x[[5]] <- stats::runif(n)
-graphics::par(mfrow=c(1,5),mar=c(3,1,1,1))
-sapply(x,palasso::scales)
+plot(rnorm(10))
 ```
 
