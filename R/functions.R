@@ -141,6 +141,11 @@ palasso <- function(y,X,trial=FALSE,...){
             temp$lambda <- c(99e99,99e98)
             model[[i]] <- do.call(what=glmnet::cv.glmnet,args=temp)
         }
+        ### trial start ###
+        if(i > 1){
+            model[[i]]$glmnet.fit$call$x <- NULL # save memory!
+        }
+        ### trial end ###
     }
     
     if(!trial){
@@ -177,6 +182,17 @@ palasso <- function(y,X,trial=FALSE,...){
         return(model)
     }
 }
+
+## trial start ##
+#if(FALSE){
+#print(object.size(fit),units="Mb")
+#print(object.size(fit[[1]]$glmnet.fit$call$x)*8,units="Mb")
+#x <- lapply(fit,function(x) x$glmnet.fit$call$x)
+#all(x[[1]]==x[[2]])
+#}
+## trial end ##
+
+
 
 #--- Generic functions ---------------------------------------------------------
 
@@ -242,8 +258,8 @@ subset.palasso <- function(x,model="paired",...){
         cond <- names(object)==model
     }
     
+    temp <- object[[1]]$glmnet.fit$call$x # trial
     object <- object[cond]
-    
     if(name=="AUC"){
         loss <- sapply(object,function(x) max(x$cvm))
         object <- object[[which.max(loss)]]
@@ -251,6 +267,7 @@ subset.palasso <- function(x,model="paired",...){
         loss <- sapply(object,function(x) min(x$cvm))
         object <- object[[which.min(loss)]]
     }
+    object$glmnet.fit$call$x <- temp # trial
     
     return(object)
 }
@@ -260,6 +277,7 @@ subset.palasso <- function(x,model="paired",...){
 #' 
 predict.palasso <- function(object,newdata,s="lambda.min",model="paired",...){
     if(missing(newdata)||is.null(newdata)) {
+        warning("Returning fitted values.")
         return(palasso:::fitted.palasso(object=object,s=s,model=model,...))
     }
     object <- palasso:::subset.palasso(x=object,model=model)
