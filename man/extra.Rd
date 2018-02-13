@@ -6,7 +6,7 @@
 \alias{.simulate}
 \alias{.predict}
 \alias{.select}
-\title{extra}
+\title{Hidden functions (analysis)}
 \usage{
 .prepare(X, cutoff = NULL)
 
@@ -42,12 +42,29 @@ including vectors}
 to do
 }
 \description{
-generic functions
+Functions for the \code{palasso} manuscript.
 }
 \details{
-By default, the function \code{predict} returns
-the linear predictor (\code{type="link"}).
-Consider predicting the response (\code{type="response"}).
+The function \code{.prepare} pre-processes sequencing data. It removes
+features with a low total abundance, adjusts for different library sizes,
+binarises the counts with cutoff zero or takes the Anscombe transform, and
+scales all covariates to mean zero and unit variance.
+(If the cutoff differed from zero, we would have to first normalise,
+then binarise, and finally filter the raw counts.)
+
+The function \code{.simulate} simulates a response. Exploiting an
+experimental covariate matrix, it allows for different numbers of non-zero
+coefficients for X and Z.
+
+The function \code{.predict} estimates the predictive performance of
+different lasso models (standard X and/or Z, adaptive X and/or Z, paired
+X and Z). Minimising the deviance, it returns the deviance and the area
+under the curve. Currently, only the binomial family is implemented.
+
+The function \code{.select} estimates the selective performance of different
+lasso models (standard X and/or Z, adaptive X and/or Z, paired X and Z).
+Limiting the number of covariates to \eqn{10}, it returns the number of
+selected covariates, and the number of correctly selected covariates.
 }
 \examples{
 set.seed(1)

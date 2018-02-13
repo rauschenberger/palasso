@@ -8,7 +8,7 @@
 \alias{plot_box}
 \alias{plot_pairs}
 \alias{plot_diff}
-\title{plots}
+\title{Hidden functions (plots)}
 \usage{
 plot_score(X, choice = NULL)
 
@@ -50,10 +50,12 @@ numeric between \eqn{0} and \eqn{1}}
 to do
 }
 \description{
-generic functions
+Functions for the \code{palasso} manuscript.
 }
 \details{
-to do
+The function \code{plot_score} compares a selected column to each of the
+other columns. It counts the number of rows where the entry in the selected
+column is smaller (blue), equal (white), or larger (red).
 }
 \examples{
 ### score ###

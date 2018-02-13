@@ -13,12 +13,11 @@
 \usage{
 \method{subset}{palasso}(x, model = "paired", ...)
 
-\method{predict}{palasso}(object, newdata, s = "lambda.min",
-  model = "paired", ...)
+predict.palasso(object, newdata, s = "lambda.min", model = "paired", ...)
 
-\method{coef}{palasso}(object, s = "lambda.min", model = "paired", ...)
+coef.palasso(object, s = "lambda.min", model = "paired", ...)
 
-\method{fitted}{palasso}(object, s = "lambda.min", model = "paired", ...)
+fitted.palasso(object, s = "lambda.min", model = "paired", ...)
 
 \method{deviance}{palasso}(object, model = "paired", ...)
 
@@ -51,7 +50,9 @@ to do
 generic functions
 }
 \details{
-to do
+By default, the function \code{predict} returns
+the linear predictor (\code{type="link"}).
+Consider predicting the response (\code{type="response"}).
 }
 \seealso{
 Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.

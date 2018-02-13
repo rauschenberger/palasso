@@ -111,15 +111,11 @@
     <pre class="usage"><span class='co'># S3 method for palasso</span>
 <span class='fu'>subset</span>(<span class='no'>x</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>predict.palasso</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>coef.palasso</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>fitted.palasso</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
 <span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
@@ -168,7 +164,9 @@ or positive numeric</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>to do</p>
+    <p>By default, the function <code>predict</code> returns
+the linear predictor (<code>type="link"</code>).
+Consider predicting the response (<code>type="response"</code>).</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 

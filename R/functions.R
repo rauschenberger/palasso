@@ -225,7 +225,9 @@ palasso <- function(y,X,trial=FALSE,...){
 #' # groups character "X" or "Z", or NULL (all groups)
 #' 
 #' @details
-#' to do
+#' By default, the function \code{predict} returns
+#' the linear predictor (\code{type="link"}).
+#' Consider predicting the response (\code{type="response"}).
 #' 
 #' @return
 #' to do
@@ -373,10 +375,10 @@ summary.palasso <- function(object,model="paired",...){
 #' @name plots
 #' 
 #' @title
-#' plots
+#' Hidden functions (plots)
 #' 
 #' @description
-#' generic functions
+#' Functions for the \code{palasso} manuscript.
 #' 
 #' @param X
 #' matrix with \eqn{n} rows and \eqn{p} columns
@@ -412,7 +414,11 @@ summary.palasso <- function(object,model="paired",...){
 #' to do
 #' 
 #' @details
-#' to do
+#' 
+#' The function \code{plot_score} compares a selected column to each of the
+#' other columns. It counts the number of rows where the entry in the selected
+#' column is smaller (blue), equal (white), or larger (red).
+#' 
 #' 
 #' @return
 #' to do
@@ -745,8 +751,6 @@ plot_diff <- function(x,y,prob=0.95,...){
 
 
 
-
-
 ##--- Internal functions ----
 
 #' @title
@@ -779,8 +783,8 @@ mtext <- function(text,unit=FALSE,side=1){
     strsplit <- strsplit(x=text,split=split)
     groups <- sapply(strsplit,function(x) x[1])
     names <- sapply(strsplit,function(x) paste0(x[-1],collapse=split))
-    names[names==""] <- groups[names==""]
-    groups[groups==names] <- ""
+    # names[names==""] <- groups[names==""]
+    # groups[groups==names] <- ""
     # location
     border <- which(groups[-1]!=groups[-p])+0.5
     temp <- c(0.5,border,p+0.5)
@@ -809,12 +813,12 @@ mtext <- function(text,unit=FALSE,side=1){
 #--- Application ---------------------------------------------------------------
 
 #' @title
-#' extra
+#' Hidden functions (analysis)
 #' 
 #' @name extra
 #' 
 #' @description
-#' generic functions
+#' Functions for the \code{palasso} manuscript.
 #' 
 #' @param X
 #' covariates\strong{:}
@@ -845,9 +849,27 @@ mtext <- function(text,unit=FALSE,side=1){
 #' arguments for \link[palasso]{palasso}
 #' 
 #' @details
-#' By default, the function \code{predict} returns
-#' the linear predictor (\code{type="link"}).
-#' Consider predicting the response (\code{type="response"}).
+#' 
+#' The function \code{.prepare} pre-processes sequencing data. It removes
+#' features with a low total abundance, adjusts for different library sizes,
+#' binarises the counts with cutoff zero or takes the Anscombe transform, and
+#' scales all covariates to mean zero and unit variance.
+#' (If the cutoff differed from zero, we would have to first normalise,
+#' then binarise, and finally filter the raw counts.)
+#' 
+#' The function \code{.simulate} simulates a response. Exploiting an
+#' experimental covariate matrix, it allows for different numbers of non-zero
+#' coefficients for X and Z.
+#' 
+#' The function \code{.predict} estimates the predictive performance of
+#' different lasso models (standard X and/or Z, adaptive X and/or Z, paired
+#' X and Z). Minimising the deviance, it returns the deviance and the area
+#' under the curve. Currently, only the binomial family is implemented.
+#' 
+#' The function \code{.select} estimates the selective performance of different
+#' lasso models (standard X and/or Z, adaptive X and/or Z, paired X and Z).
+#' Limiting the number of covariates to \eqn{10}, it returns the number of
+#' selected covariates, and the number of correctly selected covariates.
 #' 
 #' @return
 #' to do
