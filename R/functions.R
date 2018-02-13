@@ -743,6 +743,10 @@ plot_diff <- function(x,y,prob=0.95,...){
 }
 
 
+
+
+
+
 ##--- Internal functions ----
 
 #' @title
@@ -841,7 +845,9 @@ mtext <- function(text,unit=FALSE,side=1){
 #' arguments for \link[palasso]{palasso}
 #' 
 #' @details
-#' to do
+#' By default, the function \code{predict} returns
+#' the linear predictor (\code{type="link"}).
+#' Consider predicting the response (\code{type="response"}).
 #' 
 #' @return
 #' to do
@@ -992,11 +998,12 @@ NULL
                                       length.out=sum(y0==1)))
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-                                  alpha=1,family="binomial",type.measure="deviance",
+                                  family="binomial",type.measure="deviance",
                                   pmax=pmax,trial=TRUE)
         
-        pred[fold.ext==i,] <-  sapply(names,function(x)
-            palasso:::predict.palasso(object=object,newdata=X1,model=x))
+        pred[fold.ext==i,] <- sapply(names,function(x)
+            palasso:::predict.palasso(object=object,newdata=X1,model=x,
+                                      type="response"))
     }
     
     for(i in seq_along(names)){
@@ -1030,8 +1037,12 @@ NULL
     
     coef <- sapply(names,function(i) palasso:::coef.palasso(object=fit,model=i)[-1])
     
+    # coef <- split(x=coef,f=names) # trial A
+    # select <- lapply(seq_along(names),function(i) which(coef[,i]!=0)) # trial B
     select <- apply(coef,2,function(x) which(x!=0))
-    select <- sapply(select,function(x) x - p*(x %/% p))
+    if(is.matrix(select)){select <- as.list(as.data.frame(select))}
+    
+    select <- lapply(select,function(x) x - p*(x %/% p))
     
     shots <- sapply(select,length)
     hits <- sapply(select,function(x) sum(unique(x) %in% unlist(index)))

@@ -45,7 +45,9 @@ to do
 generic functions
 }
 \details{
-to do
+By default, the function \code{predict} returns
+the linear predictor (\code{type="link"}).
+Consider predicting the response (\code{type="response"}).
 }
 \examples{
 set.seed(1)
