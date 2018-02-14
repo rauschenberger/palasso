@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, trial = FALSE, ...)
+palasso(y, X, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -13,9 +13,6 @@ vector of length \eqn{n}}
 \item{X}{covariates\strong{:}
 list of matrices with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
-
-\item{trial}{development mode\strong{:}
-logical (temporary argument)}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}}
 or \code{\link[glmnet]{glmnet}}}
@@ -38,8 +35,8 @@ specifications of \code{y} and \code{x}.
 set.seed(1)
 n <- 100; p <- 200
 y <- rbinom(n=n,size=1,prob=0.5)
-X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-fit <- palasso(y=y,X=X,family="binomial",trial=TRUE)
+X <- lapply(1:3,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
+fit <- palasso(y=y,X=X,family="binomial")
 
 }
 \seealso{

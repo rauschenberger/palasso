@@ -13,11 +13,12 @@
 \usage{
 \method{subset}{palasso}(x, model = "paired", ...)
 
-predict.palasso(object, newdata, s = "lambda.min", model = "paired", ...)
+\method{predict}{palasso}(object, newdata, s = "lambda.min",
+  model = "paired", ...)
 
-coef.palasso(object, s = "lambda.min", model = "paired", ...)
+\method{coef}{palasso}(object, s = "lambda.min", model = "paired", ...)
 
-fitted.palasso(object, s = "lambda.min", model = "paired", ...)
+\method{fitted}{palasso}(object, s = "lambda.min", model = "paired", ...)
 
 \method{deviance}{palasso}(object, model = "paired", ...)
 
