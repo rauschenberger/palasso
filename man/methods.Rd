@@ -9,6 +9,7 @@
 \alias{deviance.palasso}
 \alias{weights.palasso}
 \alias{summary.palasso}
+\alias{print.palasso}
 \title{Methods for class "palasso"}
 \usage{
 \method{subset}{palasso}(x, model = "paired", ...)
@@ -25,6 +26,8 @@
 \method{weights}{palasso}(object, model = "paired", ...)
 
 \method{summary}{palasso}(object, model = "paired", ...)
+
+\method{print}{palasso}(x, ...)
 }
 \arguments{
 \item{model}{character "paired"}

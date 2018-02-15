@@ -360,6 +360,13 @@ summary.palasso <- function(object,model="paired",...){
     return(invisible("palasso"))
 }
 
+#' @rdname methods
+#' @export
+#' 
+print.palasso <- function(x,...){
+    base::print("palasso")
+}
+
 #--- Visualisation -------------------------------------------------------------
 
 #' @name plots
