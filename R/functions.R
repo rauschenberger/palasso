@@ -89,19 +89,19 @@ palasso <- function(y,X,...){
     }
     
     # weight (correlation)
-    mar <- list()
-    for(i in seq_len(k)){
-        mar[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
-        mar[[i]][is.na(mar[[i]])] <- 0
-    }
+    #mar <- list()
+    #for(i in seq_len(k)){
+    #    mar[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
+    #    mar[[i]][is.na(mar[[i]])] <- 0
+    #}
     
     # # marginal effects (univariate regression)
-    # family <- eval(parse(text=base$family))()
-    # mar <- list()
-    # for(i in seq_len(k)){
-    #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
-    #     mar[[i]][is.na(mar[[i]])] <- 0
-    # }
+    family <- eval(parse(text=base$family))()
+    mar <- list()
+    for(i in seq_len(k)){
+         mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+         mar[[i]][is.na(mar[[i]])] <- 0
+    }
     
     weight <- model <- list()
     
