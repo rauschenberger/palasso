@@ -6,7 +6,7 @@ template:
 home:
    links:
    - text: "Download package"
-     href: http://bioconductor.org/packages/palasso/
+     href: https://github.com/rauschenberger/palasso
 
 navbar:
   title: "palasso"
@@ -18,12 +18,12 @@ navbar:
     - text: "article"
       href: articles/article.html
     - text: "news"
-      href:  news/index.html
+      href: news/index.html
   right:
     - icon: fa-github
       href: https://github.com/rauschenberger/palasso
     - icon: fa-download
-      href: http://bioconductor.org/packages/palasso/
+      href: https://github.com/rauschenberger/palasso
 
 reference:
   - title: "User functions"

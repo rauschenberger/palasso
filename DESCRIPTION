@@ -4,7 +4,7 @@ Title: Pairwise-adaptive lasso
 Description: This R package adapts penalised regression to paired covariates.
 biocViews: Classification, Regression, miRNA
 Depends: R (>= 3.0.0)
-Imports: glmnet, stats, Matrix, edgeR, pROC, googledrive
+Imports: glmnet, stats, Matrix, edgeR, pROC, googledrive, httpuv
 Suggests: knitr, testthat
 Authors@R: person("Armin","Rauschenberger",email="a.rauschenberger@vumc.nl",role=c("aut","cre"))
 VignetteBuilder: knitr

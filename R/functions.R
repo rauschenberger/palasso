@@ -7,18 +7,17 @@
 #' @export
 #' 
 #' @description
-#' The function \code{palasso} cross-validates
-#' the paired lasso.
-#' Use this regression technique if
-#' the covariates are numerous and occur in pairs.
+#' The function \code{palasso} cross-validates the paired lasso. Use this
+#' regression technique if the covariates are numerous and occur in pairs.
 #' 
 #' @param y
 #' response\strong{:}
-#' vector of length \eqn{n}
+#' vector of length \eqn{n},
 #' 
 #' @param X
 #' covariates\strong{:}
-#' list of matrices with \eqn{n} rows (samples)
+#' list of matrices,
+#' each with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
 #' @param ...
@@ -26,9 +25,10 @@
 #' or \code{\link[glmnet]{glmnet}}
 #' 
 #' @details
-#' Let \code{x} denote one entry of the list \code{X}.
-#' See \link[glmnet]{glmnet} for alternative
-#' specifications of \code{y} and \code{x}.
+#' Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
+#' for alternative specifications of \code{y} and \code{x}. Further arguments:
+#' \code{family} must equal \code{"gaussian"}, \code{"binomial"} or
+#' \code{"poisson"}, and \code{penalty.factor} is forbidden.
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -42,17 +42,15 @@
 #' \code{\link[=deviance.palasso]{deviance}},
 #' \code{\link[=summary.palasso]{summary}},
 #' and \code{\link[=subset.palasso]{subset}}.
-#' 
-#' This package also includes hidden functions for
-#' \code{\link[=extra]{comparing methods}} and
-#' \code{\link[=plots]{plotting results}}.
+#' This package also includes
+#' \code{\link[=extra]{hidden functions}}
 #' 
 #' @examples
 #' set.seed(1)
 #' n <- 100; p <- 200
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:3,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' fit <- palasso(y=y,X=X,family="binomial")
+#' fit <- palasso(y=y,X=X,family="binomial",pmax=10)
 #' 
 palasso <- function(y,X,...){
 
@@ -67,13 +65,30 @@ palasso <- function(y,X,...){
     base$x <- do.call(what="cbind",args=X)
     default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
     base <- c(base,default[!names(default) %in% names(base)])
-    if(!base$family %in% c("gaussian","binomial","poisson")){stop("Invalid family.")}
+    if(!base$family %in% c("gaussian","binomial","poisson")){
+        stop("Invalid argument \"family\".")
+    }
     
     # dimensionality
     k <- ifelse(is.list(X),length(X),1)
-    if(k==1){stop("Invalid covariates.")}
+    if(k==1){
+        stop("Invalid argument \"X\".")
+    }
     n <- nrow(X[[1]])
     p <- ncol(X[[1]])
+    
+    # penalty factor (trial)
+    if(!is.null(base$penalty.factor)){
+        stop("Unexpected argument \"penalty.factor\".")
+    }
+    
+    # distribution (trial)
+    guess <- "gaussian"
+    guess[all(base$y%%1==0 & base$y>=0)] <- "poisson"
+    guess[!is.vector(base$y) | length(unique(base$y))==2] <- "binomial"
+    if(guess!=base$family){
+        warning(paste0("Consider family \"",guess,"\"."))
+    }
     
     # fold identifier
     cond <- logical()
@@ -89,19 +104,19 @@ palasso <- function(y,X,...){
     }
     
     # weight (correlation)
-    #mar <- list()
-    #for(i in seq_len(k)){
-    #    mar[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
-    #    mar[[i]][is.na(mar[[i]])] <- 0
-    #}
-    
-    # # marginal effects (univariate regression)
-    family <- eval(parse(text=base$family))()
     mar <- list()
     for(i in seq_len(k)){
-         mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
-         mar[[i]][is.na(mar[[i]])] <- 0
+        mar[[i]] <- as.vector(abs(stats::cor(X[[i]],y)))
+        mar[[i]][is.na(mar[[i]])] <- 0
     }
+    
+    # # marginal effects (univariate regression)
+    # family <- eval(parse(text=base$family))()
+    # mar <- list()
+    # for(i in seq_len(k)){
+    #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+    #     mar[[i]][is.na(mar[[i]])] <- 0
+    # }
     
     weight <- model <- list()
     
@@ -126,7 +141,7 @@ palasso <- function(y,X,...){
     args <- base
     for(i in seq_along(weight)){
         args$penalty.factor <- 1/weight[[i]]
-        model[[i]] <- tryCatch(do.call(what=glmnet::cv.glmnet,args=args),
+        model[[i]] <- tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
                                error=function(x) NA)
         if(class(model[[i]])!="cv.glmnet"){
             # intercept-only model
@@ -161,7 +176,8 @@ palasso <- function(y,X,...){
                      paste0(c("between_","within_"),all),
                      paste0("adaptive_",c(names,all)))
     ## trial end ##
-    
+    call <- sapply(list(...),function(x) deparse(x))
+    attributes(model)$info <- list(n=n,p=p,k=k,call=call)
     
     class(model) <- "palasso"
     return(model)
@@ -307,6 +323,7 @@ deviance.palasso <- function(object,model="paired",...){
 #' @importFrom stats weights
 #' 
 weights.palasso <- function(object,model="paired",...){
+    if(length(list(...))!=0){warning("Ignoring argument.")}
     object <- palasso:::subset.palasso(x=object,model=model)
     # Better split weights into X and Z group.
     # For this, adapt function <<subset.palasso>>.
@@ -327,8 +344,8 @@ summary.palasso <- function(object,model="paired",...){
     cat("",line,"\n",title,"\n",line,"\n\n")
 
     # dimensionality
-    n <- object$glmnet.fit$dim[2]
     p <- object$glmnet.fit$dim[1]
+    n <- length(object$glmnet.fit$call$y)
     weight <- 1/object$glmnet.fit$call$penalty.factor
     p_in <- sum(weight!=0)
     p_out <- sum(weight==0)
@@ -364,7 +381,12 @@ summary.palasso <- function(object,model="paired",...){
 #' @export
 #' 
 print.palasso <- function(x,...){
-    base::print("palasso")
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    info <- attributes(x)$info
+    cat("palasso object: ")
+    cat(info$n,"samples, ")
+    cat(info$k,"x",info$p,"covariates, \n")
+    cat(paste(paste(names(info$call),"=",info$call),collapse=", "))
 }
 
 #--- Visualisation -------------------------------------------------------------

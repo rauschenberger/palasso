@@ -8,10 +8,11 @@ palasso(y, X, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
-vector of length \eqn{n}}
+vector of length \eqn{n},}
 
 \item{X}{covariates\strong{:}
-list of matrices with \eqn{n} rows (samples)
+list of matrices,
+each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}}
@@ -21,22 +22,21 @@ or \code{\link[glmnet]{glmnet}}}
 This function returns an object of class \code{palasso}.
 }
 \description{
-The function \code{palasso} cross-validates
-the paired lasso.
-Use this regression technique if
-the covariates are numerous and occur in pairs.
+The function \code{palasso} cross-validates the paired lasso. Use this
+regression technique if the covariates are numerous and occur in pairs.
 }
 \details{
-Let \code{x} denote one entry of the list \code{X}.
-See \link[glmnet]{glmnet} for alternative
-specifications of \code{y} and \code{x}.
+Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
+for alternative specifications of \code{y} and \code{x}. Further arguments:
+\code{family} must equal \code{"gaussian"}, \code{"binomial"} or
+\code{"poisson"}, and \code{penalty.factor} is forbidden.
 }
 \examples{
 set.seed(1)
 n <- 100; p <- 200
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:3,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-fit <- palasso(y=y,X=X,family="binomial")
+fit <- palasso(y=y,X=X,family="binomial",pmax=10)
 
 }
 \seealso{
@@ -48,8 +48,6 @@ Available \code{\link[palasso]{methods}} for class \code{palasso} are
 \code{\link[=deviance.palasso]{deviance}},
 \code{\link[=summary.palasso]{summary}},
 and \code{\link[=subset.palasso]{subset}}.
-
-This package also includes hidden functions for
-\code{\link[=extra]{comparing methods}} and
-\code{\link[=plots]{plotting results}}.
+This package also includes
+\code{\link[=extra]{hidden functions}}
 }
