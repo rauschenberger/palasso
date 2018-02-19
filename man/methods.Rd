@@ -30,12 +30,10 @@
 \method{print}{palasso}(x, ...)
 }
 \arguments{
-\item{model}{character "paired"}
+\item{model}{character "paired" (or one of \code{names(x)})}
 
 \item{...}{further arguments for \link[glmnet]{predict.cv.glmnet},
-\link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}
-# model character "paired", "standard", "adaptive"
-# groups character "X" or "Z", or NULL (all groups)}
+\link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}}
 
 \item{object, x}{\link[palasso]{palasso} object}
 
@@ -59,5 +57,5 @@ the linear predictor (\code{type="link"}).
 Consider predicting the response (\code{type="response"}).
 }
 \seealso{
-Use \link[palasso]{palasso} to fit the pairwise-adaptive lasso.
+Use \link[palasso]{palasso} to fit the paired lasso.
 }

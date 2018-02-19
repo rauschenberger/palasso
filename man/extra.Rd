@@ -68,7 +68,7 @@ selected covariates, and the number of correctly selected covariates.
 }
 \examples{
 set.seed(1)
-n <- 20; p <- 50
+n <- 30; p <- 50
 X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
 x <- .prepare(X)
 y <- .simulate(x,effects=c(1,2))

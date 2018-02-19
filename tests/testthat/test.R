@@ -22,8 +22,8 @@ X <- lapply(seq_len(k),function(x) matrix(stats::rnorm(n*p),nrow=n,ncol=p))
 fit <- palasso::palasso(y=y,X=X,family=family,pmax=pmax)
 
 names <- c(names(fit),"paired")
-weights <- sapply(X=names,FUN=function(x) weights(object=fit,model=x))
-coef <- sapply(X=names,FUN=function(x) coef(object=fit,model=x)[-1])
+weights <- lapply(X=names,FUN=function(x) weights(object=fit,model=x))
+coef <- lapply(X=names,FUN=function(x) coef(object=fit,model=x))
 deviance <- sapply(X=names,FUN=function(x) deviance(object=fit,model=x))
 fitted <- sapply(X=names,FUN=function(x) fitted(object=fit,model=x))
 predict <- sapply(X=names,FUN=function(x) predict(object=fit,model=x,newdata=X,type="response"))
@@ -35,17 +35,17 @@ testthat::test_that("testthat works",{
 })
 
 testthat::test_that("weights are large",{
-    x <- all(weights >= 0)
+    x <- all(sapply(weights,function(x) all(x>=0)))
     testthat::expect_true(x)
 })
 
 testthat::test_that("weights are small",{
-    x <- all(weights <= 1)
+    x <- all(sapply(weights,function(x) all(x<=1)))
     testthat::expect_true(x)
 })
 
 testthat::test_that("pmax is effective",{
-    x <- all(colSums(coef!=0) <= pmax)
+    x <- all(sapply(coef,function(x) sum(x!=0))<=pmax)
     testthat::expect_true(x)
 })
 
@@ -60,9 +60,10 @@ testthat::test_that("fitted equals predict",{
 
 testthat::test_that("weights sum to one",{
     cond <- grepl(x=names,pattern="standard|between|within")
-    group <- rep(seq_len(k),each=p)
-    pair <- rep(seq_len(p),times=k)
-    sum <- sapply(seq_len(p),function(x) colSums(weights[pair==x,cond]))
+    # group <- rep(seq_len(k),each=p)
+    # pair <- rep(seq_len(p),times=k)
+    sum <- sapply(weights[cond],rowSums)
+    # sum <- sapply(seq_len(p),function(x) colSums(weights[pair==x,cond]))
     x <- all(sum>1-1e-06 & sum<1+1e-06)
     testthat::expect_true(x)
 })
