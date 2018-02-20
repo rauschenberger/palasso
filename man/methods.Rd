@@ -6,7 +6,9 @@
 \alias{predict.palasso}
 \alias{coef.palasso}
 \alias{fitted.palasso}
+\alias{residuals.palasso}
 \alias{deviance.palasso}
+\alias{logLik.palasso}
 \alias{weights.palasso}
 \alias{summary.palasso}
 \alias{print.palasso}
@@ -21,7 +23,11 @@
 
 \method{fitted}{palasso}(object, s = "lambda.min", model = "paired", ...)
 
+\method{residuals}{palasso}(object, s = "lambda.min", model = "paired", ...)
+
 \method{deviance}{palasso}(object, model = "paired", ...)
+
+\method{logLik}{palasso}(object, s = NULL, model = "paired", ...)
 
 \method{weights}{palasso}(object, model = "paired", ...)
 
