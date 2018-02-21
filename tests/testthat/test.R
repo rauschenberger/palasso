@@ -22,6 +22,7 @@ if(family=="poisson"){
     y <- stats::rpois(n=n,lambda=5)
 }
 X <- lapply(seq_len(k),function(x) matrix(stats::rnorm(n*p),nrow=n,ncol=p))
+X <- lapply(X,function(x) scale(x))
 
 fit <- palasso::palasso(y=y,X=X,family=family,pmax=pmax)
 
@@ -51,7 +52,7 @@ testthat::test_that("weights are small",{
 })
 
 testthat::test_that("pmax is effective",{
-    x <- all(sapply(coef,function(x) sum(x!=0))<=pmax)
+    x <- all(sapply(coef,function(x) sum(x$x!=0)+sum(x$z!=0))<=pmax)
     testthat::expect_true(x)
 })
 

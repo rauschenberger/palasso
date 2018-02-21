@@ -1,484 +1,4 @@
 
-#--- Workhorse function --------------------------------------------------------
-
-#' @title
-#' Paired lasso
-#' 
-#' @export
-#' 
-#' @description
-#' The function \code{palasso} fits the paired lasso. Use this regression
-#' technique if the covariates are numerous and occur in pairs.
-#' 
-#' @param y
-#' response\strong{:}
-#' vector of length \eqn{n},
-#' 
-#' @param X
-#' covariates\strong{:}
-#' list of matrices,
-#' each with \eqn{n} rows (samples)
-#' and \eqn{p} columns (variables)
-#' 
-#' @param ...
-#' further arguments for \code{\link[glmnet]{cv.glmnet}} or
-#' \code{\link[glmnet]{glmnet}}
-#' 
-#' @details
-#' Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
-#' for alternative specifications of \code{y} and \code{x}. Among the further
-#' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"} or
-#' \code{"poisson"}, and \code{penalty.factor} must not be used.
-#' 
-#' @return
-#' This function returns an object of class \code{palasso}.
-#' Available methods are
-#' \code{\link[=predict.palasso]{predict}},
-#' \code{\link[=coef.palasso]{coef}},
-#' \code{\link[=fitted.palasso]{fitted}},
-#' \code{\link[=weights.palasso]{weights}},
-#' \code{\link[=deviance.palasso]{deviance}},
-#' \code{\link[=summary.palasso]{summary}},
-#' and \code{\link[=subset.palasso]{subset}}.
-#' Click \code{\link[=extra]{here}} for hidden functions.
-#' 
-#' @references
-#' A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-#' "Penalised regression with paired covariates."
-#' \emph{Manuscript in preparation.} \email{a.rauschenberger@vumc.nl}
-#' 
-#' @examples
-#' set.seed(1)
-#' n <- 40; p <- 1000
-#' y <- rbinom(n=n,size=1,prob=0.5)
-#' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' fit <- palasso(y=y,X=X,family="binomial",pmax=10)
-#' 
-palasso <- function(y,X,...){
-
-    # checks
-    base <- list(...)
-    funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
-    formals <- unlist(lapply(funs,function(x) formals(x)),recursive=FALSE) # changed!
-    if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
- 
-    # arguments
-    base$y <- y
-    base$x <- do.call(what="cbind",args=X)
-    default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
-    base <- c(base,default[!names(default) %in% names(base)])
-    if(!base$family %in% c("gaussian","binomial","poisson")){
-        stop("Invalid argument \"family\".")
-    }
-    
-    # dimensionality
-    k <- ifelse(is.list(X),length(X),1)
-    if(k==1){
-        stop("Invalid argument \"X\".")
-    }
-    n <- nrow(X[[1]])
-    p <- ncol(X[[1]])
-    
-    # penalty factor (trial)
-    if(!is.null(base$penalty.factor)){
-        stop("Unexpected argument \"penalty.factor\".")
-    }
-    
-    # distribution (trial)
-    guess <- "gaussian"
-    guess[all(base$y%%1==0 & base$y>=0)] <- "poisson"
-    guess[!is.vector(base$y) | length(unique(base$y))==2] <- "binomial"
-    if(guess!=base$family){
-        warning(paste0("Consider family \"",guess,"\"."))
-    }
-    
-    # fold identifier
-    cond <- logical()
-    cond[1] <- is.null(base$foldid)
-    cond[2] <- base$family=="binomial"
-    cond[3] <- is.vector(y)
-    if(all(cond)){
-        base$foldid <- rep(NA,times=n)
-        base$foldid[y==0] <- sample(rep(seq_len(base$nfolds),
-            length.out=sum(y==0)))
-        base$foldid[y==1] <- sample(rep(seq_len(base$nfolds),
-            length.out=sum(y==1)))
-    }
-    
-    # marginal effects (correlation)
-    mar <- list()
-    for(i in seq_len(k)){
-        mar[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
-        mar[[i]][is.na(mar[[i]])] <- 0
-    }
-    
-    # # marginal effects (univariate regression)
-    # family <- eval(parse(text=base$family))()
-    # mar <- list()
-    # for(i in seq_len(k)){
-    #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
-    #     mar[[i]][is.na(mar[[i]])] <- 0
-    # }
-    
-    weight <- model <- list()
-    
-    # standard lasso
-    for(i in seq_len(k)){
-        weight[[i]] <- rep(1*(seq_len(k)==i),each=p)
-    }
-    weight[[k+1]] <- rep(1/k,times=k*p)
-    
-    # weighted lasso
-    weight[[k+2]] <- rep(1/k*sapply(mar,mean)/mean(unlist(mar)),each=p)
-    weight[[k+3]] <- unlist(mar)/rowSums(do.call(cbind,mar))
-    weight[[k+3]][is.na(weight[[k+3]])] <- 0
-    
-    # adaptive lasso
-    for(i in seq_len(k)){
-        weight[[k+3+i]] <- weight[[i]]*mar[[i]]
-    }
-    weight[[2*k+4]] <- unlist(mar)
-    
-    # cross-validation
-    args <- base
-    for(i in seq_along(weight)){
-        args$penalty.factor <- 1/weight[[i]]
-        ### start original ###
-        #model[[i]] <- tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
-        #                       error=function(x) NA)
-        #if(class(model[[i]])!="cv.glmnet"){
-        #    # intercept-only model
-        #    temp <- base
-        #    temp$lambda <- c(99e99,99e98)
-        #    model[[i]] <- do.call(what=glmnet::cv.glmnet,args=temp)
-        #}
-        ### end original ###
-        model[[i]] <- palasso:::.cv.glmnet(args) ### trial
-        if(i > 1){
-            # free memory
-            model[[i]]$glmnet.fit$call$x <- NULL
-        }
-    }
-    
-    # names
-    if(k==2){
-        names = c("x","z") 
-    } else {
-        names = letters[seq_len(k)]
-    }  
-    all = paste0(names,collapse="")
-    names(model) = c(paste0("standard_",c(names,all)),
-                     paste0(c("between_","within_"),all),
-                     paste0("adaptive_",c(names,all)))
-    
-    # output
-    call <- sapply(list(...),function(x) deparse(x))
-    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call)
-    class(model) <- "palasso"
-    return(model)
-}
-
-.error <- function(x,args){
-    pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
-                 "replacement has length zero")
-    cond <- sapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x))
-    if(all(cond)){
-        warning("Fitting intercept-only model.")
-        args$lambda <- c(99e99,99e98)
-        do.call(what=glmnet::cv.glmnet,args=args)
-    } else {
-        stop(x)
-    }
-}
-
-.warning <- function(x){
-    pattern <- c("from glmnet Fortran code \\(error code",
-                 "Number of nonzero coefficients along the path exceeds pmax=",
-                 "lambda value; solutions for larger lambdas returned")
-    cond <- sapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x))
-    if(all(cond)){
-        invokeRestart("muffleWarning")
-    }
-}
-
-.cv.glmnet <- function(args){
-    withCallingHandlers(expr=tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
-                        error=function(x) palasso:::.error(x,args)),
-                        warning=function(x) palasso:::.warning(x))
-}
-
-
-#--- Generic functions ---------------------------------------------------------
-
-#' @name methods
-#' 
-#' @title
-#' Methods for class "palasso"
-#' 
-#' @description
-#' generic functions
-#' 
-#' @param object,x
-#' \link[palasso]{palasso} object
-#' 
-#' @param newdata
-#' covariates\strong{:}
-#' list of matrices with \eqn{n} rows (samples)
-#' and \eqn{p} columns (variables)
-#' 
-#' @param s penalty parameter\strong{:}
-#' character "lambda.min" or "lambda.1se",
-#' or positive numeric
-#' 
-#' @param model
-#' character "paired" (or one of \code{names(x)})
-#' 
-#' @param ... further arguments for \link[glmnet]{predict.cv.glmnet},
-#' \link[glmnet]{coef.cv.glmnet}, or \link[glmnet]{deviance.glmnet}
-#' 
-#' @details
-#' By default, the function \code{predict} returns
-#' the linear predictor (\code{type="link"}).
-#' Consider predicting the response (\code{type="response"}).
-#' 
-#' @return
-#' to do
-#' 
-#' @seealso
-#' Use \link[palasso]{palasso} to fit the paired lasso.
-#' 
-NULL
-
-#' @rdname methods
-#' @export
-#' 
-subset.palasso <- function(x,model="paired",...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    
-    if(!inherits(x=x,what="palasso")){
-        warning("Fake palasso object?")
-    }
-    
-    name <- unique(sapply(X=x,FUN=function(x) x$name))
-    if(length(name)!=1){
-        stop("Different loss functions!")
-    }
-    
-    if(model=="paired"){
-        pattern <- "adaptive|between|within"
-        cond <- grepl(pattern=pattern,x=names(x))
-    } else {
-        cond <- names(x)==model
-    }
-    
-    object <- x[cond]
-    if(name=="AUC"){
-        loss <- sapply(object,function(x) max(x$cvm))
-        object <- object[[which.max(loss)]]
-    } else {
-        loss <- sapply(object,function(x) min(x$cvm))
-        object <- object[[which.min(loss)]]
-    }
-    object$glmnet.fit$call$x <- x[[1]]$glmnet.fit$call$x
-    object$palasso <- attributes(x)$info
-    
-    return(object)
-}
-
-#' @rdname methods
-#' @export
-#' 
-predict.palasso <- function(object,newdata,s="lambda.min",model="paired",...){
-    if(missing(newdata)||is.null(newdata)) {
-        stop("Fitted values?")
-    }
-    x <- palasso:::subset.palasso(x=object,model=model)
-    newx <- do.call(what="cbind",args=newdata)
-    glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,...)
-}
-
-#' @rdname methods
-#' @export
-#' 
-coef.palasso <- function(object,s="lambda.min",model="paired",...){
-    # if(length(s)!=1){stop("Not yet implemented!")}
-    x <- palasso:::subset.palasso(x=object,model=model)
-    coef <- glmnet::coef.cv.glmnet(object=x,s=s,...)[-1]
-    palasso:::.split(x=coef,info=x$palasso)
-}
-
-#' @rdname methods
-#' @export
-#' 
-fitted.palasso <- function(object,s="lambda.min",model="paired",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
-    newx <- x$glmnet.fit$call$x
-    glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
-}
-
-#' @rdname methods
-#' @export
-#' 
-residuals.palasso <- function(object,s="lambda.min",model="paired",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
-    newx <- x$glmnet.fit$call$x
-    y <- x$glmnet.fit$call$y
-    y_hat <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
-    y - y_hat
-}
-
-#' @rdname methods
-#' @export
-#' 
-deviance.palasso <- function(object,model="paired",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
-    glmnet::deviance.glmnet(x$glmnet.fit,...)
-}
-
-#' @rdname methods
-#' @export
-#' 
-logLik.palasso <- function(object,model="paired",...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    x <- palasso:::subset.palasso(x=object,model=model)$glmnet.fit
-    glm <- stats::glm(x$call$y~1,weights=x$call$weights,family=x$call$family)
-    ll <- x$nulldev/2 + stats::logLik(glm) - glmnet::deviance.glmnet(x)/2
-    attributes(ll)$df <- df.residual.glmnet(x)
-    attributes(ll)$nobs <- x$nobs
-    class(ll) <- c("logLik.palasso","logLik")
-    return(ll)
-}
-# Consider adding the logical argument "glmnet".
-# If TRUE then calculate logLik from deviance,
-# if FALSE from fitted values.
-# Create function .logLik(y,eta,family)
-
-
-# logLik.palasso <- function(object,s=NULL,model="paired",...){
-# 
-#     x <- palasso:::subset.palasso(x=object,model=model)
-#     if(is.null(s)){s <- x$glmnet.fit$lambda}
-#     y <- x$glmnet.fit$call$y
-#     newx <- x$glmnet.fit$call$x
-#     family <- x$glmnet.fit$call$family
-# 
-#     eta <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="link",...)
-#     if(is.vector(eta)){eta <- as.matrix(eta)}
-# 
-#     ll <- rep(x=NA,times=length(s))
-#     for(i in seq_along(ll)){
-#         if(family=="gaussian"){
-#             mu <- eta[,i]
-#             sd <- sqrt(sum((y-mu)^2)/length(y))
-#             ll[i] <- sum(log(1/sqrt(2*pi*sd^2)*exp(-(y-mu)^2/(2*sd^2))))
-#         } else if(family=="binomial"){
-#             p <- exp(eta[,i])/(1+exp(eta[,i]))
-#             ll[i] <- sum(log(p^y*(1-p)^(1-y)))
-#         } else if(family=="poisson"){
-#             lambda <- exp(eta[,i])
-#             ll[i] <- sum(log(lambda^y*exp(-lambda)/factorial(y)))
-#         }
-#     }
-#     return(ll)
-# }
-
-
-#' @rdname methods
-#' @export
-#' @importFrom stats df.residual
-#' 
-df.residual.glmnet <- function(object,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    if(object$call$alpha==1){
-        df <- Matrix::colSums(object$beta!=0)
-    } else {
-        d <- svd(object$call$x)$d^2
-        df <- sum(d^2/(d^2+object$lambda))
-    }
-    return(df)
-}
-
-#' @rdname methods
-#' @export
-#' 
-print.logLik.palasso <- function(x,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    X <- rbind(x,attributes(x)$df)
-    rownames(X) <- c("log Lik.","eff. df")
-    print(X)
-}
-
-#' @rdname methods
-#' @export
-#' @importFrom stats weights
-#' 
-weights.palasso <- function(object,model="paired",...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    x <- palasso:::subset.palasso(x=object,model=model)
-    weights <- 1/x$glmnet.fit$call$penalty.factor
-    palasso:::.split(x=weights,info=x$palasso)
-}
-
-#' @rdname methods
-#' @export
-#' 
-summary.palasso <- function(object,model="paired",...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    
-    # header
-    title <- paste(object[[1]]$glmnet.fit$call$family,"palasso")
-    line <- paste(rep("-",times=nchar(title)),collapse="")
-    cat("",line,"\n",title,"\n",line,"\n\n")
-    
-    # dimensions
-    palasso:::print.palasso(object)
-    cat("\n")
-    
-    # non-zero weights
-    weights <- palasso:::weights.palasso(object)
-    name <- colnames(weights)
-    number <- colSums(weights!=0)
-    cat("non-zero weights:",paste(number,name,collapse=", "),"\n\n")
-
-    # cross-validation
-    x <- palasso:::subset.palasso(x=object,model=model)
-    id <- list()
-    id$min <- which(x$lambda==x$lambda.min)
-    id$ose <- which(x$lambda==x$lambda.1se)
-    frame <- matrix(NA,nrow=2,ncol=3)
-    frame[,1] <- sapply(id,function(i) x$lambda[i])
-    frame[,2] <- sapply(id,function(i) x$nzero[i])
-    frame[,3] <- sapply(id,function(i) x$cvm[i])
-    rownames(frame) <- c("prediction","explanation")
-    colnames(frame) <- c("lambda","nzero",names(x$name))
-    base::print(round(frame,digits=2))
-    
-    return(invisible("palasso"))
-}
-
-#' @rdname methods
-#' @export
-#' 
-print.palasso <- function(x,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
-    info <- attributes(x)$info
-    cat("palasso object: ")
-    cat(info$n,"samples, ")
-    cat(paste0(info$k,"*",info$p),"covariates\n")
-    if(length(info$call)>0){
-        cat("(",paste(names(info$call),info$call,sep="=",collapse=", "),")\n",sep="")
-    }
-}
-
-
-.split <- function(x,info){
-    k <- info$k
-    p <- info$p
-    split <- lapply(seq_len(k),function(i) x[seq(from=(i-1)*p+1,to=i*p,by=1)])
-    names(split) <- info$names
-    as.data.frame(split)
-}
-
 #--- Visualisation -------------------------------------------------------------
 
 #' @name plots
@@ -563,7 +83,7 @@ plot_score <- function(X,choice=NULL){
     if(is.null(colnames(X))){colnames(X) <- seq_len(p)}
     if(is.null(choice)){choice <- p}
     if(is.character(choice)){choice <- which(colnames(X)==choice)}
-
+    
     # score
     y <- list()
     temp <- X[,choice]
@@ -579,7 +99,7 @@ plot_score <- function(X,choice=NULL){
     graphics::abline(h=n/2,lwd=2,col="grey")
     graphics::axis(side=2)
     graphics::title(ylab="count",line=2.5)
-    palasso:::mtext(text=colnames(X)[-choice],side=1)
+    palasso:::.mtext(text=colnames(X)[-choice],side=1)
     
     # bars
     for(i in seq_len(p-1)){
@@ -622,8 +142,8 @@ plot_table <- function(X,margin=2){
     graphics::plot.new()
     graphics::plot.window(xlim=c(-h,1+h),ylim=c(-v,1+v))
     graphics::par(usr=c(-h,1+h,-v,1+v))
-    palasso:::mtext(text=rev(rownames(X)),unit=TRUE,side=2)
-    palasso:::mtext(text=colnames(X),unit=TRUE,side=3)
+    palasso:::.mtext(text=rev(rownames(X)),unit=TRUE,side=2)
+    palasso:::.mtext(text=colnames(X),unit=TRUE,side=3)
     
     if(margin==0){
         temp <- matrix(rank(X),nrow=n,ncol=p) # overall rank
@@ -638,7 +158,7 @@ plot_table <- function(X,margin=2){
     image <- t(temp)[,seq(from=n,to=1,by=-1)]
     col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
     graphics::image(x=image,col=col,add=TRUE)
-
+    
     if(margin==1){
         graphics::segments(x0=-h,x1=1+h,
                            y0=seq(from=-v,to=1+v,by=2*v),
@@ -703,7 +223,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
     graphics::lines(x=0.8*x,y=0.8*y)
     
     # between
-   #  col <- "#0000CD"
+    #  col <- "#0000CD"
     col <- grDevices::rgb(red=0,green=0,blue=205,maxColorValue=255,alpha=50)
     graphics::segments(x0=x[id$b],y0=y[id$b],
                        x1=0.8*x[id$b],y1=0.8*y[id$b],col=col)
@@ -742,13 +262,13 @@ plot_box <- function(X,choice=NULL){
     
     col <- rep(x="#CD0000",times=p)
     col[choice] <- "#0000CD"
-
+    
     graphics::plot.new()
     graphics::plot.window(xlim=c(0.5,p+0.5),ylim=range(X))
     graphics::box()
     graphics::axis(side=2)
     graphics::title(ylab="",line=2.5)
-    palasso:::mtext(text=colnames(X),side=1)
+    palasso:::.mtext(text=colnames(X),side=1)
     
     for(i in seq_len(p)){
         # vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
@@ -857,32 +377,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
 }
 
-
-
-
-##--- Internal functions ----
-
-#' @title
-#' Split
-#' 
-#' @keywords internal
-#' 
-#' @description
-#' generic functions
-#' 
-#' @param text character vector
-#' 
-#' @param unit logical
-#' 
-#' @param side to do
-#' 
-#' @details
-#' to do
-#' 
-#' @return
-#' to do
-#' 
-mtext <- function(text,unit=FALSE,side=1){
+.mtext <- function(text,unit=FALSE,side=1){
     p <- length(text)
     # separator
     pattern <- c("_",".","|","+","-",":","*","^","$"," ")
@@ -1107,13 +602,13 @@ NULL
     
     # models
     names <- c(paste0("standard_",c("x","z","xz")),
-            paste0("adaptive_",c("x","z","xz")),"paired")
+               paste0("adaptive_",c("x","z","xz")),"paired")
     
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
     deviance <- auc <- rep(NA,times=length(names))
     colnames(pred) <- names(deviance) <- names(auc) <- names
-
+    
     # cross-validation
     for(i in seq_len(nfolds.ext)){
         
@@ -1173,8 +668,9 @@ NULL
     ### end original ###
     
     ### start trial ###
-    coef <- lapply(names,function(i) coef.palasso(fit,model=i))
-    select <- lapply(coef,function(x) unlist(lapply(x,function(z) which(z!=0))))
+    coef <- lapply(names,function(i) palasso:::coef.palasso(fit,model=i))
+    select <- lapply(coef,function(x) unlist(lapply(x,function(z) Matrix:::which(z!=0))))
+    # CHECK WHETHER THIS IS CORRECT!
     ### end trial ###
     
     shots <- sapply(select,length)
@@ -1183,4 +679,3 @@ NULL
     list <- list(shots=shots,hits=hits)
     return(list)
 }
-

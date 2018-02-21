@@ -109,20 +109,20 @@
     
 
     <pre class="usage"><span class='co'># S3 method for palasso</span>
-<span class='fu'>subset</span>(<span class='no'>x</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>,
+  <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
-  <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>weights</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>residuals</span>(<span class='no'>object</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
+<span class='fu'>residuals</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
 <span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
@@ -130,35 +130,14 @@
 <span class='co'># S3 method for palasso</span>
 <span class='fu'>logLik</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for glmnet</span>
-<span class='fu'>df.residual</span>(<span class='no'>object</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for logLik.palasso</span>
-<span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)
-
 <span class='co'># S3 method for palasso</span>
-<span class='fu'>weights</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>print</span>(<span class='no'>x</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>model</th>
-      <td><p>character "paired" (or one of <code>names(x)</code>)</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>further arguments for <a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>predict.cv.glmnet</a>,
-<a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>coef.cv.glmnet</a>, or <a href='http://www.rdocumentation.org/packages/glmnet/topics/deviance.glmnet'>deviance.glmnet</a></p></td>
-    </tr>
-    <tr>
-      <th>object, x</th>
+      <th>object</th>
       <td><p><a href='palasso.html'>palasso</a> object</p></td>
     </tr>
     <tr>
@@ -168,10 +147,23 @@ list of matrices with \(n\) rows (samples)
 and \(p\) columns (variables)</p></td>
     </tr>
     <tr>
+      <th>model</th>
+      <td><p>character <code>"paired"</code>,
+or an entry of <code>names(object)</code></p></td>
+    </tr>
+    <tr>
       <th>s</th>
       <td><p>penalty parameter<strong>:</strong>
-character "lambda.min" or "lambda.1se",
-or positive numeric</p></td>
+character <code>"lambda.min"</code> or <code>"lambda.1se"</code>,
+positive numeric,
+or <code>NULL</code> (entire sequence)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>further arguments for
+<code><a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>predict.cv.glmnet</a></code>,
+<code><a href='http://www.rdocumentation.org/packages/glmnet/topics/predict.cv.glmnet'>coef.cv.glmnet</a></code>,
+or <code><a href='http://www.rdocumentation.org/packages/glmnet/topics/deviance.glmnet'>deviance.glmnet</a></code></p></td>
     </tr>
     </table>
     
