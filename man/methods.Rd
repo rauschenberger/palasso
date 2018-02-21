@@ -9,6 +9,8 @@
 \alias{residuals.palasso}
 \alias{deviance.palasso}
 \alias{logLik.palasso}
+\alias{df.residual.glmnet}
+\alias{print.logLik.palasso}
 \alias{weights.palasso}
 \alias{summary.palasso}
 \alias{print.palasso}
@@ -27,7 +29,11 @@
 
 \method{deviance}{palasso}(object, model = "paired", ...)
 
-\method{logLik}{palasso}(object, s = NULL, model = "paired", ...)
+\method{logLik}{palasso}(object, model = "paired", ...)
+
+\method{df.residual}{glmnet}(object, ...)
+
+\method{print}{logLik.palasso}(x, ...)
 
 \method{weights}{palasso}(object, model = "paired", ...)
 

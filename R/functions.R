@@ -208,67 +208,6 @@ palasso <- function(y,X,...){
 }
 
 
-if(FALSE){
-
-### trial start ###
-rm(list=ls())
-
-n <- 1000
-p <- 20
-y <- rnorm(n)
-#y <- rbinom(n=n,size=1,prob=0.2)
-#y <- rpois(n=n,lambda=5)
-family <- "gaussian"
-X <- matrix(stats::rnorm(n*p),nrow=n,ncol=p)
-
-# aim
-glm <- stats::glm(y~X,family=family)
-ll1 <- stats::logLik(glm)
-ll1
-
-net <- glmnet::glmnet(y=y,x=X,lambda=seq(from=0.05,to=0,length.out=100),family=family)
-dev0 <- net$nulldev
-dev1 <- rev(glmnet::deviance.glmnet(net))[1]
-dev.ratio <- rev(net$dev.ratio)[1]
-
-# via stats
-glm <- stats::glm(y~1,family=family) # net$call$family
-ll0 <- stats::logLik(glm)
-ll_sat <- dev0/2 + ll0
-ll1 <- ll_sat - dev1/2
-ll1
-### trial end ###
-
-
-#set.seed(1)
-#n <- 1000; p <- 10
-#y <- rbinom(n=n,size=1,prob=0.5)
-#X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#family <- "binomial"
-#fit <- palasso(y=y,X=X,family=family,lambda=c(99e99,1-06))
-
-}
-
-
-
-
-### trial start ###
-#adaptive = list(a_x=5,a_z=1,a_xz=5)
-#weighted = NULL
-#standard = list(s_x=5,s_z=1,s_xz=5)
-#list = c(adaptive,weighted,standard)
-#model = sapply(list,function(x) list())
-### trial end ###
-
-### trial start ###
-#if(FALSE){
-#print(object.size(fit),units="Mb")
-#print(object.size(fit[[1]]$glmnet.fit$call$x)*8,units="Mb")
-#x <- lapply(fit,function(x) x$glmnet.fit$call$x)
-#all(x[[1]]==x[[2]])
-#}
-### trial end ###
-
 #--- Generic functions ---------------------------------------------------------
 
 #' @name methods
@@ -396,93 +335,77 @@ deviance.palasso <- function(object,model="paired",...){
     glmnet::deviance.glmnet(x$glmnet.fit,...)
 }
 
+#' @rdname methods
+#' @export
+#' 
+logLik.palasso <- function(object,model="paired",...){
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    x <- palasso:::subset.palasso(x=object,model=model)$glmnet.fit
+    glm <- stats::glm(x$call$y~1,weights=x$call$weights,family=x$call$family)
+    ll <- x$nulldev/2 + stats::logLik(glm) - glmnet::deviance.glmnet(x)/2
+    attributes(ll)$df <- df.residual.glmnet(x)
+    attributes(ll)$nobs <- x$nobs
+    class(ll) <- c("logLik.palasso","logLik")
+    return(ll)
+}
+# Consider adding the logical argument "glmnet".
+# If TRUE then calculate logLik from deviance,
+# if FALSE from fitted values.
+# Create function .logLik(y,eta,family)
 
-# logLik.palasso <- function(object,s="lambda.min",model="paired",...){
+
+# logLik.palasso <- function(object,s=NULL,model="paired",...){
 # 
 #     x <- palasso:::subset.palasso(x=object,model=model)
+#     if(is.null(s)){s <- x$glmnet.fit$lambda}
 #     y <- x$glmnet.fit$call$y
 #     newx <- x$glmnet.fit$call$x
 #     family <- x$glmnet.fit$call$family
-#     eta <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="link",...) 
-#     
-#     if(family=="gaussian"){
-#         mu <- eta
-#         sd <- sqrt(sum((y-mu)^2)/length(y))
-#         ll <- sum(log(1/sqrt(2*pi*sd^2)*exp(-(y-mu)^2/(2*sd^2))))
-#     } else if(family=="binomial"){
-#         p <- exp(eta)/(1+exp(eta))
-#         ll <- sum(log(p^y*(1-p)^(1-y)))
-#     } else if(family=="poisson"){
-#         lambda <- exp(eta)
-#         ll <- sum(log(lambda^y*exp(-lambda)/factorial(y)))
+# 
+#     eta <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="link",...)
+#     if(is.vector(eta)){eta <- as.matrix(eta)}
+# 
+#     ll <- rep(x=NA,times=length(s))
+#     for(i in seq_along(ll)){
+#         if(family=="gaussian"){
+#             mu <- eta[,i]
+#             sd <- sqrt(sum((y-mu)^2)/length(y))
+#             ll[i] <- sum(log(1/sqrt(2*pi*sd^2)*exp(-(y-mu)^2/(2*sd^2))))
+#         } else if(family=="binomial"){
+#             p <- exp(eta[,i])/(1+exp(eta[,i]))
+#             ll[i] <- sum(log(p^y*(1-p)^(1-y)))
+#         } else if(family=="poisson"){
+#             lambda <- exp(eta[,i])
+#             ll[i] <- sum(log(lambda^y*exp(-lambda)/factorial(y)))
+#         }
 #     }
-#     
-#     # selected lambda
-#     if(s=="lambda.min"){
-#         which <- which(x$lambda==x$lambda.min)
-#     } else if(s=="lambda.1se"){
-#         which <- which(x$lambda==x$lambda.1se)
-#     } else {
-#         which <- which.min(abs(x$lambda-s))
-#     }
-#     
-#     # effective degrees of freedom
-#     if(x$glmnet.fit$call$alpha==1){
-#         df <- x$nzero[which]
-#     } else {
-#         d <- svd(x$glmnet.fit$call$x)$d^2
-#         df <- sum(d^2/(d^2+x$lambda[which]))
-#     }
-#     
-#     attributes(ll)$df <- as.numeric(df)
-#     attributes(ll)$nobs <- x$glmnet.fit$nobs
-#     class(ll) <- "logLik"
 #     return(ll)
 # }
 
 
 #' @rdname methods
 #' @export
+#' @importFrom stats df.residual
 #' 
-logLik.palasso <- function(object,s=NULL,model="paired",...){
-
-    ## failed trial (proportionality)
-    # net <- palasso:::subset.palasso(x=object,model=model)
-    # d1 <- glmnet::deviance.glmnet(net$glmnet.fit)
-    # d0 <- net$glmnet.fit$nulldev
-    # return(d0-d1)
-
-    ## failed trial (right for Poisson and binomial, wrong for Gaussian,
-    ## but correct for Gaussian intercept-only model)
-    #if(length(list(...))!=0){warning("Ignoring argument.")}
-    #fit <- palasso:::subset.palasso(x=object,model=model)$glmnet.fit
-    #glm <- stats::glm(fit$call$y~1,weights=fit$call$weights,family=fit$call$family)
-    #fit$nulldev/2 + stats::logLik(glm) - deviance(fit)/2
-
-    x <- palasso:::subset.palasso(x=object,model=model)
-    if(is.null(s)){s <- x$glmnet.fit$lambda}
-    y <- x$glmnet.fit$call$y
-    newx <- x$glmnet.fit$call$x
-    family <- x$glmnet.fit$call$family
-
-    eta <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="link",...)
-    if(is.vector(eta)){eta <- as.matrix(eta)}
-
-    ll <- rep(x=NA,times=length(s))
-    for(i in seq_along(ll)){
-        if(family=="gaussian"){
-            mu <- eta[,i]
-            sd <- sqrt(sum((y-mu)^2)/length(y))
-            ll[i] <- sum(log(1/sqrt(2*pi*sd^2)*exp(-(y-mu)^2/(2*sd^2))))
-        } else if(family=="binomial"){
-            p <- exp(eta[,i])/(1+exp(eta[,i]))
-            ll[i] <- sum(log(p^y*(1-p)^(1-y)))
-        } else if(family=="poisson"){
-            lambda <- exp(eta[,i])
-            ll[i] <- sum(log(lambda^y*exp(-lambda)/factorial(y)))
-        }
+df.residual.glmnet <- function(object,...){
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(object$call$alpha==1){
+        df <- Matrix::colSums(object$beta!=0)
+    } else {
+        d <- svd(object$call$x)$d^2
+        df <- sum(d^2/(d^2+object$lambda))
     }
-    return(ll)
+    return(df)
+}
+
+#' @rdname methods
+#' @export
+#' 
+print.logLik.palasso <- function(x,...){
+    if(length(list(...))!=0){warning("Ignoring argument.")}
+    X <- rbind(x,attributes(x)$df)
+    rownames(X) <- c("log Lik.","eff. df")
+    print(X)
 }
 
 #' @rdname methods
@@ -555,10 +478,6 @@ print.palasso <- function(x,...){
     names(split) <- info$names
     as.data.frame(split)
 }
-
-
-
-
 
 #--- Visualisation -------------------------------------------------------------
 
