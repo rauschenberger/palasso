@@ -483,19 +483,17 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' 
 #' @examples 
 #' set.seed(1)
-#' n <- 30; p <- 50
+#' n <- 50; p <- 100
 #' X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
-#' x <- .prepare(X)
-#' y <- .simulate(x,effects=c(1,2))
-#' .predict(y,x)
-#' .select(y,x,attributes(y))
+#' x <- palasso:::.prepare(X)
+#' y <- palasso:::.simulate(x,effects=c(1,2))
+#' palasso:::.predict(y,x)
+#' palasso:::.select(y,x,attributes(y))
 NULL
 
 #' @rdname extra
 #' @keywords internal
-#' @export
-#' @examples
-#' 1+1
+#' 
 .prepare <- function(X,cutoff=NULL){
     
     # checks
@@ -549,9 +547,8 @@ NULL
 
 #' @rdname extra
 #' @keywords internal
-#' @export
 #' @examples
-#' 1+1
+#' 
 .simulate <- function(x,effects){
     
     # covariates
@@ -580,9 +577,8 @@ NULL
 
 #' @rdname extra
 #' @keywords internal
-#' @export
 #' @examples
-#' 1+1
+#' 
 .predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5){
     
     start <- Sys.time()
@@ -648,19 +644,20 @@ NULL
 
 #' @rdname extra
 #' @keywords internal
-#' @export
 #' @examples
-#' 1+1
+#' 
 .select <- function(y,X,index,pmax=10,nfolds=5){
     
     p <- ncol(X[[1]])
     
     fit <- palasso::palasso(y=y,X=X,family="binomial",pmax=pmax,nfolds=nfolds)
     
-    names <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),"paired")
+    names <- c(names(fit),"paired")
+    names <- names[!grepl(pattern="between_|within_",x=names)]
     
     ### start original ###
+    # names <- c(paste0("standard_",c("x","z","xz")),
+    #           paste0("adaptive_",c("x","z","xz")),"paired")
     #coef <- sapply(names,function(i) palasso:::coef.palasso(object=fit,model=i)[-1])
     #select <- apply(coef,2,function(x) which(x!=0))
     #if(is.matrix(select)){select <- as.list(as.data.frame(select))}
@@ -668,9 +665,17 @@ NULL
     ### end original ###
     
     ### start trial ###
-    coef <- lapply(names,function(i) palasso:::coef.palasso(fit,model=i))
-    select <- lapply(coef,function(x) unlist(lapply(x,function(z) Matrix:::which(z!=0))))
-    # CHECK WHETHER THIS IS CORRECT!
+    #coef <- lapply(names,function(i) palasso:::coef.palasso(fit,model=i))
+    #select <- lapply(coef,function(x) unlist(lapply(x,function(z) Matrix:::which(z!=0))))
+    #names(coef) <- names(select) <- names
+    ### end trial ###
+    
+    ### start trial ###
+    select <- sapply(names,function(x) list())
+    for(i in seq_along(names)){
+       coef <- palasso:::coef.palasso(fit,model=names[i])
+       select[[i]] <- unlist(lapply(coef,function(x) Matrix:::which(x!=0)))
+    }
     ### end trial ###
     
     shots <- sapply(select,length)

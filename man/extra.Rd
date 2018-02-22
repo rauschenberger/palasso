@@ -68,16 +68,15 @@ selected covariates, and the number of correctly selected covariates.
 }
 \examples{
 set.seed(1)
-n <- 30; p <- 50
+n <- 50; p <- 100
 X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
-x <- .prepare(X)
-y <- .simulate(x,effects=c(1,2))
-.predict(y,x)
-.select(y,x,attributes(y))
-1+1
-1+1
-1+1
-1+1
+x <- palasso:::.prepare(X)
+y <- palasso:::.simulate(x,effects=c(1,2))
+palasso:::.predict(y,x)
+palasso:::.select(y,x,attributes(y))
+
+
+
 }
 \seealso{
 Use \link[palasso]{palasso} to fit the paired lasso.

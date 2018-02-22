@@ -53,7 +53,7 @@
 #' n <- 40; p <- 1000
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' fit <- palasso(y=y,X=X,family="binomial",pmax=10)
+#' object <- palasso(y=y,X=X,family="binomial",pmax=10)
 #' 
 palasso <- function(y,X,...){
 

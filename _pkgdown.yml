@@ -29,7 +29,8 @@ reference:
   - title: "User functions"
     contents:
       - palasso
-  - title: "Internal functions"
+      - methods
+  - title: "Hidden functions"
     contents:
       - plots
       - extra

@@ -33,7 +33,7 @@
 \item{object}{\link[palasso]{palasso} object}
 
 \item{newdata}{covariates\strong{:}
-list of matrices with \eqn{n} rows (samples)
+list of matrices, each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
 \item{model}{character \code{"paired"},

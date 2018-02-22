@@ -14,7 +14,7 @@
 #' 
 #' @param newdata
 #' covariates\strong{:}
-#' list of matrices with \eqn{n} rows (samples)
+#' list of matrices, each with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
 #' @param s penalty parameter\strong{:}
@@ -54,7 +54,7 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",...){
     }
     x <- palasso:::subset.palasso(x=object,model=model)
     newx <- do.call(what="cbind",args=newdata)
-    if(is.null(s)){s <- x$glmnet.fit$call$lambda}
+    if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,...)
 }
 
@@ -62,8 +62,8 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",...){
 #' @export
 #' 
 coef.palasso <- function(object,model="paired",s="lambda.min",...){
-    #if(length(s)!=1){stop("Not yet implemented!")}
     x <- palasso:::subset.palasso(x=object,model=model)
+    if(is.null(s)){s <- x$glmnet.fit$lambda}
     coef <- glmnet::coef.cv.glmnet(object=x,s=s,...)
     if(rownames(coef)[1]=="(Intercept)"){
         # intercept <- coef[1,]
@@ -71,7 +71,9 @@ coef.palasso <- function(object,model="paired",s="lambda.min",...){
     }
     palasso:::.split(x=coef,info=x$palasso)
 }
-# CONTINUE HERE (SHOULD WORK FOR SINGLE AND MULTIPLE S!)
+# CONTINUE HERE: Maybe it is better to return a matrix of coefficients
+# (including intercept). Then rows are covariates and columns are lambdas.
+# Use x and z for rownames. However, indices are less meaningful.
 
 #' @rdname methods
 #' @export
@@ -90,7 +92,7 @@ weights.palasso <- function(object,model="paired",...){
 fitted.palasso <- function(object,model="paired",s="lambda.min",...){
     x <- palasso:::subset.palasso(x=object,model=model)
     newx <- x$glmnet.fit$call$x
-    if(is.null(s)){s <- x$glmnet.fit$call$lambda}
+    if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
 }
 
@@ -100,7 +102,7 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",...){
 residuals.palasso <- function(object,model="paired",s="lambda.min",...){
     x <- palasso:::subset.palasso(x=object,model=model)
     newx <- x$glmnet.fit$call$x
-    if(is.null(s)){s <- x$glmnet.fit$call$lambda}
+    if(is.null(s)){s <- x$glmnet.fit$lambda}
     y <- x$glmnet.fit$call$y
     y_hat <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
     y - y_hat
@@ -190,11 +192,10 @@ summary.palasso <- function(object,model="paired",...){
     frame[,1] <- sapply(id,function(i) x$lambda[i])
     frame[,2] <- sapply(id,function(i) x$nzero[i])
     frame[,3] <- sapply(id,function(i) x$cvm[i])
-    rownames(frame) <- c("prediction","explanation")
+    rownames(frame) <- c("min","1se")
     colnames(frame) <- c("lambda","nzero",names(x$name))
     base::print(round(frame,digits=2))
-    
-    return(invisible("palasso"))
+    return(invisible(NULL))
 }
 
 #' @export
@@ -208,6 +209,7 @@ print.palasso <- function(x,...){
     if(length(info$call)>0){
         cat("(",paste(names(info$call),info$call,sep="=",collapse=", "),")\n",sep="")
     }
+    return(invisible(NULL))
 }
 
 #' @export
@@ -234,13 +236,15 @@ subset.palasso <- function(x,model="paired",...){
     object <- x[cond]
     if(name=="AUC"){
         loss <- sapply(object,function(x) max(x$cvm))
-        object <- object[[which.max(loss)]]
+        select <- which.max(loss)
     } else {
         loss <- sapply(object,function(x) min(x$cvm))
-        object <- object[[which.min(loss)]]
+        select <- which.min(loss)
     }
+    object <- object[[select]]
     object$glmnet.fit$call$x <- x[[1]]$glmnet.fit$call$x
     object$palasso <- attributes(x)$info
+    object$palasso$select <- names(select)
     
     return(object)
 }

@@ -187,31 +187,40 @@ selected covariates, and the number of correctly selected covariates.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>1</span>)
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>30</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>4</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>.prepare</span>(<span class='no'>X</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/extra'>.prepare</a></span>(<span class='no'>X</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/extra'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/extra'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
 #&gt;   nfolds.ext nfolds.int          time
-#&gt; 1          5          5 2.750605 secs
+#&gt; 1          5          5 3.034304 secs
 #&gt; 
 #&gt; $deviance
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;    1.348574    1.351614    1.365939    1.537715    1.387690    1.537715 
+#&gt;    1.467288    1.398821    1.488180    1.520210    1.517579    1.517447 
 #&gt;      paired 
-#&gt;    1.539165 
+#&gt;    1.718443 
 #&gt; 
 #&gt; $auc
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;   0.5688889   0.5377778   0.5600000   0.5088889   0.5022222   0.5088889 
+#&gt;   0.5520833   0.4887821   0.5440705   0.6618590   0.5568910   0.6698718 
 #&gt;      paired 
-#&gt;   0.5044444 
-#&gt; </div><div class='input'><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
-#&gt; [1] 0 0 2 9 2 1 9
+#&gt;   0.5913462 
+#&gt; </div><div class='input'><span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/extra'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
+#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
+#&gt;           6           2           4           9           8           9 
+#&gt;      paired 
+#&gt;           9 
 #&gt; 
 #&gt; $hits
-#&gt; [1] 0 0 0 0 0 0 0
-#&gt; </div><div class='input'><span class='fl'>1</span>+<span class='fl'>1</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fl'>1</span>+<span class='fl'>1</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fl'>1</span>+<span class='fl'>1</span></div><div class='output co'>#&gt; [1] 2</div><div class='input'><span class='fl'>1</span>+<span class='fl'>1</span></div><div class='output co'>#&gt; [1] 2</div></pre>
+#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
+#&gt;           0           0           0           1           0           1 
+#&gt;      paired 
+#&gt;           1 
+#&gt; </div><div class='input'>
+
+
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
