@@ -7,7 +7,7 @@
 #' Methods for class "palasso"
 #' 
 #' @description
-#' generic functions
+#' This page lists the main methods for class "palasso".
 #' 
 #' @param object
 #' \link[palasso]{palasso} object

@@ -53,7 +53,7 @@ or \code{\link[glmnet]{deviance.glmnet}}}
 to do
 }
 \description{
-generic functions
+This page lists the main methods for class "palasso".
 }
 \details{
 By default, the function \code{predict} returns

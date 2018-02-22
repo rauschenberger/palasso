@@ -7,7 +7,8 @@ n <- 100
 p <- 200
 k <- 2
 pmax <- 10
-family <- "gaussian"
+
+for(family in c("gaussian","binomial","poisson")){
 
 if(family=="gaussian"){
     y <- stats::rnorm(n=n)
@@ -95,6 +96,13 @@ fit <- palasso::palasso(y=y,X=X,lambda=c(99e99,0),family=family)
 glm0 <- stats::glm(y~1,family=family)
 glm1 <- stats::glm(y~do.call(what="cbind",args=X),family=family)
 
+testthat::test_that("coef stats",{
+    coef <- coef(fit,model="adaptive_xz",s=0)
+    diff <- coef(glm1)[-1]-c(as.numeric(coef$x),as.numeric(coef$z))
+    x <- all(abs(diff)<0.001)
+    testthat::expect_true(x)
+})
+
 testthat::test_that("deviance stats",{
     diff <- deviance(fit,model="adaptive_xz")-c(deviance(glm0),deviance(glm1))
     x <- all(abs(diff)<1e-06)
@@ -110,3 +118,5 @@ testthat::test_that("logLik stats",{
     }
     testthat::expect_true(x)
 })
+
+}
