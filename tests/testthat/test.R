@@ -8,24 +8,23 @@ p <- 200
 k <- 2
 pmax <- 10
     
-for(family in c("gaussian","binomial","poisson")){
+for(family in c("gaussian","binomial","poisson","cox")){
     
 if(family=="gaussian"){
     y <- stats::rnorm(n=n)
     mu <- mean(y)
     sd <- sqrt(sum((y-mu)^2)/n)
     y <- (y-mu)/sd
-}
-if(family=="binomial"){
+} else if(family=="binomial"){
     y <- 1*(stats::rbinom(n=n,size=1,prob=0.5)>=0.5)
-}
-if(family=="poisson"){
+} else if(family=="poisson"){
     y <- stats::rpois(n=n,lambda=5)
-}
-if(family=="cox"){
+} else if(family=="cox"){
     time <- 1+stats::rpois(n=n,lambda=5)
     event <- 1*(stats::rbinom(n=n,size=1,prob=0.5)>=0.5)
     y <- survival::Surv(time=time,event=event)
+} else {
+    stop("Invalid family!")
 }
     
 X <- lapply(seq_len(k),function(x) matrix(stats::rnorm(n*p),nrow=n,ncol=p))
@@ -103,17 +102,17 @@ testthat::test_that("weights sum to one",{
 })
 
 # low dimensionality
-X <- lapply(X,function(x) x[,seq_len(n/(5*k))]) 
-fit <- palasso::palasso(y=y,X=X,lambda=c(99e99,0),family=family)
+Xs <- lapply(X,function(x) x[,seq_len(n/(5*k))]) 
+fit <- palasso::palasso(y=y,X=Xs,lambda=c(99e99,0),family=family)
+Xs <- do.call(what="cbind",args=Xs)
 
 if(family=="cox"){
     glm0 <- survival::coxph(y~1)
-    glm1 <- survival::coxph(y~do.call(what="cbind",args=X))
+    glm1 <- survival::coxph(y~Xs)
 } else {
     glm0 <- stats::glm(y~1,family=family)
-    glm1 <- stats::glm(y~do.call(what="cbind",args=X),family=family) 
+    glm1 <- stats::glm(y~Xs,family=family) 
 }
-
 
 testthat::test_that("coef stats",{
     coef <- coef(fit,model="adaptive_xz",s=0)
@@ -150,3 +149,43 @@ testthat::test_that("logLik stats",{
 })
 
 }
+
+
+# ### Cox regression ###
+#
+# # Here I verify whether the R packages survival, glmnet and palasso lead to
+# # the same linear predictors and risk scores. This holds if all covariates
+# # have mean zero and variance one.
+# 
+# library(survival)
+# library(glmnet)
+# library(palasso)
+# 
+# y <- Surv(lung$time[-14],lung$status[-14]-1)
+# X <- scale(cbind(lung$age,lung$ph.ecog)[-14,])
+# 
+# model <- link <- risk <- list()
+# 
+# # survival
+# model$survival <- coxph(y~X)
+# link$survival <- predict(model$survival,type="lp")
+# risk$survival <- predict(model$survival,type="risk")
+# 
+# # glmnet
+# model$glmnet <- glmnet(y=y,x=X,family="cox",lambda=c(1e-8,1e-9))
+# link$glmnet <- predict(model$glmnet,newx=X,type="link")[,"s0"]
+# risk$glmnet <- predict(model$glmnet,newx=X,type="response")[,"s0"]
+# 
+# # palasso
+# model$palasso <- palasso(y=y,X=list(X,X),family="cox",lambda=c(1e-8,1e-9))
+# link$palasso <- predict(model$palasso,newdata=list(X,X),type="link")
+# risk$palasso <- predict(model$palasso,newdata=list(X,X),type="response")
+# 
+# par(mfrow=c(1,3))
+# plot(link$survival,link$glmnet); abline(a=0,b=1,col="red")
+# plot(link$survival,link$palasso); abline(a=0,b=1,col="red")
+# plot(link$glmnet,link$palasso); abline(a=0,b=1,col="red")
+# 
+# plot(risk$survival,risk$glmnet); abline(a=0,b=1,col="red")
+# plot(risk$survival,risk$palasso); abline(a=0,b=1,col="red")
+# plot(risk$glmnet,risk$palasso); abline(a=0,b=1,col="red")

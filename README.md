@@ -5,7 +5,7 @@
 Scope
 -----
 
-Penalised regression with paired covariates. [glmnet](https://CRAN.R-project.org/package=glmnet)
+Penalised regression with paired covariates (extending [glmnet](https://CRAN.R-project.org/package=glmnet)).
 
 Installation
 ------------
@@ -14,7 +14,7 @@ Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](ht
 
 ``` r
 library(devtools)
-install_github("rauschenberger/palasso",build_vignettes=TRUE)
+install_github("rauschenberger/palasso")
 ```
 
 Reference
