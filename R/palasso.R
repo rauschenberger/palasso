@@ -28,8 +28,11 @@
 #' Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 #' for alternative specifications of \code{y} and \code{x}. Among the further
 #' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
-#' \code{"poisson"}, or \code{"cox"} (EXPERIMENTAL),
+#' \code{"poisson"}, or \code{"cox"},
 #' and \code{penalty.factor} must not be used.
+#' \emph{This method (hopefully) improves prediction if
+#' \code{alpha}\eqn{=1} (lasso)
+#' and \code{pmax}\eqn{<<p} (non-zero coefficients).}
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -71,6 +74,9 @@ palasso <- function(y,X,...){
     base <- c(base,default[!names(default) %in% names(base)])
     if(!base$family %in% c("gaussian","binomial","poisson","cox")){
         stop("Invalid argument \"family\".")
+    }
+    if(!is.null(base$pmax) & base$alpha==0){
+        stop("Unexpected argument \"pmax\" as \"alpha=0\".")
     }
     
     # dimensionality
@@ -220,6 +226,3 @@ palasso <- function(y,X,...){
                         error=function(x) palasso:::.error(x,args)),
                         warning=function(x) palasso:::.warning(x))
 }
-
-
-

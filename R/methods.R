@@ -91,6 +91,7 @@ weights.palasso <- function(object,model="paired",...){
 #' 
 fitted.palasso <- function(object,model="paired",s="lambda.min",...){
     x <- palasso:::subset.palasso(x=object,model=model)
+    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
@@ -101,7 +102,7 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",...){
 #' 
 residuals.palasso <- function(object,model="paired",s="lambda.min",...){
     x <- palasso:::subset.palasso(x=object,model=model)
-    if(x$glmnet.fit$call$family=="cox"){stop("Not implemented for Cox regression!")}
+    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     y <- x$glmnet.fit$call$y
@@ -262,7 +263,8 @@ subset.palasso <- function(x,model="paired",...){
 df.residual.glmnet <- function(object,...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
     if(object$call$alpha==1){
-        df <- Matrix::colSums(object$beta!=0)
+        # df <- Matrix::colSums(object$beta!=0)
+        df <- Matrix::colSums(glmnet::coef.glmnet(object=object)!=0)
     } else {
         d <- svd(object$call$x)$d^2
         df <- sum(d^2/(d^2+object$lambda))

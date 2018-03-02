@@ -684,3 +684,11 @@ NULL
     list <- list(shots=shots,hits=hits)
     return(list)
 }
+
+.logo <- function(...){
+cat("
+     __   __       __   __   __   __ 
+    |__| |__| |   |__| |__  |__  |  |
+    |    |  | |__ |  |  __|  __| |__|
+    ")
+}
