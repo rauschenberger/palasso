@@ -49,9 +49,9 @@ NULL
 #' @export
 #' 
 predict.palasso <- function(object,newdata,model="paired",s="lambda.min",...){
-    if(missing(newdata)||is.null(newdata)) {
-        stop("Fitted values?")
-    }
+    #if(missing(newdata)||is.null(newdata)) {
+    #    stop("Fitted values?")
+    #}
     x <- palasso:::subset.palasso(x=object,model=model)
     newx <- do.call(what="cbind",args=newdata)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
