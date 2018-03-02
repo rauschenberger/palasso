@@ -101,6 +101,7 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",...){
 #' 
 residuals.palasso <- function(object,model="paired",s="lambda.min",...){
     x <- palasso:::subset.palasso(x=object,model=model)
+    if(x$glmnet.fit$call$family=="cox"){stop("Not implemented for Cox regression!")}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     y <- x$glmnet.fit$call$y
@@ -122,12 +123,18 @@ deviance.palasso <- function(object,model="paired",...){
 logLik.palasso <- function(object,model="paired",...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
     x <- palasso:::subset.palasso(x=object,model=model)$glmnet.fit
-    glm <- stats::glm(x$call$y~1,weights=x$call$weights,family=x$call$family)
-    ll <- x$nulldev/2 + stats::logLik(glm) - glmnet::deviance.glmnet(x)/2
-    attributes(ll)$df <- df.residual.glmnet(x)
-    attributes(ll)$nobs <- x$nobs
-    class(ll) <- c("logLik.palasso","logLik")
-    return(ll)
+    if(x$call$family=="cox"){
+        cox <- survival::coxph(x$call$y~1,weights=x$call$weights)
+        ll0 <- cox$loglik # survival:::logLik.coxph.null(cox)
+    } else {
+        glm <- stats::glm(x$call$y~1,weights=x$call$weights,family=x$call$family)
+        ll0 <- stats::logLik(glm)
+    }
+    ll1 <- x$nulldev/2 + ll0 - glmnet::deviance.glmnet(x)/2
+    attributes(ll1)$df <- palasso:::df.residual.glmnet(x)
+    attributes(ll1)$nobs <- x$nobs
+    class(ll1) <- c("logLik.palasso","logLik")
+    return(ll1)
 }
 
 # Consider modifying function "logLik.palasso"

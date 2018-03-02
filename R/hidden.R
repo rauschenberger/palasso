@@ -674,7 +674,7 @@ NULL
     select <- sapply(names,function(x) list())
     for(i in seq_along(names)){
        coef <- palasso:::coef.palasso(fit,model=names[i])
-       select[[i]] <- unlist(lapply(coef,function(x) Matrix:::which(x!=0)))
+       select[[i]] <- unlist(lapply(coef,function(x) Matrix::which(x!=0))) # was Matrix:::which
     }
     ### end trial ###
     

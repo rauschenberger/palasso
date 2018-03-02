@@ -38,8 +38,9 @@ technique if the covariates are numerous and occur in pairs.
 \details{
 Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 for alternative specifications of \code{y} and \code{x}. Among the further
-arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"} or
-\code{"poisson"}, and \code{penalty.factor} must not be used.
+arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
+\code{"poisson"}, or \code{"cox"} (EXPERIMENTAL),
+and \code{penalty.factor} must not be used.
 }
 \examples{
 set.seed(1)

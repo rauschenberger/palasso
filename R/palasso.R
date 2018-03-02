@@ -27,8 +27,9 @@
 #' @details
 #' Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 #' for alternative specifications of \code{y} and \code{x}. Among the further
-#' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"} or
-#' \code{"poisson"}, and \code{penalty.factor} must not be used.
+#' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
+#' \code{"poisson"}, or \code{"cox"} (EXPERIMENTAL),
+#' and \code{penalty.factor} must not be used.
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -68,7 +69,7 @@ palasso <- function(y,X,...){
     base$x <- do.call(what="cbind",args=X)
     default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
     base <- c(base,default[!names(default) %in% names(base)])
-    if(!base$family %in% c("gaussian","binomial","poisson")){
+    if(!base$family %in% c("gaussian","binomial","poisson","cox")){
         stop("Invalid argument \"family\".")
     }
     
@@ -86,9 +87,13 @@ palasso <- function(y,X,...){
     }
     
     # distribution (trial)
-    guess <- "gaussian"
-    guess[all(base$y%%1==0 & base$y>=0)] <- "poisson"
-    guess[!is.vector(base$y) | length(unique(base$y))==2] <- "binomial"
+    if(survival::is.Surv(y)){
+        guess <- "cox"
+    } else {
+        guess <- "gaussian"
+        guess[all(base$y%%1==0 & base$y>=0)] <- "poisson"
+        guess[!is.vector(base$y) | length(unique(base$y))==2] <- "binomial"
+    }
     if(guess!=base$family){
         warning(paste0("Consider family \"",guess,"\"."))
     }
@@ -109,7 +114,11 @@ palasso <- function(y,X,...){
     # marginal effects (correlation)
     mar <- list()
     for(i in seq_len(k)){
-        mar[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
+        if(base$family=="cox"){
+            mar[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
+        } else {
+            mar[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
+        }
         mar[[i]][is.na(mar[[i]])] <- 0
     }
     
@@ -120,6 +129,10 @@ palasso <- function(y,X,...){
     #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
     #     mar[[i]][is.na(mar[[i]])] <- 0
     # }
+    ## for object x of class "summary.glm":
+    ## x$coefficients[,"Estimate"]/x$coefficients[,"Std. Error"]
+    ## for object x of class "coxph":
+    ## x$coefficients/sqrt(x$var)
     
     weight <- model <- list()
     
