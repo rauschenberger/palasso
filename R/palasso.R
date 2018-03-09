@@ -135,6 +135,15 @@ palasso <- function(y,X,...){
     #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
     #     mar[[i]][is.na(mar[[i]])] <- 0
     # }
+    
+    # # trial: marginal effects (univariate regression, s.e. correction)
+    #mar <- list()
+    #for(i in seq_len(k)){
+    #    reg <- apply(X,2,function(x) summary(glm(y~x,family=family)))
+    #    beta <- sapply(reg,function(x) x$coefficients["x","Estimate"])
+    #    sd <- sapply(reg,function(x) x$coefficients["x","Std. Error"])
+    #    mar[[i]] <- abs(beta)/sd
+    #}
     ## for object x of class "summary.glm":
     ## x$coefficients[,"Estimate"]/x$coefficients[,"Std. Error"]
     ## for object x of class "coxph":
