@@ -237,6 +237,9 @@ subset.palasso <- function(x,model="paired",...){
     if(model=="paired"){
         pattern <- "adaptive|between|within"
         cond <- grepl(pattern=pattern,x=names(x))
+    } else if(model=="trial"){
+        pattern <- "trial"
+        cond <- grepl(pattern=pattern,x=names(x))
     } else {
         cond <- names(x)==model
     }

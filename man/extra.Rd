@@ -8,17 +8,20 @@
 \alias{.select}
 \title{Hidden functions (analysis)}
 \usage{
-.prepare(X, cutoff = NULL)
+.prepare(X, cutoff = NULL, trial = FALSE)
 
 .simulate(x, effects)
 
-.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5)
+.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5,
+  trial = FALSE)
 
 .select(y, X, index, pmax = 10, nfolds = 5)
 }
 \arguments{
 \item{X}{covariates\strong{:}
 matrix with \eqn{n} rows and \eqn{p} columns}
+
+\item{trial}{development option}
 
 \item{x}{covariates\strong{:}
 list of length \eqn{k},

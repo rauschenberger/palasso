@@ -251,7 +251,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_box(X,choice=5)
 #' 
-plot_box <- function(X,choice=NULL){
+plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
     
     # input
     n <- nrow(X); p <- ncol(X)
@@ -264,10 +264,11 @@ plot_box <- function(X,choice=NULL){
     col[choice] <- "#0000CD"
     
     graphics::plot.new()
-    graphics::plot.window(xlim=c(0.5,p+0.5),ylim=range(X))
+    if(is.null(ylim)){ylim <- range(X)}
+    graphics::plot.window(xlim=c(0.5,p+0.5),ylim=ylim)
     graphics::box()
     graphics::axis(side=2)
-    graphics::title(ylab="",line=2.5)
+    graphics::title(ylab=ylab,line=2.5)
     palasso:::.mtext(text=colnames(X),side=1)
     
     for(i in seq_len(p)){
@@ -316,9 +317,9 @@ plot_pairs <- function(x,y=NULL,...){
     graphics::abline(v=0,lty=1)
     at <- seq(from=-1,to=1,by=0.5)
     graphics::axis(side=1,at=at,labels=abs(at))
-    graphics::mtext(text="weight",side=1,line=2,at=0)
-    graphics::mtext(text="X",side=1,line=2,at=-1,col=args$col[1])
-    graphics::mtext(text="Z",side=1,line=2,at=+1,col=args$col[2])
+    graphics::mtext(text="weight",side=1,line=2.2,at=0)
+    graphics::mtext(text="X",side=1,line=2.2,at=-1,col=args$col[1])
+    graphics::mtext(text="Z",side=1,line=2.2,at=+1,col=args$col[2])
     graphics::mtext(text=args$main,side=3,line=0,at=0)
 }
 
@@ -449,6 +450,8 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' @param nfolds.ext
 #' number of external folds
 #' 
+#' @param trial development option
+#' 
 #' @param ...
 #' arguments for \link[palasso]{palasso}
 #' 
@@ -494,7 +497,7 @@ NULL
 #' @rdname extra
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL){
+.prepare <- function(X,cutoff=NULL,trial=FALSE){
     
     # checks
     if(nrow(X)>=ncol(X)){
@@ -523,11 +526,17 @@ NULL
     Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
     Z[,] <- X > 0 # zero-indicator
     # alternative: Z[,] <- X > stats::quantile(X,p=0.8) # quantile
-    prop <- mean(Z==0)
     
     # transform X
     X <- 2*sqrt(X+3/8) # Anscombe transform
     # alternative: X <- sqrt(X) # square root
+    
+    # properties
+    prop <- mean(Z==0)
+    sdx <- apply(X,2,stats::sd)
+    sdz <- apply(Z,2,stats::sd)
+    
+    if(!trial){
     
     # scaling X
     X <- scale(X)
@@ -539,9 +548,11 @@ NULL
     cz <- apply(Z,2,function(z) all(is.na(z)))
     Z[,cz] <- 0
     
+    }
+    
     # return
     x <- list(X=X,Z=Z)
-    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop)
+    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop,sdx=sdx,sdz=sdz)
     return(x)
 }
 
@@ -579,7 +590,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,trial=FALSE){
     
     start <- Sys.time()
     
@@ -596,9 +607,16 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    # models
-    names <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),"paired")
+    if(trial){
+        # models
+        names <- c(paste0("standard_",c("x","z","xz")),
+                   paste0("adaptive_",c("x","z","xz")),"trial") 
+    } else {
+        # models
+        names <- c(paste0("standard_",c("x","z","xz")),
+               paste0("adaptive_",c("x","z","xz")),"paired") 
+    }
+    
     
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
@@ -620,11 +638,11 @@ NULL
                                       length.out=sum(y0==1)))
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-                                   family="binomial",pmax=pmax)
+                                   family="binomial",pmax=pmax,trial=trial)
         
         pred[fold.ext==i,] <- sapply(names,function(x)
             palasso:::predict.palasso(object=object,newdata=X1,model=x,
-                                      type="response"))
+                                      type="response",trial=trial))
     }
     
     for(i in seq_along(names)){
@@ -649,6 +667,9 @@ NULL
 .select <- function(y,X,index,pmax=10,nfolds=5){
     
     p <- ncol(X[[1]])
+    k <- length(X)
+    if(is.null(pmax)){pmax <- k*p}
+    if(is.na(pmax)){pmax <- k*p}
     
     fit <- palasso::palasso(y=y,X=X,family="binomial",pmax=pmax,nfolds=nfolds)
     

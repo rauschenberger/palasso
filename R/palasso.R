@@ -20,6 +20,8 @@
 #' each with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
+#' @param trial development option
+#' 
 #' @param ...
 #' further arguments for \code{\link[glmnet]{cv.glmnet}} or
 #' \code{\link[glmnet]{glmnet}}
@@ -59,7 +61,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial",pmax=10)
 #' 
-palasso <- function(y,X,...){
+palasso <- function(y,X,trial=FALSE,...){
 
     # checks
     base <- list(...)
@@ -168,6 +170,14 @@ palasso <- function(y,X,...){
     }
     weight[[2*k+4]] <- unlist(mar)
     
+    if(trial){
+        c1 = apply(X[[1]],2,stats::sd)
+        c2 = apply(X[[2]],2,stats::sd)
+        temp = c(c1/(c1+c2),c2/c(c1+c2))*weight[[k+2]]
+        temp[is.na(temp)] = 0
+        weight[[2*k+5]] = temp
+    }
+    
     # cross-validation
     args <- base
     for(i in seq_along(weight)){
@@ -196,9 +206,15 @@ palasso <- function(y,X,...){
         names = letters[seq_len(k)]
     }  
     all = paste0(names,collapse="")
-    names(model) = c(paste0("standard_",c(names,all)),
+    if(trial){
+        names(model) = c(paste0("standard_",c(names,all)),
+                         paste0(c("between_","within_"),all),
+                         paste0("adaptive_",c(names,all)),"trial")
+    } else {
+            names(model) = c(paste0("standard_",c(names,all)),
                      paste0(c("between_","within_"),all),
                      paste0("adaptive_",c(names,all)))
+    }
     
     # output
     call <- sapply(list(...),function(x) deparse(x))

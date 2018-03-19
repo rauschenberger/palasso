@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, ...)
+palasso(y, X, trial = FALSE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -14,6 +14,8 @@ vector of length \eqn{n},}
 list of matrices,
 each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
+
+\item{trial}{development option}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}

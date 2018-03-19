@@ -16,7 +16,7 @@ plot_table(X, margin = 2)
 
 plot_circle(b, w, cutoff = NULL, group = NULL)
 
-plot_box(X, choice = NULL)
+plot_box(X, choice = NULL, ylab = "", ylim = NULL)
 
 plot_pairs(x, y = NULL, ...)
 
