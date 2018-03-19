@@ -8,20 +8,17 @@
 \alias{.select}
 \title{Hidden functions (analysis)}
 \usage{
-.prepare(X, cutoff = NULL, trial = FALSE)
+.prepare(X, cutoff = NULL)
 
 .simulate(x, effects)
 
-.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5,
-  trial = FALSE)
+.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5)
 
 .select(y, X, index, pmax = 10, nfolds = 5)
 }
 \arguments{
 \item{X}{covariates\strong{:}
 matrix with \eqn{n} rows and \eqn{p} columns}
-
-\item{trial}{development option}
 
 \item{x}{covariates\strong{:}
 list of length \eqn{k},
@@ -38,6 +35,8 @@ vector of length \eqn{n}}
 \item{index}{indices of causal covariates\strong{:}
 list of length \eqn{k},
 including vectors}
+
+\item{trial}{development option}
 
 \item{...}{arguments for \link[palasso]{palasso}}
 }

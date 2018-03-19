@@ -107,12 +107,11 @@
     <p>Functions for the <code>palasso</code> manuscript.</p>
     
 
-    <pre><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>trial</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>.simulate</span>(<span class='no'>x</span>, <span class='no'>effects</span>)
 
-<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>trial</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>)
 
 <span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>)</pre>
     
@@ -123,10 +122,6 @@
       <th>X</th>
       <td><p>covariates<strong>:</strong>
 matrix with \(n\) rows and \(p\) columns</p></td>
-    </tr>
-    <tr>
-      <th>trial</th>
-      <td><p>development option</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -153,6 +148,10 @@ vector of length \(n\)</p></td>
       <td><p>indices of causal covariates<strong>:</strong>
 list of length \(k\),
 including vectors</p></td>
+    </tr>
+    <tr>
+      <th>trial</th>
+      <td><p>development option</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -197,30 +196,26 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
 <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
 #&gt;   nfolds.ext nfolds.int          time
-#&gt; 1          5          5 3.188319 secs
+#&gt; 1          5          5 2.441756 secs
 #&gt; 
 #&gt; $deviance
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;    1.467288    1.398821    1.488180    1.520210    1.517579    1.517447 
+#&gt;    1.467288    1.398821    1.488180    1.520210    1.517435    1.517447 
 #&gt;      paired 
-#&gt;    1.718443 
+#&gt;    1.484095 
 #&gt; 
 #&gt; $auc
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
 #&gt;   0.5520833   0.4887821   0.5440705   0.6618590   0.5568910   0.6698718 
 #&gt;      paired 
-#&gt;   0.5913462 
+#&gt;   0.5224359 
 #&gt; </div><div class='input'><span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;           6           2           4           9           8           9 
-#&gt;      paired 
-#&gt;           9 
+#&gt; paired paired 
+#&gt;      4      4 
 #&gt; 
 #&gt; $hits
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;           0           0           0           1           0           1 
-#&gt;      paired 
-#&gt;           1 
+#&gt; paired paired 
+#&gt;      0      0 
 #&gt; </div><div class='input'>
 
 

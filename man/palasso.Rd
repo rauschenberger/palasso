@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, trial = FALSE, ...)
+palasso(y, X, standard = FALSE, adaptive = FALSE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -15,7 +15,11 @@ list of matrices,
 each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
-\item{trial}{development option}
+\item{standard}{Fit standard lasso for comparison.
+\code{logical}}
+
+\item{adaptive}{Fit adaptive lasso for comparison.
+\code{logical}}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}
@@ -43,9 +47,6 @@ for alternative specifications of \code{y} and \code{x}. Among the further
 arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
 \code{"poisson"}, or \code{"cox"},
 and \code{penalty.factor} must not be used.
-\emph{This method (hopefully) improves prediction if
-\code{alpha}\eqn{=1} (lasso)
-and \code{pmax}\eqn{<<p} (non-zero coefficients).}
 }
 \examples{
 set.seed(1)

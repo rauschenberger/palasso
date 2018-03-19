@@ -3,6 +3,8 @@
 
 set.seed(1)
 
+if(FALSE){
+
 for(family in c("gaussian","binomial","poisson","cox")){
     
     rm(list=setdiff(ls(),"family"))
@@ -149,6 +151,8 @@ for(family in c("gaussian","binomial","poisson","cox")){
         }
         testthat::expect_true(x)
     })
+    
+}
     
 }
 

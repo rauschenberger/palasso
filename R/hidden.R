@@ -497,7 +497,7 @@ NULL
 #' @rdname extra
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL,trial=FALSE){
+.prepare <- function(X,cutoff=NULL){
     
     # checks
     if(nrow(X)>=ncol(X)){
@@ -536,23 +536,20 @@ NULL
     sdx <- apply(X,2,stats::sd)
     sdz <- apply(Z,2,stats::sd)
     
-    if(!trial){
-    
-    # scaling X
-    X <- scale(X)
-    cx <- apply(X,2,function(x) all(is.na(x)))
-    X[,cx] <- 0
-    
-    # scaling Z
-    Z <- scale(Z)
-    cz <- apply(Z,2,function(z) all(is.na(z)))
-    Z[,cz] <- 0
-    
-    }
-    
+    ## original
+    # # scaling X
+    # X <- scale(X)
+    # cx <- apply(X,2,function(x) all(is.na(x)))
+    # X[,cx] <- 0
+    # 
+    # # scaling Z
+    # Z <- scale(Z)
+    # cz <- apply(Z,2,function(z) all(is.na(z)))
+    # Z[,cz] <- 0
+
     # return
     x <- list(X=X,Z=Z)
-    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop,sdx=sdx,sdz=sdz)
+    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop) # sdx=sdx,sdz=sdz
     return(x)
 }
 
@@ -561,6 +558,13 @@ NULL
 #' @examples
 #' 
 .simulate <- function(x,effects){
+    
+    ### start trial ###
+    for(i in seq_along(x)){
+        x[[i]] <- scale(x[[i]])
+        x[[i]][is.na(x[[i]])] <- 0
+    }
+    ### end trial ###
     
     # covariates
     if(length(x)!=length(effects)){stop("Invalid.")}
@@ -590,7 +594,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,trial=FALSE){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5){
     
     start <- Sys.time()
     
@@ -607,17 +611,10 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    if(trial){
-        # models
-        names <- c(paste0("standard_",c("x","z","xz")),
-                   paste0("adaptive_",c("x","z","xz")),"trial") 
-    } else {
-        # models
-        names <- c(paste0("standard_",c("x","z","xz")),
+
+    names <- c(paste0("standard_",c("x","z","xz")),
                paste0("adaptive_",c("x","z","xz")),"paired") 
-    }
-    
-    
+
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
     deviance <- auc <- rep(NA,times=length(names))
@@ -638,11 +635,16 @@ NULL
                                       length.out=sum(y0==1)))
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-                                   family="binomial",pmax=pmax,trial=trial)
+                                   family="binomial",pmax=pmax,
+                                   standard=TRUE,adaptive=TRUE)
+        
+        ## original
+        # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
+        #                           family="binomial",pmax=pmax)
         
         pred[fold.ext==i,] <- sapply(names,function(x)
             palasso:::predict.palasso(object=object,newdata=X1,model=x,
-                                      type="response",trial=trial))
+                                      type="response"))
     }
     
     for(i in seq_along(names)){
