@@ -675,16 +675,17 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,pmax=10,nfolds=5){
+.select <- function(y,X,index,pmax=10,nfolds=5,standard=TRUE,adaptive=FALSE){
     
     p <- ncol(X[[1]])
     k <- length(X)
     if(is.null(pmax)){pmax <- k*p}
     if(is.na(pmax)){pmax <- k*p}
     
-    fit <- palasso::palasso(y=y,X=X,family="binomial",pmax=pmax,nfolds=nfolds)
+    fit <- palasso::palasso(y=y,X=X,family="binomial",pmax=pmax,nfolds=nfolds,
+                            standard=standard,adaptive=adaptive)
     
-    names <- c(names(fit),"paired")
+    names <- unique(c(names(fit),"paired"))
     names <- names[!grepl(pattern="between_|within_",x=names)]
     
     ### start original ###
