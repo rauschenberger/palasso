@@ -12,7 +12,8 @@
 
 .simulate(x, effects)
 
-.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5)
+.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5,
+  standard = TRUE, adaptive = FALSE)
 
 .select(y, X, index, pmax = 10, nfolds = 5)
 }

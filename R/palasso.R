@@ -66,15 +66,6 @@
 #' 
 palasso <- function(y,X,standard=FALSE,adaptive=FALSE,...){
     
-    # scaling
-    cm1 <- lapply(X,function(x) apply(x,2,mean))
-    cm2 <- lapply(X,function(x) apply(x,2,stats::var))
-    cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
-    cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
-    if(any(cond1)|any(cond2)){ # maybe too strict
-        stop("Provide unstandardised covariates!")
-    }
-
     # checks
     base <- list(...)
     funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
@@ -104,6 +95,15 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,...){
     # check: paired covariates
     # - same p for all elements
     # - correlation between elements
+    
+    # scaling
+    cm1 <- lapply(X,function(x) apply(x,2,mean))
+    cm2 <- lapply(X,function(x) apply(x,2,stats::var))
+    cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
+    cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
+    if(any(cond1)|any(cond2)){ # maybe too strict
+        stop("Provide unstandardised covariates!")
+    }
     
     # penalty factor
     if(!is.null(base$penalty.factor)){

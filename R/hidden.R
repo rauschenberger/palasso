@@ -594,7 +594,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=FALSE){
     
     start <- Sys.time()
     
@@ -611,9 +611,18 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-
-    names <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),"paired") 
+    names <- "paired"
+    if(adaptive){
+        adapt <- paste0("adaptive_",c("x","z","xz"))
+        names <- c(adapt,names)
+    }
+    if(standard){
+        stand <- paste0("standard_",c("x","z","xz"))
+        names <- c(stand,names)
+    }
+    
+    #names <- c(paste0("standard_",c("x","z","xz")),
+    #         paste0("adaptive_",c("x","z","xz")),"paired") 
 
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
@@ -636,7 +645,7 @@ NULL
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
                                    family="binomial",pmax=pmax,
-                                   standard=TRUE,adaptive=TRUE)
+                                   standard=standard,adaptive=adaptive)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
