@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -107,7 +108,7 @@
     <p>Functions for the <code>palasso</code> manuscript.</p>
     
 
-    <pre><span class='fu'>plot_score</span>(<span class='no'>X</span>, <span class='kw'>choice</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>plot_score</span>(<span class='no'>X</span>, <span class='kw'>choice</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>plot_table</span>(<span class='no'>X</span>, <span class='kw'>margin</span> <span class='kw'>=</span> <span class='fl'>2</span>)
 
@@ -187,12 +188,12 @@ column is smaller (blue), equal (white), or larger (red).</p>
 
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>4</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_score</span>(<span class='no'>X</span>)</div><img src='plots-2.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_score</a></span>(<span class='no'>X</span>)</div><div class='img'><img src='plots-1.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>### table ###</span>
 
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_table</span>(<span class='no'>X</span>,<span class='kw'>margin</span><span class='kw'>=</span><span class='fl'>1</span>)</div><img src='plots-4.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_table</a></span>(<span class='no'>X</span>,<span class='kw'>margin</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='img'><img src='plots-2.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>### circle ###</span>
 
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
@@ -202,21 +203,21 @@ column is smaller (blue), equal (white), or larger (red).</p>
 <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='fu'>seq_len</span>(<span class='no'>p</span>),<span class='kw'>function</span>(<span class='no'>i</span>) <span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>X</span>[,<span class='no'>i</span>],<span class='no'>Z</span>[,<span class='no'>i</span>])))
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>pmax</span>(<span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>X</span>)),<span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>Z</span>)),<span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
 
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_circle</span>(<span class='no'>b</span>,<span class='no'>w</span>)</div><img src='plots-6.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_circle</a></span>(<span class='no'>b</span>,<span class='no'>w</span>)</div><div class='img'><img src='plots-3.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>### box ###</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_box</span>(<span class='no'>X</span>,<span class='kw'>choice</span><span class='kw'>=</span><span class='fl'>5</span>)</div><img src='plots-8.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_box</a></span>(<span class='no'>X</span>,<span class='kw'>choice</span><span class='kw'>=</span><span class='fl'>5</span>)</div><div class='img'><img src='plots-4.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>### pairs ###</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='no'>n</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='no'>n</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_pairs</span>(<span class='no'>x</span>,<span class='no'>y</span>)</div><img src='plots-10.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_pairs</a></span>(<span class='no'>x</span>,<span class='no'>y</span>)</div><div class='img'><img src='plots-5.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 <span class='co'>### diff ###</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='no'>n</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>runif</span>(<span class='no'>n</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_diff</span>(<span class='no'>x</span>,<span class='no'>y</span>)</div><img src='plots-12.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/plots'>plot_diff</a></span>(<span class='no'>x</span>,<span class='no'>y</span>)</div><div class='img'><img src='plots-6.png' alt='' width='700' height='432.632880098887' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -64,7 +64,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial",pmax=10)
 #' 
-palasso <- function(y,X,standard=FALSE,adaptive=FALSE,...){
+palasso <- function(y,X,standard=FALSE,adaptive=FALSE,devel=FALSE,...){
     
     # checks
     base <- list(...)
@@ -161,15 +161,23 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,...){
     
     weight <- list()
 
-    # paired lasso
-    groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-    pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
-    pairs[is.na(pairs)] <- 0
-    weight[[1]] <- groups*pairs
-    names(weight) <- "paired"
+    if(devel){
+        # weighted lasso
+        weight[[1]] <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+        weight[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
+        weight[[2]][is.na(weight[[2]])] <- 0
+        names(weight) <- paste0(c("between_","within_"),paste(names,collapse=""))
+    } else {
+        # paired lasso
+        groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+        pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
+        pairs[is.na(pairs)] <- 0
+        weight[[1]] <- groups*pairs
+        names(weight) <- "paired"
+    }
     
     # standard lasso
-    if(standard){ 
+    if(standard|adaptive){ 
         stand <- list()
         for(i in seq_len(k)){
             stand[[i]] <- rep(1*(seq_len(k)==i),each=p)
@@ -177,7 +185,9 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,...){
         names(stand) <- paste0("standard_",names)
         stand[[k+1]] <- rep(1/k,times=k*p)
         names(stand)[k+1] <- paste0("standard_",paste(names,collapse=""))
-        weight <- c(weight,stand)
+        if(standard){
+            weight <- c(weight,stand)
+        }
     }
     
     # adaptive lasso

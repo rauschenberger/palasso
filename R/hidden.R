@@ -271,6 +271,9 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
     graphics::title(ylab=ylab,line=2.5)
     palasso:::.mtext(text=colnames(X),side=1)
     
+    graphics::abline(h=max(apply(X,2,mean)),col="grey",lty=2)
+    graphics::abline(h=max(apply(X,2,stats::median)),col="grey")
+    
     for(i in seq_len(p)){
         # vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
         graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
@@ -396,7 +399,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     centre <- 0.5*(temp[-1]+temp[-length(temp)])
     # checks
     cond <- logical()
-    cond[1] <- length(unique(groups))>1
+    cond[1] <- length(unique(groups))>=1 # trial! was >1 instead of >=1
     cond[2] <- length(unique(groups))==length(border)+1
     cond[3] <- length(unique(groups))<p
     at <- function(x){
@@ -408,7 +411,9 @@ plot_diff <- function(x,y,prob=0.95,...){
     }
     if(all(cond)){
         graphics::mtext(text=names,side=side,at=at(seq_len(p)))
-        graphics::mtext(text="|",side=side,at=at(border),font=2)
+        if(length(unique(groups))!=1){
+            graphics::mtext(text="|",side=side,at=at(border),font=2)
+        }
         graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
     } else {
         graphics::mtext(text=text,side=side,at=at(seq_len(p)))
@@ -594,7 +599,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=FALSE){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=FALSE,devel=TRUE){
     
     start <- Sys.time()
     
@@ -611,7 +616,7 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    names <- "paired"
+    names <- "devel"
     if(adaptive){
         adapt <- paste0("adaptive_",c("x","z","xz"))
         names <- c(adapt,names)
@@ -645,7 +650,8 @@ NULL
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
                                    family="binomial",pmax=pmax,
-                                   standard=standard,adaptive=adaptive)
+                                   standard=standard,adaptive=adaptive,
+                                   devel=devel)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
