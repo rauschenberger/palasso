@@ -599,7 +599,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=FALSE,devel=TRUE){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,...){
     
     start <- Sys.time()
     
@@ -616,18 +616,22 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    names <- "devel"
-    if(adaptive){
-        adapt <- paste0("adaptive_",c("x","z","xz"))
-        names <- c(adapt,names)
-    }
-    if(standard){
-        stand <- paste0("standard_",c("x","z","xz"))
-        names <- c(stand,names)
-    }
+    # if(devel){
+    #     names <- "devel"
+    # } else {
+    #     names <- "paired"
+    # }
+    # if(adaptive){
+    #     adapt <- paste0("adaptive_",c("x","z","xz"))
+    #     names <- c(adapt,names)
+    # }
+    # if(standard){
+    #     stand <- paste0("standard_",c("x","z","xz"))
+    #     names <- c(stand,names)
+    # }
     
-    #names <- c(paste0("standard_",c("x","z","xz")),
-    #         paste0("adaptive_",c("x","z","xz")),"paired") 
+    names <- c(paste0("standard_",c("x","z","xz")),
+               paste0("adaptive_",c("x","z","xz")),"paired") 
 
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
@@ -648,10 +652,8 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-                                   family="binomial",pmax=pmax,
-                                   standard=standard,adaptive=adaptive,
-                                   devel=devel)
+        object <- palasso::palasso(y=y0,X=X0,sparse=NA,foldid=fold.int,
+                                   family="binomial",pmax=pmax,...)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
@@ -681,15 +683,14 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,pmax=10,nfolds=5,standard=TRUE,adaptive=FALSE){
+.select <- function(y,X,index,pmax=10,nfolds=5){
     
     p <- ncol(X[[1]])
     k <- length(X)
     if(is.null(pmax)){pmax <- k*p}
     if(is.na(pmax)){pmax <- k*p}
     
-    fit <- palasso::palasso(y=y,X=X,family="binomial",pmax=pmax,nfolds=nfolds,
-                            standard=standard,adaptive=adaptive)
+    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",pmax=pmax,nfolds=nfolds)
     
     names <- unique(c(names(fit),"paired"))
     names <- names[!grepl(pattern="between_|within_",x=names)]

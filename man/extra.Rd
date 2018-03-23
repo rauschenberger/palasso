@@ -12,11 +12,9 @@
 
 .simulate(x, effects)
 
-.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5,
-  standard = TRUE, adaptive = FALSE, devel = TRUE)
+.predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5, ...)
 
-.select(y, X, index, pmax = 10, nfolds = 5, standard = TRUE,
-  adaptive = FALSE)
+.select(y, X, index, pmax = 10, nfolds = 5)
 }
 \arguments{
 \item{X}{covariates\strong{:}
@@ -34,13 +32,13 @@ vector of length \eqn{n}}
 
 \item{nfolds.ext}{number of external folds}
 
+\item{...}{arguments for \link[palasso]{palasso}}
+
 \item{index}{indices of causal covariates\strong{:}
 list of length \eqn{k},
 including vectors}
 
 \item{trial}{development option}
-
-\item{...}{arguments for \link[palasso]{palasso}}
 }
 \value{
 to do

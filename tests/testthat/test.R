@@ -3,8 +3,6 @@
 
 set.seed(1)
 
-if(FALSE){
-
 for(family in c("gaussian","binomial","poisson","cox")){
     
     rm(list=setdiff(ls(),"family"))
@@ -32,7 +30,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
         stop("Invalid family!")
     }
     
-    fit <- palasso::palasso(y=y,X=X,family=family,pmax=pmax)
+    fit <- palasso::palasso(y=y,X=X,sparse=NA,family=family,pmax=pmax)
     
     names <- c(names(fit),"paired")
     weights <- lapply(X=names,FUN=function(x) weights(object=fit,model=x))
@@ -154,9 +152,6 @@ for(family in c("gaussian","binomial","poisson","cox")){
     
 }
     
-}
-
-
 
 
 # ### Cox regression ###

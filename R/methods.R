@@ -234,13 +234,29 @@ subset.palasso <- function(x,model="paired",...){
         stop("Different loss functions!")
     }
     
-    if(model=="devel"){
-        pattern <- "standard|between|within" # temporary
-    } else {
+    # start trial #
+    sparse <- attributes(x)$info$sparse
+    if(model!="paired"){
         pattern <- model
+    } else if(is.null(sparse)){
+        pattern <- "naive"
+    } else if(is.na(sparse)){
+        pattern <- "adaptive|between|within"
+    } else if(sparse){
+        pattern <- "adaptive|between|within"
+    } else if(!sparse){
+        pattern <- "standard|between|within"
     }
+    cond <- grepl(pattern=pattern,x=names(x))
+    # end trial
     
-    cond <- grepl(pattern=pattern,x=names(x)) # trial
+    #if(model=="devel"){
+    #    pattern <- "standard|between|within" # temporary
+    #} else {
+    #    pattern <- model
+    #}
+    
+    #cond <- grepl(pattern=pattern,x=names(x)) # trial
     # cond <- names(x) %in% model # trial
 
     ## original

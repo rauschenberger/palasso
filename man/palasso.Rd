@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, standard = FALSE, adaptive = FALSE, devel = FALSE, ...)
+palasso(y, X, sparse = TRUE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -15,10 +15,8 @@ list of matrices,
 each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
-\item{standard}{Fit standard lasso for comparison.
-\code{logical}}
-
-\item{adaptive}{Fit adaptive lasso for comparison.
+\item{sparse}{Set to \code{TRUE} if \code{pmax} \eqn{<= p^*},
+i.e. below optimal number of non-zero coefficients.
 \code{logical}}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
@@ -50,10 +48,11 @@ and \code{penalty.factor} must not be used.
 }
 \examples{
 set.seed(1)
-n <- 40; p <- 1000
+n <- 40; p <- 10
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 object <- palasso(y=y,X=X,family="binomial",pmax=10)
+names(object)
 
 }
 \references{

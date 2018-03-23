@@ -20,12 +20,9 @@
 #' each with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
-#' @param standard
-#' Fit standard lasso for comparison.
-#' \code{logical}
-#' 
-#' @param adaptive
-#' Fit adaptive lasso for comparison.
+#' @param sparse
+#' Set to \code{TRUE} if \code{pmax} \eqn{<= p^*},
+#' i.e. below optimal number of non-zero coefficients.
 #' \code{logical}
 #' 
 #' @param ...
@@ -59,17 +56,32 @@
 #' 
 #' @examples
 #' set.seed(1)
-#' n <- 40; p <- 1000
+#' n <- 40; p <- 10
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial",pmax=10)
+#' names(object)
 #' 
-palasso <- function(y,X,standard=FALSE,adaptive=FALSE,devel=FALSE,...){
+palasso <- function(y,X,sparse=TRUE,...){
+    
+    # to fit:
+    fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
+    if(is.null(sparse)){
+        fit$naive <- TRUE
+    } else if(is.na(sparse)){
+        fit$standard <- fit$adaptive <- fit$weighted <- TRUE
+    } else if(sparse){
+        fit$adaptive <- fit$weighted <- TRUE
+    } else if(!sparse){
+        fit$standard <- fit$weighted <- TRUE
+    } else {
+        stop("Invalid argument \"sparse\".")
+    }
     
     # checks
     base <- list(...)
     funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
-    formals <- unlist(lapply(funs,function(x) formals(x)),recursive=FALSE) # changed!
+    formals <- unlist(lapply(funs,function(x) formals(x)),recursive=FALSE)
     if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
  
     # arguments
@@ -85,25 +97,15 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,devel=FALSE,...){
     }
     
     # dimensionality
+    if(length(unique(lapply(X,dim)))!=1){
+        stop("Invalid argument \"X\".")
+    }
     k <- ifelse(is.list(X),length(X),1)
     if(k==1){
         stop("Invalid argument \"X\".")
     }
     n <- nrow(X[[1]])
     p <- ncol(X[[1]])
-    
-    # check: paired covariates
-    # - same p for all elements
-    # - correlation between elements
-    
-    # scaling
-    cm1 <- lapply(X,function(x) apply(x,2,mean))
-    cm2 <- lapply(X,function(x) apply(x,2,stats::var))
-    cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
-    cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
-    if(any(cond1)|any(cond2)){ # maybe too strict
-        stop("Provide unstandardised covariates!")
-    }
     
     # penalty factor
     if(!is.null(base$penalty.factor)){
@@ -153,55 +155,76 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,devel=FALSE,...){
         cor[[i]][is.na(cor[[i]])] <- 0
     }
     
-    # standard deviation
-    sd <- list()
-    for(i in seq_len(k)){
-        sd[[i]] <- apply(X[[i]],2,stats::sd)
+    # sparsity constraint
+    if(!is.null(sparse)){
+        if(!is.na(sparse)){
+            if(sparse==is.null(base$pmax)){
+                warning("Provide \"pmax\" iff \"sparse=TRUE\".")
+            }
+        }
     }
     
     weight <- list()
-
-    if(devel){
-        # weighted lasso
-        weight[[1]] <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-        weight[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
-        weight[[2]][is.na(weight[[2]])] <- 0
-        names(weight) <- paste0(c("between_","within_"),paste(names,collapse=""))
-    } else {
-        # paired lasso
-        groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-        pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
-        pairs[is.na(pairs)] <- 0
-        weight[[1]] <- groups*pairs
-        names(weight) <- "paired"
-    }
     
     # standard lasso
-    if(standard|adaptive){ 
-        stand <- list()
+    if(fit$standard){ 
+        temp <- list()
         for(i in seq_len(k)){
-            stand[[i]] <- rep(1*(seq_len(k)==i),each=p)
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)
         }
-        names(stand) <- paste0("standard_",names)
-        stand[[k+1]] <- rep(1/k,times=k*p)
-        names(stand)[k+1] <- paste0("standard_",paste(names,collapse=""))
-        if(standard){
-            weight <- c(weight,stand)
-        }
+        names(temp) <- paste0("standard_",names)
+        temp[[k+1]] <- rep(1/k,times=k*p)
+        names(temp)[k+1] <- paste0("standard_",paste(names,collapse=""))
+        weight <- c(weight,temp)
     }
     
     # adaptive lasso
-    if(adaptive){ 
-        adapt <- list()
+    if(fit$adaptive){ 
+        temp <- list()
         for(i in seq_len(k)){
-            adapt[[i]] <- stand[[i]]*cor[[i]]
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] # was <- stand[[i]]*cor[[i]] 
         }
-        names(adapt) <- paste0("adaptive_",names)
-        adapt[[k+1]] <- unlist(cor)
-        names(adapt)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
-        weight <- c(weight,adapt)
+        names(temp) <- paste0("adaptive_",names)
+        temp[[k+1]] <- unlist(cor)
+        names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
+        weight <- c(weight,temp)
     }
-
+    
+    # weighted lasso
+    if(fit$weighted){
+        temp <- list() 
+        temp[[1]] <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+        temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
+        temp[[2]][is.na(temp[[2]])] <- 0
+        names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
+        weight <- c(weight,temp)
+    }
+    
+    # naive lasso
+    if(fit$naive){
+        # standard deviation
+        sd <- list()
+        for(i in seq_len(k)){
+            sd[[i]] <- apply(X[[i]],2,stats::sd)
+        }
+        # scaling
+        cm1 <- lapply(X,function(x) apply(x,2,mean))
+        cm2 <- lapply(X,function(x) apply(x,2,stats::var))
+        cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
+        cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
+        if(any(cond1)|any(cond2)){ # too strict?
+            stop("Provide unstandardised covariates!")
+        }
+        # weighting
+        temp <- list()
+        groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+        pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
+        pairs[is.na(pairs)] <- 0
+        temp[[1]] <- groups*pairs
+        names(temp) <- "naive"
+        weight <- c(weight,temp)
+    }
+    
     # cross-validation
     model <- list()
     args <- base
@@ -216,7 +239,7 @@ palasso <- function(y,X,standard=FALSE,adaptive=FALSE,devel=FALSE,...){
     
     # output
     call <- sapply(list(...),function(x) deparse(x))
-    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call)
+    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,sparse=sparse)
     class(model) <- "palasso"
     return(model)
 }
