@@ -130,7 +130,7 @@ plot_score <- function(X,choice=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_table(X,margin=1)
 #' 
-plot_table <- function(X,margin=2){
+plot_table <- function(X,margin=2,labels=TRUE,las=1){
     
     n <- nrow(X); p <- ncol(X)
     if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
@@ -142,8 +142,8 @@ plot_table <- function(X,margin=2){
     graphics::plot.new()
     graphics::plot.window(xlim=c(-h,1+h),ylim=c(-v,1+v))
     graphics::par(usr=c(-h,1+h,-v,1+v))
-    palasso:::.mtext(text=rev(rownames(X)),unit=TRUE,side=2)
-    palasso:::.mtext(text=colnames(X),unit=TRUE,side=3)
+    palasso:::.mtext(text=rev(rownames(X)),unit=TRUE,side=2,las=las)
+    palasso:::.mtext(text=colnames(X),unit=TRUE,side=3,las=las)
     
     if(margin==0){
         temp <- matrix(rank(X),nrow=n,ncol=p) # overall rank
@@ -155,6 +155,7 @@ plot_table <- function(X,margin=2){
         temp <- apply(X,2,rank) # rank per column
     }
     
+    temp[is.na(X)] <- NA # temporary
     image <- t(temp)[,seq(from=n,to=1,by=-1)]
     col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
     graphics::image(x=image,col=col,add=TRUE)
@@ -170,10 +171,12 @@ plot_table <- function(X,margin=2){
                            col="white",lwd=3)
     }
     
-    labels <- round(as.numeric(X),digits=2)
-    xs <- rep(seq_len(p),each=n)
-    ys <- rep(seq_len(n),times=p)
-    graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
+    if(labels){
+        labels <- round(as.numeric(X),digits=2)
+        xs <- rep(seq_len(p),each=n)
+        ys <- rep(seq_len(n),times=p)
+        graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
+    }
 }
 
 #' @rdname plots
@@ -381,7 +384,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
 }
 
-.mtext <- function(text,unit=FALSE,side=1){
+.mtext <- function(text,unit=FALSE,side=1,las=1){
     p <- length(text)
     # separator
     pattern <- c("_",".","|","+","-",":","*","^","$"," ")
@@ -410,13 +413,13 @@ plot_diff <- function(x,y,prob=0.95,...){
         }
     }
     if(all(cond)){
-        graphics::mtext(text=names,side=side,at=at(seq_len(p)))
+        graphics::mtext(text=names,side=side,at=at(seq_len(p)),las=las)
         if(length(unique(groups))!=1){
             graphics::mtext(text="|",side=side,at=at(border),font=2)
         }
         graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
     } else {
-        graphics::mtext(text=text,side=side,at=at(seq_len(p)))
+        graphics::mtext(text=text,side=side,at=at(seq_len(p)),las=las)
     }
 }
 

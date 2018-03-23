@@ -12,7 +12,7 @@
 \usage{
 plot_score(X, choice = NULL)
 
-plot_table(X, margin = 2)
+plot_table(X, margin = 2, labels = TRUE, las = 1)
 
 plot_circle(b, w, cutoff = NULL, group = NULL)
 
