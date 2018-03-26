@@ -8,13 +8,13 @@
 \alias{.select}
 \title{Hidden functions (analysis)}
 \usage{
-.prepare(X, cutoff = NULL)
+.prepare(X, cutoff = NULL, quantile = 0.8)
 
 .simulate(x, effects)
 
 .predict(y, X, pmax = NULL, nfolds.ext = 5, nfolds.int = 5, ...)
 
-.select(y, X, index, pmax = 10, nfolds = 5)
+.select(y, X, index, pmax = 10, nfolds = 5, ...)
 }
 \arguments{
 \item{X}{covariates\strong{:}
@@ -76,6 +76,7 @@ x <- palasso:::.prepare(X)
 y <- palasso:::.simulate(x,effects=c(1,2))
 palasso:::.predict(y,x)
 palasso:::.select(y,x,attributes(y))
+
 
 
 

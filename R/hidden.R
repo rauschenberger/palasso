@@ -505,7 +505,8 @@ NULL
 #' @rdname extra
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL){
+.prepare <- function(X,cutoff=NULL,quantile=0.8){
+    # original: cutoff=NULL (with 0.05*n below) and quantile=NULL
     
     # checks
     if(nrow(X)>=ncol(X)){
@@ -519,7 +520,8 @@ NULL
     lib.size <- Matrix::rowSums(X)
     abundance <- Matrix::colSums(X)
     if(is.null(cutoff)){
-        cutoff <- 0.05*nrow(X) 
+        # cutoff <- 0.05*nrow(X) # original
+        cutoff <- 2*nrow(X)
     }
     X <- X[,abundance>=cutoff]
     X <- Matrix::as.matrix(X)
@@ -532,8 +534,12 @@ NULL
     
     # transform Z
     Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
-    Z[,] <- X > 0 # zero-indicator
-    # alternative: Z[,] <- X > stats::quantile(X,p=0.8) # quantile
+    if(is.null(quantile)){
+        Z[,] <- X > 0 # zero-indicator 
+    } else {
+        # Z[,] <- X > stats::quantile(X,probs=quantile) # quantile
+        Z[,] <- t(apply(X,1,function(x) x > stats::quantile(x=x,probs=quantile)))
+    }
     
     # transform X
     X <- 2*sqrt(X+3/8) # Anscombe transform
@@ -602,6 +608,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
+#' 
 .predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,...){
     
     start <- Sys.time()
@@ -638,8 +645,9 @@ NULL
 
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
-    deviance <- auc <- rep(NA,times=length(names))
-    colnames(pred) <- names(deviance) <- names(auc) <- names
+    temp <- rep(NA,times=length(names))
+    names(temp) <- names
+    deviance <- auc <- mse <- mae <- class <- temp
     
     # cross-validation
     for(i in seq_len(nfolds.ext)){
@@ -668,16 +676,21 @@ NULL
     }
     
     for(i in seq_along(names)){
+        y_hat <- pred[,i]
+        mse[i] <- mean((y_hat-y)^2)
+        mae[i] <- mean(abs(y_hat-y))
+        class[i] <- mean(abs(round(y_hat)-y))
         y_hat <- pmax(1e-05,pmin(pred[,i],1-1e-05))
         deviance[i] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
         auc[i] <- pROC::roc(response=y,predictor=y_hat)$auc
+
     }
     
     end <- Sys.time()
     
     info <- data.frame(nfolds.ext=nfolds.ext,nfolds.int=nfolds.int,
                        time=format(end-start))
-    list <- list(info=info,deviance=deviance,auc=auc)
+    list <- list(info=info,deviance=deviance,auc=auc,mse=mse,mae=mae,class=class)
     
     return(list)
 }
@@ -686,14 +699,15 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,pmax=10,nfolds=5){
+.select <- function(y,X,index,pmax=10,nfolds=5,...){
     
     p <- ncol(X[[1]])
     k <- length(X)
     if(is.null(pmax)){pmax <- k*p}
     if(is.na(pmax)){pmax <- k*p}
     
-    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",pmax=pmax,nfolds=nfolds)
+    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",
+                            pmax=pmax,nfolds=nfolds,...)
     
     names <- unique(c(names(fit),"paired"))
     names <- names[!grepl(pattern="between_|within_",x=names)]
