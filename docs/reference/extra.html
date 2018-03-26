@@ -195,38 +195,38 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.prepare</span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
 <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
-#&gt;   nfolds.ext nfolds.int       time
-#&gt; 1          5          5 2.854 secs
+#&gt;   nfolds.ext nfolds.int          time
+#&gt; 1          5          5 2.781278 secs
 #&gt; 
 #&gt; $deviance
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;    1.361982    1.380267    1.375194    1.354569    1.773626    1.345416 
-#&gt;      paired 
-#&gt;    1.354569 
+#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
+#&gt;        1.361982        1.380267        1.375194        1.354569        1.773626 
+#&gt;     adaptive_xz paired_adaptive paired_standard 
+#&gt;        1.345416        1.354569        1.364156 
 #&gt; 
 #&gt; $auc
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;   0.5844156   0.4772727   0.5324675   0.6737013   0.4797078   0.6525974 
-#&gt;      paired 
-#&gt;   0.6737013 
+#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
+#&gt;       0.5844156       0.4772727       0.5324675       0.6737013       0.4797078 
+#&gt;     adaptive_xz paired_adaptive paired_standard 
+#&gt;       0.6525974       0.6737013       0.5754870 
 #&gt; 
 #&gt; $mse
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;   0.2438689   0.2484933   0.2471049   0.2341794   0.3149251   0.2387258 
-#&gt;      paired 
-#&gt;   0.2341794 
+#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
+#&gt;       0.2438689       0.2484933       0.2471049       0.2341794       0.3149251 
+#&gt;     adaptive_xz paired_adaptive paired_standard 
+#&gt;       0.2387258       0.2341794       0.2444059 
 #&gt; 
 #&gt; $mae
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;   0.4885832   0.4947769   0.4922335   0.4204224   0.5044301   0.4307796 
-#&gt;      paired 
-#&gt;   0.4204224 
+#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
+#&gt;       0.4885832       0.4947769       0.4922335       0.4204224       0.5044301 
+#&gt;     adaptive_xz paired_adaptive paired_standard 
+#&gt;       0.4307796       0.4204224       0.4890960 
 #&gt; 
 #&gt; $class
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;        0.44        0.46        0.42        0.32        0.52        0.36 
-#&gt;      paired 
-#&gt;        0.32 
+#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
+#&gt;            0.44            0.46            0.42            0.32            0.52 
+#&gt;     adaptive_xz paired_adaptive paired_standard 
+#&gt;            0.36            0.32            0.44 
 #&gt; </div><div class='input'><span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
 #&gt;           2           0           2           8           7           8 

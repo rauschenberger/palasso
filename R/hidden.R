@@ -641,7 +641,8 @@ NULL
     # }
     
     names <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),"paired") 
+               paste0("adaptive_",c("x","z","xz")),
+               "paired_adaptive","paired_standard") 
 
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
@@ -670,9 +671,19 @@ NULL
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
         #                           family="binomial",pmax=pmax)
         
-        pred[fold.ext==i,] <- sapply(names,function(x)
+        pred[fold.ext==i,1:6] <- sapply(names[1:6],function(x)
             palasso:::predict.palasso(object=object,newdata=X1,model=x,
                                       type="response"))
+        pred[fold.ext==i,7] <- palasso:::predict.palasso(
+                    object=object,
+                    newdata=X1,
+                    model="adaptive|between|within",
+                    type="response")
+        pred[fold.ext==i,8] <- palasso:::predict.palasso(
+                    object=object,
+                    newdata=X1,
+                    model="standard|between|within",
+                    type="response")
     }
     
     for(i in seq_along(names)){
@@ -683,7 +694,6 @@ NULL
         y_hat <- pmax(1e-05,pmin(pred[,i],1-1e-05))
         deviance[i] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
         auc[i] <- pROC::roc(response=y,predictor=y_hat)$auc
-
     }
     
     end <- Sys.time()
