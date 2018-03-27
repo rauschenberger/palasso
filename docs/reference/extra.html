@@ -107,11 +107,12 @@
     <p>Functions for the <code>palasso</code> manuscript.</p>
     
 
-    <pre><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quantile</span> <span class='kw'>=</span> <span class='fl'>0.8</span>)
+    <pre><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quantile</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>.simulate</span>(<span class='no'>x</span>, <span class='no'>effects</span>)
 
-<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)
+<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+  <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
 <span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
     
@@ -194,50 +195,50 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>4</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.prepare</span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
-#&gt;   nfolds.ext nfolds.int          time
-#&gt; 1          5          5 2.781278 secs
+<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; $info
+#&gt;   nfolds.ext nfolds.int        time
+#&gt; 1          5          5 2.3168 secs
 #&gt; 
 #&gt; $deviance
-#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
-#&gt;        1.361982        1.380267        1.375194        1.354569        1.773626 
-#&gt;     adaptive_xz paired_adaptive paired_standard 
-#&gt;        1.345416        1.354569        1.364156 
+#&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
+#&gt;    1.361982    1.380267    1.375194    1.388501    1.394127    1.362967 
+#&gt;     paired1     paired2     paired3 
+#&gt;    1.361982    1.364156    1.361982 
 #&gt; 
 #&gt; $auc
-#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
-#&gt;       0.5844156       0.4772727       0.5324675       0.6737013       0.4797078 
-#&gt;     adaptive_xz paired_adaptive paired_standard 
-#&gt;       0.6525974       0.6737013       0.5754870 
+#&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
+#&gt;   0.5844156   0.4772727   0.5324675   0.5292208   0.4715909   0.5649351 
+#&gt;     paired1     paired2     paired3 
+#&gt;   0.5844156   0.5754870   0.5844156 
 #&gt; 
 #&gt; $mse
-#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
-#&gt;       0.2438689       0.2484933       0.2471049       0.2341794       0.3149251 
-#&gt;     adaptive_xz paired_adaptive paired_standard 
-#&gt;       0.2387258       0.2341794       0.2444059 
+#&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
+#&gt;   0.2438689   0.2484933   0.2471049   0.2504348   0.2520069   0.2441610 
+#&gt;     paired1     paired2     paired3 
+#&gt;   0.2438689   0.2444059   0.2438689 
 #&gt; 
 #&gt; $mae
-#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
-#&gt;       0.4885832       0.4947769       0.4922335       0.4204224       0.5044301 
-#&gt;     adaptive_xz paired_adaptive paired_standard 
-#&gt;       0.4307796       0.4204224       0.4890960 
+#&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
+#&gt;   0.4885832   0.4947769   0.4922335   0.4959735   0.4950790   0.4885495 
+#&gt;     paired1     paired2     paired3 
+#&gt;   0.4885832   0.4890960   0.4885832 
 #&gt; 
 #&gt; $class
-#&gt;      standard_x      standard_z     standard_xz      adaptive_x      adaptive_z 
-#&gt;            0.44            0.46            0.42            0.32            0.52 
-#&gt;     adaptive_xz paired_adaptive paired_standard 
-#&gt;            0.36            0.32            0.44 
+#&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
+#&gt;        0.44        0.46        0.42        0.44        0.44        0.42 
+#&gt;     paired1     paired2     paired3 
+#&gt;        0.44        0.44        0.44 
 #&gt; </div><div class='input'><span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
 #&gt;           2           0           2           8           7           8 
-#&gt;      paired 
-#&gt;           8 
+#&gt;  combine_xz      paired 
+#&gt;           2           8 
 #&gt; 
 #&gt; $hits
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
 #&gt;           1           0           1           2           1           2 
-#&gt;      paired 
-#&gt;           2 
+#&gt;  combine_xz      paired 
+#&gt;           1           2 
 #&gt; </div><div class='input'>
 
 

@@ -67,7 +67,7 @@ palasso <- function(y,X,sparse=TRUE,...){
     # to fit:
     fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
     if(is.null(sparse)){
-        fit$naive <- TRUE
+        fit$naive <- fit$standard <- TRUE
     } else if(is.na(sparse)){
         fit$standard <- fit$adaptive <- fit$weighted <- TRUE
     } else if(sparse){
@@ -198,6 +198,20 @@ palasso <- function(y,X,sparse=TRUE,...){
         temp[[2]][is.na(temp[[2]])] <- 0
         names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
         weight <- c(weight,temp)
+        ### trial start ### (remove this?)
+        #extra <- list()
+        #extra[[1]] <- temp[[1]]*temp[[2]]
+        #names(extra) <- "combine_xz"
+        #weight <- c(weight,temp1)
+        ### trial end ### (remove this?)
+        ### trial start ###
+        cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
+        cc[is.na(cc)] <- 0
+        extra <- list()
+        extra[[1]] <- rep(x=(2-cc)/2,times=2)
+        names(extra) <- "combine_xz"
+        weight <- c(weight,extra)
+        ### trial end ###
     }
     
     # naive lasso

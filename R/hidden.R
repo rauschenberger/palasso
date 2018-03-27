@@ -274,9 +274,14 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
     graphics::title(ylab=ylab,line=2.5)
     palasso:::.mtext(text=colnames(X),side=1)
     
-    graphics::abline(h=max(apply(X,2,mean)),col="grey",lty=2)
-    graphics::abline(h=max(apply(X,2,stats::median)),col="grey")
-    
+    if(ylab %in% c("AUC","auc")){
+        graphics::abline(h=max(apply(X,2,mean)),col="grey",lty=2)
+        graphics::abline(h=max(apply(X,2,stats::median)),col="grey")
+    } else if(ylab %in% c("MSE","deviance","mse")){
+        graphics::abline(h=min(apply(X,2,mean)),col="grey",lty=2)
+        graphics::abline(h=min(apply(X,2,stats::median)),col="grey")
+    }
+
     for(i in seq_len(p)){
         # vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
         graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
@@ -505,7 +510,7 @@ NULL
 #' @rdname extra
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL,quantile=0.8){
+.prepare <- function(X,cutoff=NULL,quantile=0.8,scale=TRUE){
     # original: cutoff=NULL (with 0.05*n below) and quantile=NULL
     
     # checks
@@ -550,16 +555,17 @@ NULL
     sdx <- apply(X,2,stats::sd)
     sdz <- apply(Z,2,stats::sd)
     
-    ## original
-    # # scaling X
-    # X <- scale(X)
-    # cx <- apply(X,2,function(x) all(is.na(x)))
-    # X[,cx] <- 0
-    # 
-    # # scaling Z
-    # Z <- scale(Z)
-    # cz <- apply(Z,2,function(z) all(is.na(z)))
-    # Z[,cz] <- 0
+    if(scale){
+    # scaling X
+    X <- scale(X)
+    cx <- apply(X,2,function(x) all(is.na(x)))
+    X[,cx] <- 0
+
+    # scaling Z
+    Z <- scale(Z)
+    cz <- apply(Z,2,function(z) all(is.na(z)))
+    Z[,cz] <- 0
+    }
 
     # return
     x <- list(X=X,Z=Z)
@@ -609,7 +615,7 @@ NULL
 #' @examples
 #' 
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,...){
+.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=FALSE,...){
     
     start <- Sys.time()
     
@@ -640,10 +646,17 @@ NULL
     #     names <- c(stand,names)
     # }
     
-    names <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),
-               "paired_adaptive","paired_standard") 
-
+    if(is.null(sparse)){
+        names <- c(paste0("standard_",c("x","z","xz")),
+                   "naive") 
+    } else {
+        names <- c(paste0("standard_",c("x","z","xz")),
+               #paste0("adaptive_",c("x","z","xz")),
+               "between_xz","within_xz","combine_xz",
+               #"paired_adaptive",
+               "paired1","paired2","paired3") 
+    }
+    
     # predictions
     pred <- matrix(NA,nrow=length(y),ncol=length(names))
     temp <- rep(NA,times=length(names))
@@ -664,26 +677,60 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,sparse=NA,foldid=fold.int,
+        object <- palasso::palasso(y=y0,X=X0,sparse=sparse,foldid=fold.int,
                                    family="binomial",pmax=pmax,...)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
         #                           family="binomial",pmax=pmax)
         
-        pred[fold.ext==i,1:6] <- sapply(names[1:6],function(x)
-            palasso:::predict.palasso(object=object,newdata=X1,model=x,
-                                      type="response"))
-        pred[fold.ext==i,7] <- palasso:::predict.palasso(
-                    object=object,
-                    newdata=X1,
-                    model="adaptive|between|within",
-                    type="response")
-        pred[fold.ext==i,8] <- palasso:::predict.palasso(
-                    object=object,
-                    newdata=X1,
-                    model="standard|between|within",
-                    type="response")
+
+        if(is.null(sparse)){
+            pred[fold.ext==i,1:3] <- sapply(names[1:3],function(x)
+                palasso:::predict.palasso(object=object,newdata=X1,model=x,
+                                          type="response"))
+            pred[fold.ext==i,4] <- palasso:::predict.palasso(
+                object=object,
+                newdata=X1,
+                model="naive",
+                type="response")
+        } else {
+            
+            pred[fold.ext==i,1:6] <- sapply(names[1:6],function(x)
+                palasso:::predict.palasso(object=object,newdata=X1,model=x,
+                                          type="response"))
+            
+            pred[fold.ext==i,7] <- palasso:::predict.palasso(
+                     object=object,
+                     newdata=X1,
+                     model="standard|between",
+                     type="response")
+            
+            pred[fold.ext==i,8] <- palasso:::predict.palasso(
+                object=object,
+                newdata=X1,
+                model="standard|between|within",
+                type="response")
+            
+            pred[fold.ext==i,9] <- palasso:::predict.palasso(
+                object=object,
+                newdata=X1,
+                model="standard|between|combined",
+                type="response")
+            
+            
+            # pred[fold.ext==i,7] <- palasso:::predict.palasso(
+            #         object=object,
+            #         newdata=X1,
+            #         model="adaptive|between|within",
+            #         type="response")
+            # pred[fold.ext==i,8] <- palasso:::predict.palasso(
+            #         object=object,
+            #         newdata=X1,
+            #         model="standard|between|within",
+            #         type="response")
+            
+        }
     }
     
     for(i in seq_along(names)){
