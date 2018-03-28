@@ -13,7 +13,7 @@
 .simulate(x, effects)
 
 .predict(y, X, dfmax = NULL, nfolds.ext = 5, nfolds.int = 5,
-  sparse = FALSE, ...)
+  sparse = NA, ...)
 
 .select(y, X, index, dfmax = 10, nfolds = 5, ...)
 }

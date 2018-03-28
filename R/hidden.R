@@ -526,7 +526,7 @@ NULL
     abundance <- Matrix::colSums(X)
     if(is.null(cutoff)){
         # cutoff <- 0.05*nrow(X) # original
-        cutoff <- 2*nrow(X)
+        cutoff <- nrow(X) # trial
     }
     X <- X[,abundance>=cutoff]
     X <- Matrix::as.matrix(X)
@@ -615,7 +615,7 @@ NULL
 #' @examples
 #' 
 #' 
-.predict <- function(y,X,dfmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=FALSE,...){
+.predict <- function(y,X,dfmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=NA,...){
     
     start <- Sys.time()
     
@@ -651,10 +651,10 @@ NULL
                    "naive") 
     } else {
         names <- c(paste0("standard_",c("x","z","xz")),
-               #paste0("adaptive_",c("x","z","xz")),
+               paste0("adaptive_",c("x","z","xz")),
                "between_xz","within_xz","combine_xz",
                #"paired_adaptive",
-               "paired1","paired2","paired3") 
+               "paired1","paired2","paired3","paired4","paired5") 
     }
     
     # predictions
@@ -696,27 +696,40 @@ NULL
                 type="response")
         } else {
             
-            pred[fold.ext==i,1:6] <- sapply(names[1:6],function(x)
+            pred[fold.ext==i,1:9] <- sapply(names[1:9],function(x)
                 palasso:::predict.palasso(object=object,newdata=X1,model=x,
                                           type="response"))
             
-            pred[fold.ext==i,7] <- palasso:::predict.palasso(
+            pred[fold.ext==i,10] <- palasso:::predict.palasso(
                      object=object,
                      newdata=X1,
-                     model="standard|between",
+                     model="standard|between|within",
                      type="response")
             
-            pred[fold.ext==i,8] <- palasso:::predict.palasso(
+            pred[fold.ext==i,11] <- palasso:::predict.palasso(
                 object=object,
                 newdata=X1,
-                model="standard|between|within",
+                model="adaptive|between|within",
                 type="response")
             
-            pred[fold.ext==i,9] <- palasso:::predict.palasso(
+            pred[fold.ext==i,12] <- palasso:::predict.palasso(
                 object=object,
                 newdata=X1,
-                model="standard|between|combined",
+                model="within|between|combined",
                 type="response")
+            
+            pred[fold.ext==i,13] <- palasso:::predict.palasso(
+                object=object,
+                newdata=X1,
+                model="standard_x|standard_z|between|within",
+                type="response")
+            
+            pred[fold.ext==i,14] <- palasso:::predict.palasso(
+                object=object,
+                newdata=X1,
+                model="adaptive_x|adaptive_z|between|within",
+                type="response")
+            
             
             
             # pred[fold.ext==i,7] <- palasso:::predict.palasso(
