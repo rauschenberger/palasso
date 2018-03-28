@@ -21,8 +21,8 @@
 #' and \eqn{p} columns (variables)
 #' 
 #' @param sparse
-#' Set to \code{TRUE} if \code{pmax} \eqn{<= p^*},
-#' i.e. below optimal number of non-zero coefficients.
+#' Set to \code{TRUE} if \code{dfmax} below 
+#' optimal number of non-zero coefficients.
 #' \code{logical}
 #' 
 #' @param ...
@@ -59,7 +59,7 @@
 #' n <- 40; p <- 10
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",pmax=10)
+#' object <- palasso(y=y,X=X,family="binomial",dfmax=10)
 #' names(object)
 #' 
 palasso <- function(y,X,sparse=TRUE,...){
@@ -92,8 +92,8 @@ palasso <- function(y,X,sparse=TRUE,...){
     if(!base$family %in% c("gaussian","binomial","poisson","cox")){
         stop("Invalid argument \"family\".")
     }
-    if(!is.null(base$pmax) & base$alpha==0){
-        stop("Unexpected argument \"pmax\" as \"alpha=0\".")
+    if(!is.null(base$dfmax) & base$alpha==0){
+        stop("Unexpected argument \"dfmax\" as \"alpha=0\".")
     }
     
     # dimensionality
@@ -158,8 +158,8 @@ palasso <- function(y,X,sparse=TRUE,...){
     # sparsity constraint
     if(!is.null(sparse)){
         if(!is.na(sparse)){
-            if(sparse==is.null(base$pmax)){
-                warning("Provide \"pmax\" iff \"sparse=TRUE\".")
+            if(sparse==is.null(base$dfmax)){
+                warning("Provide \"dfmax\" iff \"sparse=TRUE\".")
             }
         }
     }

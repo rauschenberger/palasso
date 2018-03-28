@@ -615,15 +615,15 @@ NULL
 #' @examples
 #' 
 #' 
-.predict <- function(y,X,pmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=FALSE,...){
+.predict <- function(y,X,dfmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=FALSE,...){
     
     start <- Sys.time()
     
     # dimensionality
     p <- unique(sapply(X,ncol))
     k <- length(X)
-    if(is.null(pmax)){pmax <- k*p}
-    if(is.na(pmax)){pmax <- k*p}
+    if(is.null(dfmax)){dfmax <- k*p}
+    if(is.na(dfmax)){dfmax <- k*p}
     
     # external folds
     fold.ext <- rep(NA,times=length(y))
@@ -678,11 +678,11 @@ NULL
                                       length.out=sum(y0==1)))
         
         object <- palasso::palasso(y=y0,X=X0,sparse=sparse,foldid=fold.int,
-                                   family="binomial",pmax=pmax,...)
+                                   family="binomial",dfmax=dfmax,...)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-        #                           family="binomial",pmax=pmax)
+        #                           family="binomial",dfmax=dfmax)
         
 
         if(is.null(sparse)){
@@ -756,15 +756,15 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,pmax=10,nfolds=5,...){
+.select <- function(y,X,index,dfmax=10,nfolds=5,...){
     
     p <- ncol(X[[1]])
     k <- length(X)
-    if(is.null(pmax)){pmax <- k*p}
-    if(is.na(pmax)){pmax <- k*p}
+    if(is.null(dfmax)){dfmax <- k*p}
+    if(is.na(dfmax)){dfmax <- k*p}
     
     fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",
-                            pmax=pmax,nfolds=nfolds,...)
+                            dfmax=dfmax,nfolds=nfolds,...)
     
     names <- unique(c(names(fit),"paired"))
     names <- names[!grepl(pattern="between_|within_",x=names)]

@@ -15,8 +15,8 @@ list of matrices,
 each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
-\item{sparse}{Set to \code{TRUE} if \code{pmax} \eqn{<= p^*},
-i.e. below optimal number of non-zero coefficients.
+\item{sparse}{Set to \code{TRUE} if \code{dfmax} below 
+optimal number of non-zero coefficients.
 \code{logical}}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
@@ -51,7 +51,7 @@ set.seed(1)
 n <- 40; p <- 10
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-object <- palasso(y=y,X=X,family="binomial",pmax=10)
+object <- palasso(y=y,X=X,family="binomial",dfmax=10)
 names(object)
 
 }

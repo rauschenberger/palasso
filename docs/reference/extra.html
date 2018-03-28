@@ -111,10 +111,10 @@
 
 <span class='fu'>.simulate</span>(<span class='no'>x</span>, <span class='no'>effects</span>)
 
-<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>,
+<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>dfmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>,
   <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)
 
-<span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>pmax</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>dfmax</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -195,9 +195,9 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>4</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.prepare</span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "pmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; $info
-#&gt;   nfolds.ext nfolds.int        time
-#&gt; 1          5          5 2.3168 secs
+<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "dfmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "dfmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "dfmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "dfmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Provide "dfmax" iff "sparse=TRUE".</span></div><div class='output co'>#&gt; $info
+#&gt;   nfolds.ext nfolds.int          time
+#&gt; 1          5          5 2.298205 secs
 #&gt; 
 #&gt; $deviance
 #&gt;  standard_x  standard_z standard_xz  between_xz   within_xz  combine_xz 
@@ -230,7 +230,7 @@ selected covariates, and the number of correctly selected covariates.</p>
 #&gt;        0.44        0.44        0.44 
 #&gt; </div><div class='input'><span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;           2           0           2           8           7           8 
+#&gt;           2           0           2           8           8           8 
 #&gt;  combine_xz      paired 
 #&gt;           2           8 
 #&gt; 

@@ -8,7 +8,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
     rm(list=setdiff(ls(),"family"))
     
     n <- 100; p <- 200; k <- 2
-    pmax <- 10
+    dfmax <- 10
     
     X <- lapply(seq_len(k),function(x) matrix(stats::rnorm(n*p),nrow=n,ncol=p))
     X <- lapply(X,function(x) scale(x))
@@ -30,7 +30,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
         stop("Invalid family!")
     }
     
-    fit <- palasso::palasso(y=y,X=X,sparse=NA,family=family,pmax=pmax)
+    fit <- palasso::palasso(y=y,X=X,sparse=NA,family=family,dfmax=dfmax)
     
     names <- c(names(fit),"paired")
     weights <- lapply(X=names,FUN=function(x) weights(object=fit,model=x))
@@ -59,8 +59,8 @@ for(family in c("gaussian","binomial","poisson","cox")){
         testthat::expect_true(x)
     })
     
-    testthat::test_that("pmax is effective",{
-        x <- all(sapply(coef,function(x) sum(x$x!=0)+sum(x$z!=0))<=pmax)
+    testthat::test_that("dfmax is effective",{
+        x <- all(sapply(coef,function(x) sum(x$x!=0)+sum(x$z!=0))<=dfmax)
         testthat::expect_true(x)
     })
     
