@@ -24,7 +24,7 @@
 #' maximum number of non-zero coefficients\strong{:}
 #' positive numeric, or \code{NULL} (\eqn{2*p+1})
 #' 
-#' @param sparse
+#' @param devel
 #' temporary argument
 #' 
 #' @param ...
@@ -64,20 +64,26 @@
 #' object <- palasso(y=y,X=X,family="binomial",max=10)
 #' names(object)
 #' 
-palasso <- function(y,X,max=NULL,sparse=TRUE,...){
+palasso <- function(y,X,max=NULL,devel=FALSE,...){
     
-    # to fit:
-    fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
-    if(is.null(sparse)){
-        fit$naive <- fit$standard <- TRUE
-    } else if(is.na(sparse)){
-        fit$standard <- fit$adaptive <- fit$weighted <- TRUE
-    } else if(sparse){
-        fit$adaptive <- fit$weighted <- TRUE
-    } else if(!sparse){
-        fit$standard <- fit$weighted <- TRUE
+    # # to fit:
+    # fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
+    # if(is.null(sparse)){
+    #     fit$naive <- fit$standard <- TRUE
+    # } else if(is.na(sparse)){
+    #     fit$standard <- fit$adaptive <- fit$weighted <- TRUE
+    # } else if(sparse){
+    #     fit$adaptive <- fit$weighted <- TRUE
+    # } else if(!sparse){
+    #     fit$standard <- fit$weighted <- TRUE
+    # } else {
+    #     stop("Invalid argument \"sparse\".")
+    # }
+    
+    if(devel){
+        fit <- list(standard=TRUE,adaptive=TRUE,weighted=TRUE,naive=FALSE)
     } else {
-        stop("Invalid argument \"sparse\".")
+        fit <- list(standard=FALSE,adaptive=TRUE,weighted=TRUE,naive=FALSE)
     }
     
     # checks
@@ -201,18 +207,20 @@ palasso <- function(y,X,max=NULL,sparse=TRUE,...){
         names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
         weight <- c(weight,temp)
         ### trial start ### (remove this?)
+        ## multiply between and within weights
         #extra <- list()
         #extra[[1]] <- temp[[1]]*temp[[2]]
         #names(extra) <- "combine_xz"
         #weight <- c(weight,temp1)
         ### trial end ### (remove this?)
         ### trial start ###
-        cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
-        cc[is.na(cc)] <- 0
-        extra <- list()
-        extra[[1]] <- rep(x=(2-cc)/2,times=2)
-        names(extra) <- "combine_xz"
-        weight <- c(weight,extra)
+        ## obtain weights from xz correlations
+        #cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
+        #cc[is.na(cc)] <- 0
+        #extra <- list()
+        #extra[[1]] <- rep(x=(2-cc)/2,times=2)
+        #names(extra) <- "combine_xz"
+        #weight <- c(weight,extra)
         ### trial end ###
     }
     
@@ -237,7 +245,7 @@ palasso <- function(y,X,max=NULL,sparse=TRUE,...){
         pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
         pairs[is.na(pairs)] <- 0
         temp[[1]] <- groups*pairs
-        names(temp) <- "naive"
+        names(temp) <- "naive_xz"
         weight <- c(weight,temp)
     }
     
@@ -255,7 +263,7 @@ palasso <- function(y,X,max=NULL,sparse=TRUE,...){
     
     # output
     call <- sapply(list(...),function(x) deparse(x))
-    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max,sparse=sparse)
+    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max)
     class(model) <- "palasso"
     return(model)
 }

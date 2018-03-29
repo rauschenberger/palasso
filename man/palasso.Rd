@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, max = NULL, sparse = TRUE, ...)
+palasso(y, X, max = NULL, devel = FALSE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -18,7 +18,7 @@ and \eqn{p} columns (variables)}
 \item{max}{maximum number of non-zero coefficients\strong{:}
 positive numeric, or \code{NULL} (\eqn{2*p+1})}
 
-\item{sparse}{temporary argument}
+\item{devel}{temporary argument}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}

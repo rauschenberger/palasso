@@ -8,14 +8,13 @@
 \alias{.select}
 \title{Hidden functions (analysis)}
 \usage{
-.prepare(X, cutoff = NULL, quantile = 0.8, scale = TRUE)
+.prepare(X, cutoff = NULL, quantile = NULL, scale = TRUE)
 
 .simulate(x, effects)
 
-.predict(y, X, max = NULL, nfolds.ext = 5, nfolds.int = 5, sparse = NA,
-  ...)
+.predict(y, X, nfolds.ext = 5, nfolds.int = 5, ...)
 
-.select(y, X, index, nfolds = 5, ...)
+.select(y, X, index, family = "binomial", nfolds = 5, ...)
 }
 \arguments{
 \item{X}{covariates\strong{:}

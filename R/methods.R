@@ -229,7 +229,6 @@ print.palasso <- function(x,...){
 #' 
 subset.palasso <- function(x,model="paired",max=NULL,...){
     
-    
     if(length(list(...))!=0){warning("Ignoring argument.")}
     
     if(!inherits(x=x,what="palasso")){
@@ -267,17 +266,30 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     }
     
     # start trial #
-    sparse <- attributes(x)$info$sparse
-    if(model!="paired"){
-        pattern <- model
-    } else if(is.null(sparse)){
-        pattern <- "naive"
-    } else if(is.na(sparse)){
+    # sparse <- attributes(x)$info$sparse
+    # if(model!="paired"){
+    #     pattern <- model
+    # } else if(is.null(sparse)){
+    #     pattern <- "naive"
+    # } else if(is.na(sparse)){
+    #     pattern <- "adaptive|between|within"
+    # } else if(sparse){
+    #     pattern <- "adaptive|between|within"
+    # } else if(!sparse){
+    #     pattern <- "standard|between|within"
+    # }
+    if(model=="paired"){
         pattern <- "adaptive|between|within"
-    } else if(sparse){
-        pattern <- "adaptive|between|within"
-    } else if(!sparse){
+    } else if(model=="trial1"){
         pattern <- "standard|between|within"
+    } else if(model=="trial2"){
+        pattern <- "adaptive|between"
+    } else if(model=="trial3"){
+        pattern <- "standard|between"
+    } else if(model=="trial4"){
+        pattern <- "between|within"
+    } else {
+        pattern <- model 
     }
     cond <- grepl(pattern=pattern,x=names(x))
     # end trial

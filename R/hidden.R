@@ -510,7 +510,7 @@ NULL
 #' @rdname extra
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL,quantile=0.8,scale=TRUE){
+.prepare <- function(X,cutoff=NULL,quantile=NULL,scale=TRUE){
     # original: cutoff=NULL (with 0.05*n below) and quantile=NULL
     
     # checks
@@ -525,8 +525,7 @@ NULL
     lib.size <- Matrix::rowSums(X)
     abundance <- Matrix::colSums(X)
     if(is.null(cutoff)){
-        # cutoff <- 0.05*nrow(X) # original
-        cutoff <- nrow(X) # trial
+        cutoff <- nrow(X) # original: 0.05*nrow(X)
     }
     X <- X[,abundance>=cutoff]
     X <- Matrix::as.matrix(X)
@@ -556,15 +555,15 @@ NULL
     sdz <- apply(Z,2,stats::sd)
     
     if(scale){
-    # scaling X
-    X <- scale(X)
-    cx <- apply(X,2,function(x) all(is.na(x)))
-    X[,cx] <- 0
-
-    # scaling Z
-    Z <- scale(Z)
-    cz <- apply(Z,2,function(z) all(is.na(z)))
-    Z[,cz] <- 0
+        # scaling X
+        X <- scale(X)
+        cx <- apply(X,2,function(x) all(is.na(x)))
+        X[,cx] <- 0
+        
+        # scaling Z
+        Z <- scale(Z)
+        cz <- apply(Z,2,function(z) all(is.na(z)))
+        Z[,cz] <- 0
     }
 
     # return
@@ -615,15 +614,14 @@ NULL
 #' @examples
 #' 
 #' 
-.predict <- function(y,X,max=NULL,nfolds.ext=5,nfolds.int=5,sparse=NA,...){
+.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,...){
     
     start <- Sys.time()
     
     # dimensionality
+    n <- unique(sapply(X,nrow))
     p <- unique(sapply(X,ncol))
     k <- length(X)
-    #if(is.null(dfmax)){dfmax <- k*p}
-    # if(is.na(dfmax)){dfmax <- k*p}
     
     # external folds
     fold.ext <- rep(NA,times=length(y))
@@ -632,43 +630,27 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    # if(devel){
-    #     names <- "devel"
-    # } else {
-    #     names <- "paired"
-    # }
-    # if(adaptive){
-    #     adapt <- paste0("adaptive_",c("x","z","xz"))
-    #     names <- c(adapt,names)
-    # }
-    # if(standard){
-    #     stand <- paste0("standard_",c("x","z","xz"))
-    #     names <- c(stand,names)
-    # }
-    
-    if(is.null(sparse)){
-        names <- c(paste0("standard_",c("x","z","xz")),
-                   "naive") 
-    } else {
-        names <- c(paste0("standard_",c("x","z","xz")),
+    model <- c(paste0("standard_",c("x","z","xz")),
                paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","combine_xz",
-               #"paired_adaptive",
-               "paired1","paired2","paired3","paired4","paired5") 
-    }
+               "between_xz","within_xz","paired",
+               paste0("trial",1:4))
+    nzero <- c(5,10,20,Inf)
     
     # predictions
-    pred <- matrix(NA,nrow=length(y),ncol=length(names))
-    temp <- rep(NA,times=length(names))
-    names(temp) <- names
-    deviance <- auc <- mse <- mae <- class <- temp
+    pred <- matrix(list(rep(NA,times=n)),nrow=length(nzero),
+                 ncol=length(model),dimnames=list(nzero,model))
+    #pred <- matrix(NA,nrow=n,ncol=length(model))
+    #temp <- rep(NA,times=length(model))
+    #names(temp) <- names
+    deviance <- auc <- mse <- mae <- class <- matrix(NA,nrow=length(nzero),
+            ncol=length(model),dimnames=list(nzero,model))
     
     # cross-validation
-    for(i in seq_len(nfolds.ext)){
+    for(k in seq_len(nfolds.ext)){
         
-        y0 <- y[fold.ext!=i]
-        X0 <- lapply(X,function(x) x[fold.ext!=i,,drop=FALSE])
-        X1 <- lapply(X,function(x) x[fold.ext==i,,drop=FALSE])
+        y0 <- y[fold.ext!=k]
+        X0 <- lapply(X,function(x) x[fold.ext!=k,,drop=FALSE])
+        X1 <- lapply(X,function(x) x[fold.ext==k,,drop=FALSE])
         
         # internal folds
         fold.int <- rep(NA,times=length(y0))
@@ -677,82 +659,28 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,sparse=sparse,foldid=fold.int,
-                                   family="binomial",max=max,...)
-        
-        ## original
-        # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
-        #                           family="binomial",dfmax=dfmax)
-        
-
-        if(is.null(sparse)){
-            pred[fold.ext==i,1:3] <- sapply(names[1:3],function(x)
-                palasso:::predict.palasso(object=object,newdata=X1,model=x,
-                                          type="response"))
-            pred[fold.ext==i,4] <- palasso:::predict.palasso(
-                object=object,
-                newdata=X1,
-                model="naive",
-                type="response")
-        } else {
-            
-            pred[fold.ext==i,1:9] <- sapply(names[1:9],function(x)
-                palasso:::predict.palasso(object=object,newdata=X1,model=x,
-                                          type="response"))
-            
-            pred[fold.ext==i,10] <- palasso:::predict.palasso(
-                     object=object,
-                     newdata=X1,
-                     model="standard|between|within",
-                     type="response")
-            
-            pred[fold.ext==i,11] <- palasso:::predict.palasso(
-                object=object,
-                newdata=X1,
-                model="adaptive|between|within",
-                type="response")
-            
-            pred[fold.ext==i,12] <- palasso:::predict.palasso(
-                object=object,
-                newdata=X1,
-                model="within|between|combined",
-                type="response")
-            
-            pred[fold.ext==i,13] <- palasso:::predict.palasso(
-                object=object,
-                newdata=X1,
-                model="standard_x|standard_z|between|within",
-                type="response")
-            
-            pred[fold.ext==i,14] <- palasso:::predict.palasso(
-                object=object,
-                newdata=X1,
-                model="adaptive_x|adaptive_z|between|within",
-                type="response")
-            
-            
-            # pred[fold.ext==i,7] <- palasso:::predict.palasso(
-            #         object=object,
-            #         newdata=X1,
-            #         model="adaptive|between|within",
-            #         type="response")
-            # pred[fold.ext==i,8] <- palasso:::predict.palasso(
-            #         object=object,
-            #         newdata=X1,
-            #         model="standard|between|within",
-            #         type="response")
-            
+        object <- palasso::palasso(y=y0,X=X0,devel=TRUE,foldid=fold.int,
+                                   family="binomial",...)
+       
+        for(i in seq_along(nzero)){
+            for(j in seq_along(model)){
+                temp <- palasso:::predict.palasso(object=object,
+                    newdata=X1,model=model[j],type="response",max=nzero[i])
+                pred[i,j][[1]][fold.ext==k] <- temp
+            }
         }
     }
     
-    for(i in seq_along(names)){
-        y_hat <- pred[,i]
-        mse[i] <- mean((y_hat-y)^2)
-        mae[i] <- mean(abs(y_hat-y))
-        class[i] <- mean(abs(round(y_hat)-y))
-        y_hat <- pmax(1e-05,pmin(pred[,i],1-1e-05))
-        deviance[i] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
-        auc[i] <- pROC::roc(response=y,predictor=y_hat)$auc
+    for(i in seq_along(nzero)){
+        for(j in seq_along(model)){
+            y_hat <- pred[i,j][[1]]
+            mse[i,j] <- mean((y_hat-y)^2)
+            mae[i,j] <- mean(abs(y_hat-y))
+            class[i,j] <- mean(abs(round(y_hat)-y))
+            y_hat <- pmax(1e-05,pmin(y_hat,1-1e-05))
+            deviance[i,j] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
+            auc[i,j] <- pROC::roc(response=y,predictor=y_hat)$auc
+        }
     }
     
     end <- Sys.time()
@@ -768,17 +696,12 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,nfolds=5,...){
+.select <- function(y,X,index,family="binomial",nfolds=5,...){
     
-    p <- ncol(X[[1]])
-    k <- length(X)
-    #if(is.null(dfmax)){dfmax <- k*p}
-    #if(is.na(dfmax)){dfmax <- k*p}
+    fit <- palasso::palasso(y=y,X=X,devel=TRUE,family=family,nfolds=nfolds,...)
     
-    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",nfolds=nfolds,...)
-    
-    names <- unique(c(names(fit),"paired"))
-    names <- names[grepl(pattern="standard_|adaptive_|paired",x=names)]
+    names <- unique(c(names(fit),"paired",paste0("trial",1:4)))
+    #names <- names[grepl(pattern="standard|adaptive|paired",x=names)]
     nzero <- c(5,10,20,Inf)
     
     shots <- hits <- matrix(integer(),
@@ -787,16 +710,12 @@ NULL
                             dimnames=list(nzero,names))
     
     for(i in seq_along(nzero)){
-        # select <- sapply(names,function(x) list())
         for(j in seq_along(names)){
             coef <- palasso:::coef.palasso(fit,model=names[j],max=nzero[i])
-            # select[[j]] <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
             temp <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
             shots[i,j] <- length(temp)
             hits[i,j] <- sum(unique(temp) %in% unlist(index))
         }
-        # shots[i,j] <- sapply(select,length)
-        # hits[i,j] <- sapply(select,function(x) sum(unique(x) %in% unlist(index)))
     }
 
     list <- list(shots=shots,hits=hits)
