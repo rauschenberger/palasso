@@ -26,6 +26,11 @@
 #' character \code{"paired"},
 #' or an entry of \code{names(object)}
 #' 
+#' @param max
+#' maximum number of non-zero coefficients,
+#' positive integer,
+#' or \code{NULL}
+#' 
 #' @param ...
 #' further arguments for
 #' \code{\link[glmnet]{predict.cv.glmnet}},
@@ -48,11 +53,11 @@ NULL
 #' @rdname methods
 #' @export
 #' 
-predict.palasso <- function(object,newdata,model="paired",s="lambda.min",...){
+predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NULL,...){
     #if(missing(newdata)||is.null(newdata)) {
     #    stop("Fitted values?")
     #}
-    x <- palasso:::subset.palasso(x=object,model=model)
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     newx <- do.call(what="cbind",args=newdata)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,...)
@@ -61,8 +66,8 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",...){
 #' @rdname methods
 #' @export
 #' 
-coef.palasso <- function(object,model="paired",s="lambda.min",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
+coef.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     coef <- glmnet::coef.cv.glmnet(object=x,s=s,...)
     if(rownames(coef)[1]=="(Intercept)"){
@@ -79,9 +84,9 @@ coef.palasso <- function(object,model="paired",s="lambda.min",...){
 #' @export
 #' @importFrom stats weights
 #' 
-weights.palasso <- function(object,model="paired",...){
+weights.palasso <- function(object,model="paired",max=NULL,...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
-    x <- palasso:::subset.palasso(x=object,model=model)
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     weights <- 1/x$glmnet.fit$call$penalty.factor
     palasso:::.split(x=weights,info=x$palasso)
 }
@@ -89,8 +94,8 @@ weights.palasso <- function(object,model="paired",...){
 #' @rdname methods
 #' @export
 #' 
-fitted.palasso <- function(object,model="paired",s="lambda.min",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
+fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
@@ -100,8 +105,8 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",...){
 #' @rdname methods
 #' @export
 #' 
-residuals.palasso <- function(object,model="paired",s="lambda.min",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
+residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
@@ -113,17 +118,17 @@ residuals.palasso <- function(object,model="paired",s="lambda.min",...){
 #' @rdname methods
 #' @export
 #' 
-deviance.palasso <- function(object,model="paired",...){
-    x <- palasso:::subset.palasso(x=object,model=model)
+deviance.palasso <- function(object,model="paired",max=NULL,...){
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)
     glmnet::deviance.glmnet(x$glmnet.fit,...)
 }
 
 #' @rdname methods
 #' @export
 #' 
-logLik.palasso <- function(object,model="paired",...){
+logLik.palasso <- function(object,model="paired",max=NULL,...){
     if(length(list(...))!=0){warning("Ignoring argument.")}
-    x <- palasso:::subset.palasso(x=object,model=model)$glmnet.fit
+    x <- palasso:::subset.palasso(x=object,model=model,max=max)$glmnet.fit
     if(x$call$family=="cox"){
         cox <- survival::coxph(x$call$y~1,weights=x$call$weights)
         ll0 <- cox$loglik # survival:::logLik.coxph.null(cox)
@@ -222,7 +227,9 @@ print.palasso <- function(x,...){
 
 #' @export
 #' 
-subset.palasso <- function(x,model="paired",...){
+subset.palasso <- function(x,model="paired",max=NULL,...){
+    
+    
     if(length(list(...))!=0){warning("Ignoring argument.")}
     
     if(!inherits(x=x,what="palasso")){
@@ -232,6 +239,31 @@ subset.palasso <- function(x,model="paired",...){
     name <- unique(sapply(X=x,FUN=function(x) x$name))
     if(length(name)!=1){
         stop("Different loss functions!")
+    }
+    
+    if(is.null(max)){
+        max <- attributes(x)$info$max
+    }
+    
+    if(!is.null(max)){
+        for(i in seq_along(x)){
+            cond <- x[[i]]$nzero<=max
+            for(j in c("lambda","cvm","cvsd","cvup","cvlo","nzero")){
+                x[[i]][[j]] <- x[[i]][[j]][cond] 
+            }
+            if(name=="AUC"){
+                x[[i]]$lambda.min <- x[[i]]$lambda[which.max(x[[i]]$cvm)]
+                x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm>=max(x[[i]]$cvlo[which.max(x[[i]]$cvm)])])
+            } else {
+                x[[i]]$lambda.min <- x[[i]]$lambda[which.min(x[[i]]$cvm)]
+                x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm<=min(x[[i]]$cvup[which.min(x[[i]]$cvm)])])
+            }
+            cond <- x[[i]]$glmnet.fit$df<=max
+            for(j in c("a0","df","lambda","dev.ratio")){
+                x[[i]]$glmnet.fit[[j]] <- x[[i]]$glmnet.fit[[j]][cond]
+            }
+            x[[i]]$glmnet.fit$beta <- x[[i]]$glmnet.fit$beta[,cond,drop=FALSE]
+        }
     }
     
     # start trial #
@@ -275,7 +307,7 @@ subset.palasso <- function(x,model="paired",...){
         loss <- sapply(object,function(x) max(x$cvm))
         select <- which.max(loss)
     } else {
-        loss <- sapply(object,function(x) min(x$cvm))
+        loss <- sapply(object,function(x) min(x$cvm)) 
         select <- which.min(loss)
     }
     object <- object[[select]]

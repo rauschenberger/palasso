@@ -111,10 +111,10 @@
 
 <span class='fu'>.simulate</span>(<span class='no'>x</span>, <span class='no'>effects</span>)
 
-<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>dfmax</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>,
-  <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='no'>...</span>)
+<span class='fu'>.predict</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>nfolds.ext</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>nfolds.int</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>sparse</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='no'>...</span>)
 
-<span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>dfmax</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>.select</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>index</span>, <span class='kw'>nfolds</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -196,8 +196,8 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.prepare</span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
 <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; $info
-#&gt;   nfolds.ext nfolds.int         time
-#&gt; 1          5          5 3.32119 secs
+#&gt;   nfolds.ext nfolds.int       time
+#&gt; 1          5          5 3.105 secs
 #&gt; 
 #&gt; $deviance
 #&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
@@ -239,16 +239,18 @@ selected covariates, and the number of correctly selected covariates.</p>
 #&gt;     paired4     paired5 
 #&gt;        0.44        0.32 
 #&gt; </div><div class='input'><span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='output co'>#&gt; $shots
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;           2           0           2           8           8           8 
-#&gt;  combine_xz      paired 
-#&gt;           2           8 
+#&gt;     standard_x standard_z standard_xz adaptive_x adaptive_z adaptive_xz paired
+#&gt; 5            2          0           2          5          4           5      5
+#&gt; 10           2          0           2         10         10          10     10
+#&gt; 20           2          0           2         19         13          19     19
+#&gt; Inf          2          0           2         19         13          19     19
 #&gt; 
 #&gt; $hits
-#&gt;  standard_x  standard_z standard_xz  adaptive_x  adaptive_z adaptive_xz 
-#&gt;           1           0           1           2           1           2 
-#&gt;  combine_xz      paired 
-#&gt;           1           2 
+#&gt;     standard_x standard_z standard_xz adaptive_x adaptive_z adaptive_xz paired
+#&gt; 5            1          0           1          1          0           1      1
+#&gt; 10           1          0           1          2          2           2      2
+#&gt; 20           1          0           1          2          2           2      2
+#&gt; Inf          1          0           1          2          2           2      2
 #&gt; </div><div class='input'>
 
 

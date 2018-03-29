@@ -12,7 +12,7 @@
 #' 
 #' @param y
 #' response\strong{:}
-#' vector of length \eqn{n},
+#' vector of length \eqn{n}
 #' 
 #' @param X
 #' covariates\strong{:}
@@ -20,10 +20,12 @@
 #' each with \eqn{n} rows (samples)
 #' and \eqn{p} columns (variables)
 #' 
+#' @param max
+#' maximum number of non-zero coefficients\strong{:}
+#' positive numeric, or \code{NULL} (\eqn{2*p+1})
+#' 
 #' @param sparse
-#' Set to \code{TRUE} if \code{dfmax} below 
-#' optimal number of non-zero coefficients.
-#' \code{logical}
+#' temporary argument
 #' 
 #' @param ...
 #' further arguments for \code{\link[glmnet]{cv.glmnet}} or
@@ -59,10 +61,10 @@
 #' n <- 40; p <- 10
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",dfmax=10)
+#' object <- palasso(y=y,X=X,family="binomial",max=10)
 #' names(object)
 #' 
-palasso <- function(y,X,sparse=TRUE,...){
+palasso <- function(y,X,max=NULL,sparse=TRUE,...){
     
     # to fit:
     fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
@@ -156,13 +158,13 @@ palasso <- function(y,X,sparse=TRUE,...){
     }
     
     # sparsity constraint
-    if(!is.null(sparse)){
-        if(!is.na(sparse)){
-            if(sparse==is.null(base$dfmax)){
-                warning("Provide \"dfmax\" iff \"sparse=TRUE\".")
-            }
-        }
-    }
+    #if(!is.null(sparse)){
+    #    if(!is.na(sparse)){
+    #        if(sparse==is.null(base$dfmax)){
+    #            warning("Provide \"dfmax\" iff \"sparse=TRUE\".")
+    #        }
+    #    }
+    #}
     
     weight <- list()
     
@@ -253,7 +255,7 @@ palasso <- function(y,X,sparse=TRUE,...){
     
     # output
     call <- sapply(list(...),function(x) deparse(x))
-    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,sparse=sparse)
+    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max,sparse=sparse)
     class(model) <- "palasso"
     return(model)
 }

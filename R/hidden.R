@@ -615,15 +615,15 @@ NULL
 #' @examples
 #' 
 #' 
-.predict <- function(y,X,dfmax=NULL,nfolds.ext=5,nfolds.int=5,sparse=NA,...){
+.predict <- function(y,X,max=NULL,nfolds.ext=5,nfolds.int=5,sparse=NA,...){
     
     start <- Sys.time()
     
     # dimensionality
     p <- unique(sapply(X,ncol))
     k <- length(X)
-    if(is.null(dfmax)){dfmax <- k*p}
-    if(is.na(dfmax)){dfmax <- k*p}
+    #if(is.null(dfmax)){dfmax <- k*p}
+    # if(is.na(dfmax)){dfmax <- k*p}
     
     # external folds
     fold.ext <- rep(NA,times=length(y))
@@ -678,7 +678,7 @@ NULL
                                       length.out=sum(y0==1)))
         
         object <- palasso::palasso(y=y0,X=X0,sparse=sparse,foldid=fold.int,
-                                   family="binomial",dfmax=dfmax,...)
+                                   family="binomial",max=max,...)
         
         ## original
         # object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,
@@ -731,7 +731,6 @@ NULL
                 type="response")
             
             
-            
             # pred[fold.ext==i,7] <- palasso:::predict.palasso(
             #         object=object,
             #         newdata=X1,
@@ -769,45 +768,37 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,dfmax=10,nfolds=5,...){
+.select <- function(y,X,index,nfolds=5,...){
     
     p <- ncol(X[[1]])
     k <- length(X)
-    if(is.null(dfmax)){dfmax <- k*p}
-    if(is.na(dfmax)){dfmax <- k*p}
+    #if(is.null(dfmax)){dfmax <- k*p}
+    #if(is.na(dfmax)){dfmax <- k*p}
     
-    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",
-                            dfmax=dfmax,nfolds=nfolds,...)
+    fit <- palasso::palasso(y=y,X=X,sparse=NA,family="binomial",nfolds=nfolds,...)
     
     names <- unique(c(names(fit),"paired"))
-    names <- names[!grepl(pattern="between_|within_",x=names)]
+    names <- names[grepl(pattern="standard_|adaptive_|paired",x=names)]
+    nzero <- c(5,10,20,Inf)
     
-    ### start original ###
-    # names <- c(paste0("standard_",c("x","z","xz")),
-    #           paste0("adaptive_",c("x","z","xz")),"paired")
-    #coef <- sapply(names,function(i) palasso:::coef.palasso(object=fit,model=i)[-1])
-    #select <- apply(coef,2,function(x) which(x!=0))
-    #if(is.matrix(select)){select <- as.list(as.data.frame(select))}
-    #select <- lapply(select,function(x) x - p*(x %/% p))
-    ### end original ###
+    shots <- hits <- matrix(integer(),
+                            nrow=length(nzero),
+                            ncol=length(names),
+                            dimnames=list(nzero,names))
     
-    ### start trial ###
-    #coef <- lapply(names,function(i) palasso:::coef.palasso(fit,model=i))
-    #select <- lapply(coef,function(x) unlist(lapply(x,function(z) Matrix:::which(z!=0))))
-    #names(coef) <- names(select) <- names
-    ### end trial ###
-    
-    ### start trial ###
-    select <- sapply(names,function(x) list())
-    for(i in seq_along(names)){
-       coef <- palasso:::coef.palasso(fit,model=names[i])
-       select[[i]] <- unlist(lapply(coef,function(x) Matrix::which(x!=0))) # was Matrix:::which
+    for(i in seq_along(nzero)){
+        # select <- sapply(names,function(x) list())
+        for(j in seq_along(names)){
+            coef <- palasso:::coef.palasso(fit,model=names[j],max=nzero[i])
+            # select[[j]] <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
+            temp <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
+            shots[i,j] <- length(temp)
+            hits[i,j] <- sum(unique(temp) %in% unlist(index))
+        }
+        # shots[i,j] <- sapply(select,length)
+        # hits[i,j] <- sapply(select,function(x) sum(unique(x) %in% unlist(index)))
     }
-    ### end trial ###
-    
-    shots <- sapply(select,length)
-    hits <- sapply(select,function(x) sum(unique(x) %in% unlist(index)))
-    
+
     list <- list(shots=shots,hits=hits)
     return(list)
 }

@@ -13,19 +13,22 @@
 \title{Methods for class "palasso"}
 \usage{
 \method{predict}{palasso}(object, newdata, model = "paired",
-  s = "lambda.min", ...)
+  s = "lambda.min", max = NULL, ...)
 
-\method{coef}{palasso}(object, model = "paired", s = "lambda.min", ...)
+\method{coef}{palasso}(object, model = "paired", s = "lambda.min",
+  max = NULL, ...)
 
-\method{weights}{palasso}(object, model = "paired", ...)
+\method{weights}{palasso}(object, model = "paired", max = NULL, ...)
 
-\method{fitted}{palasso}(object, model = "paired", s = "lambda.min", ...)
+\method{fitted}{palasso}(object, model = "paired", s = "lambda.min",
+  max = NULL, ...)
 
-\method{residuals}{palasso}(object, model = "paired", s = "lambda.min", ...)
+\method{residuals}{palasso}(object, model = "paired", s = "lambda.min",
+  max = NULL, ...)
 
-\method{deviance}{palasso}(object, model = "paired", ...)
+\method{deviance}{palasso}(object, model = "paired", max = NULL, ...)
 
-\method{logLik}{palasso}(object, model = "paired", ...)
+\method{logLik}{palasso}(object, model = "paired", max = NULL, ...)
 
 \method{summary}{palasso}(object, model = "paired", ...)
 }
@@ -43,6 +46,10 @@ or an entry of \code{names(object)}}
 character \code{"lambda.min"} or \code{"lambda.1se"},
 positive numeric,
 or \code{NULL} (entire sequence)}
+
+\item{max}{maximum number of non-zero coefficients,
+positive integer,
+or \code{NULL}}
 
 \item{...}{further arguments for
 \code{\link[glmnet]{predict.cv.glmnet}},

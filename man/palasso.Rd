@@ -4,20 +4,21 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, sparse = TRUE, ...)
+palasso(y, X, max = NULL, sparse = TRUE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
-vector of length \eqn{n},}
+vector of length \eqn{n}}
 
 \item{X}{covariates\strong{:}
 list of matrices,
 each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
-\item{sparse}{Set to \code{TRUE} if \code{dfmax} below 
-optimal number of non-zero coefficients.
-\code{logical}}
+\item{max}{maximum number of non-zero coefficients\strong{:}
+positive numeric, or \code{NULL} (\eqn{2*p+1})}
+
+\item{sparse}{temporary argument}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}
@@ -51,7 +52,7 @@ set.seed(1)
 n <- 40; p <- 10
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-object <- palasso(y=y,X=X,family="binomial",dfmax=10)
+object <- palasso(y=y,X=X,family="binomial",max=10)
 names(object)
 
 }
