@@ -632,8 +632,8 @@ NULL
     
     model <- c(paste0("standard_",c("x","z","xz")),
                paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","paired",
-               paste0("trial",1:4))
+               paste0("among_",c("x","z","xz")),
+               "between_xz","within_xz","paired","trial")
     nzero <- c(5,10,20,Inf)
     
     # predictions
@@ -659,8 +659,9 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,devel=TRUE,foldid=fold.int,
+        object <- palasso::palasso(y=y0,X=X0,devel=NA,foldid=fold.int,
                                    family="binomial",...)
+        # usually devel=TRUE
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
@@ -698,10 +699,9 @@ NULL
 #' 
 .select <- function(y,X,index,family="binomial",nfolds=5,...){
     
-    fit <- palasso::palasso(y=y,X=X,devel=TRUE,family=family,nfolds=nfolds,...)
+    fit <- palasso::palasso(y=y,X=X,devel=NA,family=family,nfolds=nfolds,...)
     
-    names <- unique(c(names(fit),"paired",paste0("trial",1:4)))
-    #names <- names[grepl(pattern="standard|adaptive|paired",x=names)]
+    names <- unique(c(names(fit),"paired","trial"))
     nzero <- c(5,10,20,Inf)
     
     shots <- hits <- matrix(integer(),
@@ -729,3 +729,4 @@ cat("
     |    |  | |__ |  |  __|  __| |__|
     ")
 }
+

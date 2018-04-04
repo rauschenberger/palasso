@@ -279,15 +279,9 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     #     pattern <- "standard|between|within"
     # }
     if(model=="paired"){
+        pattern <- "among|between|within"
+    } else if(model=="trial"){
         pattern <- "adaptive|between|within"
-    } else if(model=="trial1"){
-        pattern <- "standard|between|within"
-    } else if(model=="trial2"){
-        pattern <- "adaptive|between"
-    } else if(model=="trial3"){
-        pattern <- "standard|between"
-    } else if(model=="trial4"){
-        pattern <- "between|within"
     } else {
         pattern <- model 
     }

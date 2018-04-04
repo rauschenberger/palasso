@@ -113,7 +113,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
     }
     
     testthat::test_that("coef stats",{
-        int <- coef(fit,model="adaptive_xz",s=0)
+        int <- coef(fit,model="among_xz",s=0)
         int <- c(as.numeric(int$x),as.numeric(int$z))
         ext <- coef(glm1)
         ext <- ext[names(ext)!="(Intercept)"]
@@ -127,7 +127,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
     })
     
     testthat::test_that("deviance stats",{
-        int <- deviance(fit,model="adaptive_xz")
+        int <- deviance(fit,model="among_xz")
         ext <- c(deviance(glm0),deviance(glm1))
         diff <- int - ext
         x <- all(abs(diff)<1e-06)
@@ -135,7 +135,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
     })
     
     testthat::test_that("logLik stats",{
-        int <- as.numeric(logLik(fit,model="adaptive_xz"))
+        int <- as.numeric(logLik(fit,model="among_xz"))
         if(family=="cox"){
             ext <- glm1$loglik
         } else {

@@ -80,10 +80,12 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     #     stop("Invalid argument \"sparse\".")
     # }
     
-    if(devel){
-        fit <- list(standard=TRUE,adaptive=TRUE,weighted=TRUE,naive=FALSE)
+    if(is.na(devel)){
+        fit <- list(standard=TRUE,adaptive=TRUE,paired=TRUE)
+    } else if(devel){
+        fit <- list(standard=TRUE,adaptive=FALSE,paired=TRUE)
     } else {
-        fit <- list(standard=FALSE,adaptive=TRUE,weighted=TRUE,naive=FALSE)
+        fit <- list(standard=FALSE,adaptive=FALSE,paired=TRUE)
     }
     
     # checks
@@ -152,7 +154,7 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         names <- letters[seq_len(k)]
     }
     
-    # correlation
+    # Pearson correlation (initial)
     cor <- list()
     for(i in seq_len(k)){
         if(base$family=="cox"){
@@ -187,19 +189,37 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     }
     
     # adaptive lasso
-    if(fit$adaptive){ 
+    if(fit$adaptive){
         temp <- list()
         for(i in seq_len(k)){
-            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] # was <- stand[[i]]*cor[[i]] 
+            args <- base
+            args$alpha <- 0
+            args$penalty.factor <- 1/rep(1*(seq_len(k)==i),each=p)
+            model <- palasso:::.cv.glmnet(args)
+            temp[[i]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
         }
         names(temp) <- paste0("adaptive_",names)
-        temp[[k+1]] <- unlist(cor)
+        args$penalty.factor <- rep(1,times=k*p)
+        model <- palasso:::.cv.glmnet(args)
+        temp[[k+1]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
         names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
         weight <- c(weight,temp)
     }
     
     # weighted lasso
-    if(fit$weighted){
+    if(fit$paired){ 
+        temp <- list()
+        for(i in seq_len(k)){
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] # was <- stand[[i]]*cor[[i]] 
+        }
+        names(temp) <- paste0("among_",names)
+        temp[[k+1]] <- unlist(cor)
+        names(temp)[k+1] <- paste0("among_",paste(names,collapse=""))
+        weight <- c(weight,temp)
+    }
+    
+    # weighted lasso
+    if(fit$paired){
         temp <- list() 
         temp[[1]] <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
         temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
@@ -225,7 +245,7 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     }
     
     # naive lasso
-    if(fit$naive){
+    if(FALSE){
         # standard deviation
         sd <- list()
         for(i in seq_len(k)){
