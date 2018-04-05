@@ -107,24 +107,19 @@
     <p>This page lists the main methods for class "palasso".</p>
     
 
-    <pre><span class='co'># S3 method for palasso</span>
-<span class='fu'>predict</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>,
-  <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>coef</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
+    <pre><span class='fu'>predict.palasso</span>(<span class='no'>object</span>, <span class='no'>newdata</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
   <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+
+<span class='fu'>coef.palasso</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
 <span class='fu'>weights</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
 
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>fitted</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>fitted.palasso</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>)
 
-<span class='co'># S3 method for palasso</span>
-<span class='fu'>residuals</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>,
-  <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
+<span class='fu'>residuals.palasso</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>s</span> <span class='kw'>=</span> <span class='st'>"lambda.min"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='no'>...</span>)
 
 <span class='co'># S3 method for palasso</span>
 <span class='fu'>deviance</span>(<span class='no'>object</span>, <span class='kw'>model</span> <span class='kw'>=</span> <span class='st'>"paired"</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)

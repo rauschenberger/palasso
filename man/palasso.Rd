@@ -49,10 +49,12 @@ and \code{penalty.factor} must not be used.
 }
 \examples{
 set.seed(1)
-n <- 40; p <- 10
+n <- 100; p <- 2000
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-object <- palasso(y=y,X=X,family="binomial",max=10)
+object <- palasso(y=y,X=X,family="binomial",max=10,devel=NA)
+a <- weights(object,model="among_x")[,1]
+b <- weights(object,model="adaptive_x")[,1]
 names(object)
 
 }

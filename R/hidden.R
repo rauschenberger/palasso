@@ -511,7 +511,6 @@ NULL
 #' @keywords internal
 #' 
 .prepare <- function(X,cutoff=NULL,quantile=NULL,scale=TRUE){
-    # original: cutoff=NULL (with 0.05*n below) and quantile=NULL
     
     # checks
     if(nrow(X)>=ncol(X)){
@@ -547,7 +546,6 @@ NULL
     
     # transform X
     X <- 2*sqrt(X+3/8) # Anscombe transform
-    # alternative: X <- sqrt(X) # square root
     
     # properties
     prop <- mean(Z==0)
@@ -559,7 +557,6 @@ NULL
         X <- scale(X)
         cx <- apply(X,2,function(x) all(is.na(x)))
         X[,cx] <- 0
-        
         # scaling Z
         Z <- scale(Z)
         cz <- apply(Z,2,function(z) all(is.na(z)))
@@ -568,7 +565,7 @@ NULL
 
     # return
     x <- list(X=X,Z=Z)
-    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop) # sdx=sdx,sdz=sdz
+    attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop)
     return(x)
 }
 
@@ -631,10 +628,10 @@ NULL
                                  length.out=sum(y==1)))
     
     model <- c(paste0("standard_",c("x","z","xz")),
-               paste0("adaptive_",c("x","z","xz")),
+               #paste0("adaptive_",c("x","z","xz")),
                paste0("among_",c("x","z","xz")),
                "between_xz","within_xz","paired","trial")
-    nzero <- c(5,10,20,Inf)
+    nzero <- c(5,10,15,20,25,50,Inf)
     
     # predictions
     pred <- matrix(list(rep(NA,times=n)),nrow=length(nzero),
@@ -659,7 +656,7 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,devel=NA,foldid=fold.int,
+        object <- palasso::palasso(y=y0,X=X0,devel=TRUE,foldid=fold.int,
                                    family="binomial",...)
         # usually devel=TRUE
        
@@ -699,10 +696,10 @@ NULL
 #' 
 .select <- function(y,X,index,family="binomial",nfolds=5,...){
     
-    fit <- palasso::palasso(y=y,X=X,devel=NA,family=family,nfolds=nfolds,...)
+    fit <- palasso::palasso(y=y,X=X,devel=TRUE,family=family,nfolds=nfolds,...)
     
     names <- unique(c(names(fit),"paired","trial"))
-    nzero <- c(5,10,20,Inf)
+    nzero <- c(5,10,15,20,25,50,Inf)
     
     shots <- hits <- matrix(integer(),
                             nrow=length(nzero),

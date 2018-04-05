@@ -58,27 +58,15 @@
 #' 
 #' @examples
 #' set.seed(1)
-#' n <- 40; p <- 10
+#' n <- 100; p <- 2000
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",max=10)
+#' object <- palasso(y=y,X=X,family="binomial",max=10,devel=NA)
+#' a <- weights(object,model="among_x")[,1]
+#' b <- weights(object,model="adaptive_x")[,1]
 #' names(object)
 #' 
 palasso <- function(y,X,max=NULL,devel=FALSE,...){
-    
-    # # to fit:
-    # fit <- list(standard=FALSE,adaptive=FALSE,weighted=FALSE,naive=FALSE)
-    # if(is.null(sparse)){
-    #     fit$naive <- fit$standard <- TRUE
-    # } else if(is.na(sparse)){
-    #     fit$standard <- fit$adaptive <- fit$weighted <- TRUE
-    # } else if(sparse){
-    #     fit$adaptive <- fit$weighted <- TRUE
-    # } else if(!sparse){
-    #     fit$standard <- fit$weighted <- TRUE
-    # } else {
-    #     stop("Invalid argument \"sparse\".")
-    # }
     
     if(is.na(devel)){
         fit <- list(standard=TRUE,adaptive=TRUE,paired=TRUE)
@@ -165,6 +153,14 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         cor[[i]][is.na(cor[[i]])] <- 0
     }
     
+    # # Pearson correlation
+    # if(base$family=="cox"){
+    #     cor <- abs(2*survival::survConcordance(y~base$x)$concordance-1)
+    # } else {
+    #     cor <- as.vector(abs(stats::cor(base$x,y)))
+    # }
+    # 
+    
     # sparsity constraint
     #if(!is.null(sparse)){
     #    if(!is.na(sparse)){
@@ -182,27 +178,42 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         for(i in seq_len(k)){
             temp[[i]] <- rep(1*(seq_len(k)==i),each=p)
         }
-        names(temp) <- paste0("standard_",names)
         temp[[k+1]] <- rep(1/k,times=k*p)
-        names(temp)[k+1] <- paste0("standard_",paste(names,collapse=""))
+        names(temp) <- paste0("standard_",c(names,paste(names,collapse="")))
         weight <- c(weight,temp)
     }
     
     # adaptive lasso
     if(fit$adaptive){
+        # ### via ridge regression ###
+        # temp <- list()
+        # for(i in seq_len(k)){
+        #     args <- base
+        #     args$alpha <- 0
+        #     args$penalty.factor <- 1/rep(1*(seq_len(k)==i),each=p)
+        #     model <- palasso:::.cv.glmnet(args)
+        #     temp[[i]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
+        # }
+        # names(temp) <- paste0("adaptive_",names)
+        # args$penalty.factor <- rep(1,times=k*p)
+        # model <- palasso:::.cv.glmnet(args)
+        # temp[[k+1]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
+        # names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
+        # weight <- c(weight,temp)
+        ### via univariate regression ###
+        family <- eval(parse(text=base$family))()
+        if(base$family=="cox"){
+            stop("NOT YET IMPLEMENTED!")
+        } else {
+            mar <- abs(apply(base$x,2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
+        }
+        mar[is.na(mar)] <- 0
         temp <- list()
         for(i in seq_len(k)){
-            args <- base
-            args$alpha <- 0
-            args$penalty.factor <- 1/rep(1*(seq_len(k)==i),each=p)
-            model <- palasso:::.cv.glmnet(args)
-            temp[[i]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*mar
         }
-        names(temp) <- paste0("adaptive_",names)
-        args$penalty.factor <- rep(1,times=k*p)
-        model <- palasso:::.cv.glmnet(args)
-        temp[[k+1]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
-        names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
+        temp[[k+1]] <- mar
+        names(temp) <- paste0("adaptive_",c(names,paste(names,collapse="")))
         weight <- c(weight,temp)
     }
     
@@ -212,9 +223,8 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         for(i in seq_len(k)){
             temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] # was <- stand[[i]]*cor[[i]] 
         }
-        names(temp) <- paste0("among_",names)
         temp[[k+1]] <- unlist(cor)
-        names(temp)[k+1] <- paste0("among_",paste(names,collapse=""))
+        names(temp) <- paste0("among_",c(names,paste(names,collapse="")))
         weight <- c(weight,temp)
     }
     
