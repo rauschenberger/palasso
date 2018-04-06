@@ -4,7 +4,7 @@
 #' @name plots
 #' 
 #' @title
-#' Hidden functions (plots)
+#' Plot functions (manuscript)
 #' 
 #' @description
 #' Functions for the \code{palasso} manuscript.
@@ -43,11 +43,9 @@
 #' to do
 #' 
 #' @details
-#' 
 #' The function \code{plot_score} compares a selected column to each of the
 #' other columns. It counts the number of rows where the entry in the selected
 #' column is smaller (blue), equal (white), or larger (red).
-#' 
 #' 
 #' @return
 #' to do
@@ -70,7 +68,6 @@ NULL
 #' @keywords internal
 #' @examples
 #' ### score ###
-#' 
 #' n <- 10; p <- 4
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_score(X)
@@ -125,12 +122,12 @@ plot_score <- function(X,choice=NULL){
 #' @keywords internal
 #' @examples
 #' ### table ###
-#' 
 #' n <- 5; p <- 3
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
-#' palasso:::plot_table(X,margin=1)
+#' palasso:::plot_table(X,margin=2)
 #' 
 plot_table <- function(X,margin=2,labels=TRUE,las=1){
+    par <- graphics::par(no.readonly=TRUE)
     
     n <- nrow(X); p <- ncol(X)
     if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
@@ -177,23 +174,23 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
         ys <- rep(seq_len(n),times=p)
         graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
     }
+    
+    graphics::par(par)
 }
 
 #' @rdname plots
 #' @keywords internal
 #' @examples
 #' ### circle ###
-#' 
-#' n <- 50; p <- 100
+#' n <- 50; p <- 25
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' Z <- matrix(rnorm(n*p),nrow=n,ncol=p)
-#' 
 #' b <- sapply(seq_len(p),function(i) abs(cor(X[,i],Z[,i])))
 #' w <- pmax(abs(cor(X)),abs(cor(Z)),na.rm=TRUE)
-#' 
-#' palasso:::plot_circle(b,w)
+#' palasso:::plot_circle(b,w,cutoff=0)
 #' 
 plot_circle <- function(b,w,cutoff=NULL,group=NULL){
+    par <- graphics::par(no.readonly=TRUE)
     
     # checks
     if(any(dim(w)!=length(b))){stop("Invalid dimensions!")}
@@ -244,6 +241,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
         graphics::text(x=1.15*x[centre],y=1.15*y[centre],labels=names(cumsum))
     }
     
+    graphics::par(par)
 }
 
 #' @rdname plots
@@ -344,6 +342,7 @@ plot_pairs <- function(x,y=NULL,...){
 #' palasso:::plot_diff(x,y)
 #' 
 plot_diff <- function(x,y,prob=0.95,...){
+    par <- graphics::par(no.readonly=TRUE)
     
     # difference
     diff <- x - y
@@ -387,6 +386,8 @@ plot_diff <- function(x,y,prob=0.95,...){
     l1 <- paste0("wilcox = ",wilcox)
     l2 <- paste0("binom = ",adhoc)
     graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
+    
+    graphics::par(par)
 }
 
 .mtext <- function(text,unit=FALSE,side=1,las=1){
@@ -431,9 +432,9 @@ plot_diff <- function(x,y,prob=0.95,...){
 #--- Application ---------------------------------------------------------------
 
 #' @title
-#' Hidden functions (analysis)
+#' Other functions (manuscript)
 #' 
-#' @name extra
+#' @name other
 #' 
 #' @description
 #' Functions for the \code{palasso} manuscript.
@@ -503,11 +504,11 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
 #' x <- palasso:::.prepare(X)
 #' y <- palasso:::.simulate(x,effects=c(1,2))
-#' palasso:::.predict(y,x)
-#' palasso:::.select(y,x,attributes(y))
+#' predict <- palasso:::.predict(y,x)
+#' select <- palasso:::.select(y,x,attributes(y))
 NULL
 
-#' @rdname extra
+#' @rdname other
 #' @keywords internal
 #' 
 .prepare <- function(X,cutoff=NULL,quantile=NULL,scale=TRUE){
@@ -569,7 +570,7 @@ NULL
     return(x)
 }
 
-#' @rdname extra
+#' @rdname other
 #' @keywords internal
 #' @examples
 #' 
@@ -606,12 +607,11 @@ NULL
     return(y)
 }
 
-#' @rdname extra
+#' @rdname other
 #' @keywords internal
 #' @examples
 #' 
-#' 
-.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,...){
+.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=TRUE,...){
     
     start <- Sys.time()
     
@@ -627,9 +627,10 @@ NULL
     fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
                                  length.out=sum(y==1)))
     
-    model <- c(paste0("standard_",c("x","z","xz")),
-               #paste0("adaptive_",c("x","z","xz")),
-               paste0("among_",c("x","z","xz")),
+    model <- character()
+    if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
+    if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
+    model <- c(model,paste0("among_",c("x","z","xz")),
                "between_xz","within_xz","paired","trial")
     nzero <- c(5,10,15,20,25,50,Inf)
     
@@ -656,9 +657,8 @@ NULL
         fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
                                       length.out=sum(y0==1)))
         
-        object <- palasso::palasso(y=y0,X=X0,devel=TRUE,foldid=fold.int,
-                                   family="binomial",...)
-        # usually devel=TRUE
+        object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family="binomial",
+                                   standard=standard,adaptive=adaptive,...)
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
@@ -690,13 +690,14 @@ NULL
     return(list)
 }
 
-#' @rdname extra
+#' @rdname other
 #' @keywords internal
 #' @examples
 #' 
-.select <- function(y,X,index,family="binomial",nfolds=5,...){
+.select <- function(y,X,index,nfolds=5,standard=TRUE,adaptive=TRUE,...){
     
-    fit <- palasso::palasso(y=y,X=X,devel=TRUE,family=family,nfolds=nfolds,...)
+    fit <- palasso::palasso(y=y,X=X,family="binomial",nfolds=nfolds,
+                            standard=standard,adaptive=adaptive,...)
     
     names <- unique(c(names(fit),"paired","trial"))
     nzero <- c(5,10,15,20,25,50,Inf)

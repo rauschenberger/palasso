@@ -22,10 +22,7 @@
 #' 
 #' @param max
 #' maximum number of non-zero coefficients\strong{:}
-#' positive numeric, or \code{NULL} (\eqn{2*p+1})
-#' 
-#' @param devel
-#' temporary argument
+#' positive numeric, or \code{NULL} \eqn{(2*p+1)}
 #' 
 #' @param ...
 #' further arguments for \code{\link[glmnet]{cv.glmnet}} or
@@ -35,8 +32,9 @@
 #' Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 #' for alternative specifications of \code{y} and \code{x}. Among the further
 #' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
-#' \code{"poisson"}, or \code{"cox"},
-#' and \code{penalty.factor} must not be used.
+#' \code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
+#' used. Fit additional lasso models by setting the hidden arguments
+#' \code{standard} or \code{adaptive} to \code{TRUE}.
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -49,38 +47,31 @@
 #' \code{\link[=deviance.palasso]{deviance}},
 #' \code{\link[=logLik.palasso]{logLik}},
 #' and \code{\link[=summary.palasso]{summary}}.
-#' Click \code{\link[=extra]{here}} for hidden functions.
 #' 
 #' @references
 #' A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-#' "Penalised regression with paired covariates."
+#' "Sparse regression with paired covariates."
 #' \emph{Manuscript in preparation.} \email{a.rauschenberger@vumc.nl}
 #' 
 #' @examples
 #' set.seed(1)
-#' n <- 100; p <- 2000
+#' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",max=10,devel=NA)
-#' a <- weights(object,model="among_x")[,1]
-#' b <- weights(object,model="adaptive_x")[,1]
-#' names(object)
+#' object <- palasso(y=y,X=X,family="binomial",max=10)
 #' 
-palasso <- function(y,X,max=NULL,devel=FALSE,...){
+palasso <- function(y,X,max=NULL,...){
     
-    if(is.na(devel)){
-        fit <- list(standard=TRUE,adaptive=TRUE,paired=TRUE)
-    } else if(devel){
-        fit <- list(standard=TRUE,adaptive=FALSE,paired=TRUE)
-    } else {
-        fit <- list(standard=FALSE,adaptive=FALSE,paired=TRUE)
-    }
+    # extract
+    base <- list(...)
+    standard <- !(is.null(base$standard)||!base$standard)
+    adaptive <- !(is.null(base$adaptive)||!base$adaptive)
+    base$standard <- base$adaptive <- NULL
     
     # checks
-    base <- list(...)
     funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
     formals <- unlist(lapply(funs,function(x) formals(x)),recursive=FALSE)
-    if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
+    if(any(!names(base) %in% names(formals))){stop("Unexpected argument.")}
  
     # arguments
     base$y <- y
@@ -136,13 +127,16 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     }
     
     # names
-    if(k==2){
-        names <- c("x","z") 
-    } else {
-        names <- letters[seq_len(k)]
-    }
+    #names <- names(X)
+    #if(is.null(names)||anyDuplicated(names)){
+        if(k==2){
+            names <- c("x","z") 
+        } else {
+            names <- letters[seq_len(k)]
+        }
+    #}
     
-    # Pearson correlation (initial)
+    # Pearson correlation
     cor <- list()
     for(i in seq_len(k)){
         if(base$family=="cox"){
@@ -152,28 +146,11 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         }
         cor[[i]][is.na(cor[[i]])] <- 0
     }
-    
-    # # Pearson correlation
-    # if(base$family=="cox"){
-    #     cor <- abs(2*survival::survConcordance(y~base$x)$concordance-1)
-    # } else {
-    #     cor <- as.vector(abs(stats::cor(base$x,y)))
-    # }
-    # 
-    
-    # sparsity constraint
-    #if(!is.null(sparse)){
-    #    if(!is.na(sparse)){
-    #        if(sparse==is.null(base$dfmax)){
-    #            warning("Provide \"dfmax\" iff \"sparse=TRUE\".")
-    #        }
-    #    }
-    #}
-    
+
     weight <- list()
     
     # standard lasso
-    if(fit$standard){ 
+    if(standard){ 
         temp <- list()
         for(i in seq_len(k)){
             temp[[i]] <- rep(1*(seq_len(k)==i),each=p)
@@ -184,7 +161,7 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     }
     
     # adaptive lasso
-    if(fit$adaptive){
+    if(adaptive){
         # ### via ridge regression ###
         # temp <- list()
         # for(i in seq_len(k)){
@@ -218,24 +195,26 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     }
     
     # weighted lasso
-    if(fit$paired){ 
+    if(TRUE){ 
+        # among
         temp <- list()
         for(i in seq_len(k)){
-            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] # was <- stand[[i]]*cor[[i]] 
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] 
         }
         temp[[k+1]] <- unlist(cor)
         names(temp) <- paste0("among_",c(names,paste(names,collapse="")))
         weight <- c(weight,temp)
-    }
-    
-    # weighted lasso
-    if(fit$paired){
+        # between and within
         temp <- list() 
-        temp[[1]] <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+        temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
         temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
         temp[[2]][is.na(temp[[2]])] <- 0
         names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
         weight <- c(weight,temp)
+    }
+    
+    # weighted lasso
+    #if(FALSE){
         ### trial start ### (remove this?)
         ## multiply between and within weights
         #extra <- list()
@@ -252,32 +231,32 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
         #names(extra) <- "combine_xz"
         #weight <- c(weight,extra)
         ### trial end ###
-    }
+    #}
     
-    # naive lasso
-    if(FALSE){
-        # standard deviation
-        sd <- list()
-        for(i in seq_len(k)){
-            sd[[i]] <- apply(X[[i]],2,stats::sd)
-        }
-        # scaling
-        cm1 <- lapply(X,function(x) apply(x,2,mean))
-        cm2 <- lapply(X,function(x) apply(x,2,stats::var))
-        cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
-        cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
-        if(any(cond1)|any(cond2)){ # too strict?
-            stop("Provide unstandardised covariates!")
-        }
-        # weighting
-        temp <- list()
-        groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-        pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
-        pairs[is.na(pairs)] <- 0
-        temp[[1]] <- groups*pairs
-        names(temp) <- "naive_xz"
-        weight <- c(weight,temp)
-    }
+    # # naive lasso
+    # if(FALSE){
+    #     # standard deviation
+    #     sd <- list()
+    #     for(i in seq_len(k)){
+    #         sd[[i]] <- apply(X[[i]],2,stats::sd)
+    #     }
+    #     # scaling
+    #     cm1 <- lapply(X,function(x) apply(x,2,mean))
+    #     cm2 <- lapply(X,function(x) apply(x,2,stats::var))
+    #     cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
+    #     cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
+    #     if(any(cond1)|any(cond2)){ # too strict?
+    #         stop("Provide unstandardised covariates!")
+    #     }
+    #     # weighting
+    #     temp <- list()
+    #     groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+    #     pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
+    #     pairs[is.na(pairs)] <- 0
+    #     temp[[1]] <- groups*pairs
+    #     names(temp) <- "naive_xz"
+    #     weight <- c(weight,temp)
+    # }
     
     # cross-validation
     model <- list()
@@ -292,7 +271,7 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     names(model) <- names(weight)
     
     # output
-    call <- sapply(list(...),function(x) deparse(x))
+    call <- lapply(list(...),function(x) unlist(x))
     attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max)
     class(model) <- "palasso"
     return(model)
@@ -465,7 +444,8 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
 .error <- function(x,args){
     pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
                  "replacement has length zero")
-    cond <- sapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x))
+    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+                   FUN.VALUE=logical(1))
     if(all(cond)){
         warning("Fitting intercept-only model.")
         args$lambda <- c(99e99,99e98)
@@ -479,7 +459,8 @@ palasso <- function(y,X,max=NULL,devel=FALSE,...){
     pattern <- c("from glmnet Fortran code \\(error code",
                  "Number of nonzero coefficients along the path exceeds pmax=",
                  "lambda value; solutions for larger lambdas returned")
-    cond <- sapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x))
+    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+                   FUN.VALUE=logical(1))
     if(all(cond)){
         invokeRestart("muffleWarning")
     }

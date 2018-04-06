@@ -108,7 +108,7 @@
 technique if the covariates are numerous and occur in pairs.</p>
     
 
-    <pre><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>devel</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='no'>...</span>)</pre>
+    <pre><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -128,11 +128,7 @@ and \(p\) columns (variables)</p></td>
     <tr>
       <th>max</th>
       <td><p>maximum number of non-zero coefficients<strong>:</strong>
-positive numeric, or <code>NULL</code> (\(2*p+1\))</p></td>
-    </tr>
-    <tr>
-      <th>devel</th>
-      <td><p>temporary argument</p></td>
+positive numeric, or <code>NULL</code> \((2*p+1)\)</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -152,36 +148,30 @@ Available methods include
 <code><a href='methods.html'>residuals</a></code>,
 <code><a href='methods.html'>deviance</a></code>,
 <code><a href='methods.html'>logLik</a></code>,
-and <code><a href='methods.html'>summary</a></code>.
-Click <code><a href='extra.html'>here</a></code> for hidden functions.</p>
+and <code><a href='methods.html'>summary</a></code>.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Let <code>x</code> denote one entry of the list <code>X</code>. See <a href='http://www.rdocumentation.org/packages/glmnet/topics/glmnet'>glmnet</a>
 for alternative specifications of <code>y</code> and <code>x</code>. Among the further
 arguments, <code>family</code> must equal <code>"gaussian"</code>, <code>"binomial"</code>,
-<code>"poisson"</code>, or <code>"cox"</code>,
-and <code>penalty.factor</code> must not be used.</p>
+<code>"poisson"</code>, or <code>"cox"</code>, and <code>penalty.factor</code> must not be
+used. Fit additional lasso models by setting the hidden arguments
+<code>standard</code> or <code>adaptive</code> to <code>TRUE</code>.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-"Penalised regression with paired covariates."
+"Sparse regression with paired covariates."
 <em>Manuscript in preparation.</em> <a href='mailto:a.rauschenberger@vumc.nl'>a.rauschenberger@vumc.nl</a></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>1</span>)
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>2000</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>rbinom</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>prob</span><span class='kw'>=</span><span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>))
-<span class='no'>object</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>,<span class='kw'>max</span><span class='kw'>=</span><span class='fl'>10</span>,<span class='kw'>devel</span><span class='kw'>=</span><span class='fl'>NA</span>)
-<span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>weights</span>(<span class='no'>object</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"among_x"</span>)[,<span class='fl'>1</span>]
-<span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'>weights</span>(<span class='no'>object</span>,<span class='kw'>model</span><span class='kw'>=</span><span class='st'>"adaptive_x"</span>)[,<span class='fl'>1</span>]
-<span class='fu'>names</span>(<span class='no'>object</span>)</div><div class='output co'>#&gt;  [1] "standard_x"  "standard_z"  "standard_xz" "adaptive_x"  "adaptive_z" 
-#&gt;  [6] "adaptive_xz" "among_x"     "among_z"     "among_xz"    "between_xz" 
-#&gt; [11] "within_xz"  </div><div class='input'>
-</div></pre>
+<span class='no'>object</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>,<span class='kw'>max</span><span class='kw'>=</span><span class='fl'>10</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

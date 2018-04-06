@@ -54,9 +54,6 @@ NULL
 #' @export
 #' 
 predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NULL,...){
-    #if(missing(newdata)||is.null(newdata)) {
-    #    stop("Fitted values?")
-    #}
     x <- palasso:::subset.palasso(x=object,model=model,max=max)
     newx <- do.call(what="cbind",args=newdata)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
@@ -202,9 +199,9 @@ summary.palasso <- function(object,model="paired",...){
     id$min <- which(x$lambda==x$lambda.min)
     id$ose <- which(x$lambda==x$lambda.1se)
     frame <- matrix(NA,nrow=2,ncol=3)
-    frame[,1] <- sapply(id,function(i) x$lambda[i])
-    frame[,2] <- sapply(id,function(i) x$nzero[i])
-    frame[,3] <- sapply(id,function(i) x$cvm[i])
+    frame[,1] <- vapply(id,function(i) x$lambda[i],numeric(1))
+    frame[,2] <- vapply(id,function(i) x$nzero[i],integer(1))
+    frame[,3] <- vapply(id,function(i) x$cvm[i],numeric(1))
     rownames(frame) <- c("min","1se")
     colnames(frame) <- c("lambda","nzero",names(x$name))
     base::print(round(frame,digits=2))
@@ -220,7 +217,14 @@ print.palasso <- function(x,...){
     cat(info$n,"samples, ")
     cat(paste0(info$k,"*",info$p),"covariates\n")
     if(length(info$call)>0){
-        cat("(",paste(names(info$call),info$call,sep="=",collapse=", "),")\n",sep="")
+        cond <- vapply(X=info$call,FUN=function(x) length(x)>1,FUN.VALUE=logical(1))
+        info$call[cond] <- "..."
+        call <- vapply(X=info$call,FUN=deparse,FUN.VALUE=character(1))
+        call <- paste0(names(call),"=",call)
+        call <- paste(call,collapse=", ")
+        call <- paste0("(",call,")")
+        call <- gsub(x=call,pattern="\"...\"",replacement="...")
+        cat(call)
     }
     return(invisible(NULL))
 }
@@ -235,7 +239,11 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         warning("Fake palasso object?")
     }
     
-    name <- unique(sapply(X=x,FUN=function(x) x$name))
+    if(!model %in% c(names(x),"paired","trial")){
+        stop("Invalid argument \"model\".")
+    }
+    
+    name <- unique(vapply(X=x,FUN=function(x) x$name,FUN.VALUE=character(1)))
     if(length(name)!=1){
         stop("Different loss functions!")
     }
@@ -310,10 +318,10 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     
     object <- x[cond]
     if(name=="AUC"){
-        loss <- sapply(object,function(x) max(x$cvm))
+        loss <- vapply(X=object,FUN=function(x) max(x$cvm),FUN.VALUE=numeric(1))
         select <- which.max(loss)
     } else {
-        loss <- sapply(object,function(x) min(x$cvm)) 
+        loss <- vapply(X=object,FUN=function(x) min(x$cvm),FUN.VALUE=numeric(1)) 
         select <- which.min(loss)
     }
     object <- object[[select]]
@@ -354,6 +362,5 @@ print.logLik.palasso <- function(x,...){
     split <- sapply(seq_len(k),function(i) x[seq(from=(i-1)*p+1,to=i*p,by=1),,drop=FALSE])
     if(is.list(split)){names(split) <- info$names}
     if(is.matrix(split)){colnames(split) <- info$names}
-    # as.data.frame(split)
     split
 }

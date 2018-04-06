@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hidden functions (plots) — plots â€¢ palasso</title>
+<title>Plot functions (manuscript) — plots â€¢ palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -100,7 +100,7 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Hidden functions (plots)</h1>
+    <h1>Plot functions (manuscript)</h1>
     </div>
 
     
@@ -184,25 +184,20 @@ column is smaller (blue), equal (white), or larger (red).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>### score ###</span>
-
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>4</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_score</span>(<span class='no'>X</span>)</div><img src='plots-2.png' alt='' width='540' height='400' /><div class='input'>
 <span class='co'>### table ###</span>
-
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>3</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_table</span>(<span class='no'>X</span>,<span class='kw'>margin</span><span class='kw'>=</span><span class='fl'>1</span>)</div><img src='plots-4.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_table</span>(<span class='no'>X</span>,<span class='kw'>margin</span><span class='kw'>=</span><span class='fl'>2</span>)</div><img src='plots-4.png' alt='' width='540' height='400' /><div class='input'>
 <span class='co'>### circle ###</span>
-
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>25</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>Z</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-
 <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'>sapply</span>(<span class='fu'>seq_len</span>(<span class='no'>p</span>),<span class='kw'>function</span>(<span class='no'>i</span>) <span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>X</span>[,<span class='no'>i</span>],<span class='no'>Z</span>[,<span class='no'>i</span>])))
 <span class='no'>w</span> <span class='kw'>&lt;-</span> <span class='fu'>pmax</span>(<span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>X</span>)),<span class='fu'>abs</span>(<span class='fu'>cor</span>(<span class='no'>Z</span>)),<span class='kw'>na.rm</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-
-<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_circle</span>(<span class='no'>b</span>,<span class='no'>w</span>)</div><img src='plots-6.png' alt='' width='540' height='400' /><div class='input'>
+<span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>plot_circle</span>(<span class='no'>b</span>,<span class='no'>w</span>,<span class='kw'>cutoff</span><span class='kw'>=</span><span class='fl'>0</span>)</div><img src='plots-6.png' alt='' width='540' height='400' /><div class='input'>
 <span class='co'>### box ###</span>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>10</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)

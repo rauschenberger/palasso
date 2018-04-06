@@ -30,7 +30,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
         stop("Invalid family!")
     }
     
-    fit <- palasso::palasso(y=y,X=X,devel=TRUE,family=family,max=max)
+    fit <- palasso::palasso(y=y,X=X,standard=TRUE,adaptive=FALSE,family=family,max=max)
     
     names <- c(names(fit),"paired")
     weights <- lapply(X=names,FUN=function(x) weights(object=fit,model=x))

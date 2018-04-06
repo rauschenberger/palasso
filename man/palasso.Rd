@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, max = NULL, devel = FALSE, ...)
+palasso(y, X, max = NULL, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -16,9 +16,7 @@ each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
 \item{max}{maximum number of non-zero coefficients\strong{:}
-positive numeric, or \code{NULL} (\eqn{2*p+1})}
-
-\item{devel}{temporary argument}
+positive numeric, or \code{NULL} \eqn{(2*p+1)}}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}
@@ -34,7 +32,6 @@ Available methods include
 \code{\link[=deviance.palasso]{deviance}},
 \code{\link[=logLik.palasso]{logLik}},
 and \code{\link[=summary.palasso]{summary}}.
-Click \code{\link[=extra]{here}} for hidden functions.
 }
 \description{
 The function \code{palasso} fits the paired lasso. Use this regression
@@ -44,22 +41,20 @@ technique if the covariates are numerous and occur in pairs.
 Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 for alternative specifications of \code{y} and \code{x}. Among the further
 arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
-\code{"poisson"}, or \code{"cox"},
-and \code{penalty.factor} must not be used.
+\code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
+used. Fit additional lasso models by setting the hidden arguments
+\code{standard} or \code{adaptive} to \code{TRUE}.
 }
 \examples{
 set.seed(1)
-n <- 100; p <- 2000
+n <- 50; p <- 20
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-object <- palasso(y=y,X=X,family="binomial",max=10,devel=NA)
-a <- weights(object,model="among_x")[,1]
-b <- weights(object,model="adaptive_x")[,1]
-names(object)
+object <- palasso(y=y,X=X,family="binomial",max=10)
 
 }
 \references{
 A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-"Penalised regression with paired covariates."
+"Sparse regression with paired covariates."
 \emph{Manuscript in preparation.} \email{a.rauschenberger@vumc.nl}
 }
