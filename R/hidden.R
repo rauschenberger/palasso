@@ -705,7 +705,7 @@ NULL
     names <- unique(c(names(fit),"paired","trial1","trial2"))
     nzero <- c(5,10,15,20,25,50,Inf)
     
-    shots <- hits <- matrix(integer(),
+    shots <- hits1 <- hits2 <- matrix(integer(),
                             nrow=length(nzero),
                             ncol=length(names),
                             dimnames=list(nzero,names))
@@ -715,11 +715,12 @@ NULL
             coef <- palasso:::coef.palasso(fit,model=names[j],max=nzero[i])
             temp <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
             shots[i,j] <- length(temp)
-            hits[i,j] <- sum(unique(temp) %in% unlist(index))
+            hits1[i,j] <- sum(unique(temp) %in% unlist(index)) # original
+            hits2[i,j] <- sum(temp %in% unlist(index)) # new
         }
     }
 
-    list <- list(shots=shots,hits=hits)
+    list <- list(shots=shots,hits1=hits1,hits2=hits2)
     return(list)
 }
 
