@@ -690,7 +690,6 @@ NULL
     info <- data.frame(nfolds.ext=nfolds.ext,nfolds.int=nfolds.int,
                        time=format(end-start))
     list <- list(info=info,deviance=deviance,auc=auc,mse=mse,mae=mae,class=class)
-    
     return(list)
 }
 
