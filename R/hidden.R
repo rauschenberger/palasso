@@ -127,7 +127,7 @@ plot_score <- function(X,choice=NULL){
 #' palasso:::plot_table(X,margin=2)
 #' 
 plot_table <- function(X,margin=2,labels=TRUE,las=1){
-    par <- graphics::par(no.readonly=TRUE)
+    #par <- graphics::par(no.readonly=TRUE)
     
     n <- nrow(X); p <- ncol(X)
     if(is.null(rownames(X))){rownames(X) <- seq_len(n)}
@@ -138,6 +138,7 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
     
     graphics::plot.new()
     graphics::plot.window(xlim=c(-h,1+h),ylim=c(-v,1+v))
+    par_usr <- graphics::par()$usr
     graphics::par(usr=c(-h,1+h,-v,1+v))
     palasso:::.mtext(text=rev(rownames(X)),unit=TRUE,side=2,las=las)
     palasso:::.mtext(text=colnames(X),unit=TRUE,side=3,las=las)
@@ -175,7 +176,7 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
         graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
     }
     
-    graphics::par(par)
+    graphics::par(usr=par_usr)
 }
 
 #' @rdname plots
@@ -190,7 +191,7 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
 #' palasso:::plot_circle(b,w,cutoff=0)
 #' 
 plot_circle <- function(b,w,cutoff=NULL,group=NULL){
-    par <- graphics::par(no.readonly=TRUE)
+    # par <- graphics::par(no.readonly=TRUE)
     
     # checks
     if(any(dim(w)!=length(b))){stop("Invalid dimensions!")}
@@ -218,6 +219,8 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
     # initialisation
     graphics::plot.new()
     graphics::plot.window(xlim=1.2*c(-1,1),ylim=1.2*c(-1,1))
+    par_usr <- graphics::par()$usr
+    par_mar <- graphics::par()$mar
     graphics::par(usr=1.2*c(-1,1,-1,1),mar=c(1,1,1,1))
     graphics::lines(x=x,y=y)
     graphics::lines(x=0.8*x,y=0.8*y)
@@ -241,7 +244,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
         graphics::text(x=1.15*x[centre],y=1.15*y[centre],labels=names(cumsum))
     }
     
-    graphics::par(par)
+    graphics::par(usr=par_usr,mar=par_mar)
 }
 
 #' @rdname plots
@@ -342,7 +345,7 @@ plot_pairs <- function(x,y=NULL,...){
 #' palasso:::plot_diff(x,y)
 #' 
 plot_diff <- function(x,y,prob=0.95,...){
-    par <- graphics::par(no.readonly=TRUE)
+    # par <- graphics::par(no.readonly=TRUE)
     
     # difference
     diff <- x - y
@@ -352,6 +355,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     col <- c("blue","grey","red")[index]
     
     # visualisation
+    par_mar <- graphics::par()$mar
     graphics::par(mar=c(4,4,1,1))
     ylim <- 1.2*range(c(-diff,diff),na.rm=TRUE)
     graphics::plot(x=diff,ylim=ylim,
@@ -387,7 +391,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     l2 <- paste0("binom = ",adhoc)
     graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
     
-    graphics::par(par)
+    graphics::par(mar=par_mar)
 }
 
 .mtext <- function(text,unit=FALSE,side=1,las=1){
@@ -631,7 +635,7 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
     if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
     model <- c(model,paste0("among_",c("x","z","xz")),
-               "between_xz","within_xz","paired","trial")
+               "between_xz","within_xz","paired","trial1","trial2")
     nzero <- c(5,10,15,20,25,50,Inf)
     
     # predictions
@@ -699,7 +703,7 @@ NULL
     fit <- palasso::palasso(y=y,X=X,family="binomial",nfolds=nfolds,
                             standard=standard,adaptive=adaptive,...)
     
-    names <- unique(c(names(fit),"paired","trial"))
+    names <- unique(c(names(fit),"paired","trial1","trial2"))
     nzero <- c(5,10,15,20,25,50,Inf)
     
     shots <- hits <- matrix(integer(),

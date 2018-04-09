@@ -239,7 +239,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         warning("Fake palasso object?")
     }
     
-    if(!model %in% c(names(x),"paired","trial")){
+    if(!model %in% c(names(x),"paired","trial1","trial2")){
         stop("Invalid argument \"model\".")
     }
     
@@ -288,8 +288,10 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     # }
     if(model=="paired"){
         pattern <- "among|between|within"
-    } else if(model=="trial"){
+    } else if(model=="trial1"){
         pattern <- "adaptive|between|within"
+    } else if(model=="trial2"){
+        pattern <- "standard|between|within"
     } else {
         pattern <- model 
     }
