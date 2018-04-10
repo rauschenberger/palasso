@@ -636,7 +636,7 @@ NULL
     if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
     model <- c(model,paste0("among_",c("x","z","xz")),
                "between_xz","within_xz","paired","trial1","trial2")
-    nzero <- c(5,10,15,20,25,50,Inf)
+    nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
     pred <- matrix(list(rep(NA,times=n)),nrow=length(nzero),
@@ -703,7 +703,7 @@ NULL
                             standard=standard,adaptive=adaptive,...)
     
     names <- unique(c(names(fit),"paired","trial1","trial2"))
-    nzero <- c(5,10,15,20,25,50,Inf)
+    nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     shots <- hits1 <- hits2 <- matrix(integer(),
                             nrow=length(nzero),

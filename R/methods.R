@@ -223,7 +223,7 @@ print.palasso <- function(x,...){
         call <- paste0(names(call),"=",call)
         call <- paste(call,collapse=", ")
         call <- paste0("(",call,")")
-        call <- gsub(x=call,pattern="\"...\"",replacement="...")
+        call <- gsub(x=call,pattern="\"\\.\\.\\.\"",replacement="...")
         cat(call)
     }
     return(invisible(NULL))
