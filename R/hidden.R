@@ -593,8 +593,8 @@ NULL
         #plot(step)
         #abline(v=index+0.5,col="blue",lty=2)
     }
-    list <- list(X=X,Z=Z)
-    return(list)
+    # list <- list(X=X,Z=Z)
+    return(Z)
 }
 
 
