@@ -23,9 +23,10 @@
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-
+  
+  
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -107,7 +108,7 @@
     <p>Functions for the <code>palasso</code> manuscript.</p>
     
 
-    <pre><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>quantile</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>.prepare</span>(<span class='no'>X</span>, <span class='kw'>filter</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='st'>"zero"</span>, <span class='kw'>scale</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
 
 <span class='fu'>.simulate</span>(<span class='no'>x</span>, <span class='no'>effects</span>)
 
@@ -123,6 +124,18 @@
       <th>X</th>
       <td><p>covariates<strong>:</strong>
 matrix with \(n\) rows and \(p\) columns</p></td>
+    </tr>
+    <tr>
+      <th>filter</th>
+      <td><p>numeric, multiplying the sample size</p></td>
+    </tr>
+    <tr>
+      <th>cutoff</th>
+      <td><p>character "zero", "knee", or "half"</p></td>
+    </tr>
+    <tr>
+      <th>scale</th>
+      <td><p>logical</p></td>
     </tr>
     <tr>
       <th>x</th>
@@ -192,11 +205,11 @@ selected covariates, and the number of correctly selected covariates.</p>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>1</span>)
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
-<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>4</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.prepare</span>(<span class='no'>X</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.predict</span>(<span class='no'>y</span>,<span class='no'>x</span>)
-<span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw'>palasso</span><span class='kw'>:::</span><span class='fu'>.select</span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div></pre>
+<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>3</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
+<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
+<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)
+<span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

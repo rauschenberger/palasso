@@ -8,7 +8,7 @@
 \alias{.select}
 \title{Other functions (manuscript)}
 \usage{
-.prepare(X, cutoff = NULL, quantile = NULL, scale = TRUE)
+.prepare(X, filter = 1, cutoff = "zero", scale = TRUE)
 
 .simulate(x, effects)
 
@@ -20,6 +20,12 @@
 \arguments{
 \item{X}{covariates\strong{:}
 matrix with \eqn{n} rows and \eqn{p} columns}
+
+\item{filter}{numeric, multiplying the sample size}
+
+\item{cutoff}{character "zero", "knee", or "half"}
+
+\item{scale}{logical}
 
 \item{x}{covariates\strong{:}
 list of length \eqn{k},
@@ -72,7 +78,7 @@ selected covariates, and the number of correctly selected covariates.
 \examples{
 set.seed(1)
 n <- 50; p <- 100
-X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
+X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 x <- palasso:::.prepare(X)
 y <- palasso:::.simulate(x,effects=c(1,2))
 predict <- palasso:::.predict(y,x)

@@ -456,6 +456,15 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' response\strong{:}
 #' vector of length \eqn{n}
 #' 
+#' @param filter
+#' numeric, multiplying the sample size
+#' 
+#' @param cutoff
+#' character "zero", "knee", or "half"
+#' 
+#' @param scale
+#' logical
+#' 
 #' @param effects
 #' number of causal covariates\strong{:}
 #' vector of length \eqn{k}
@@ -505,7 +514,7 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' @examples 
 #' set.seed(1)
 #' n <- 50; p <- 100
-#' X <- matrix(rpois(n*p,lambda=4),nrow=n,ncol=p)
+#' X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 #' x <- palasso:::.prepare(X)
 #' y <- palasso:::.simulate(x,effects=c(1,2))
 #' predict <- palasso:::.predict(y,x)
@@ -515,7 +524,7 @@ NULL
 #' @rdname other
 #' @keywords internal
 #' 
-.prepare <- function(X,cutoff=NULL,quantile=NULL,scale=TRUE){
+.prepare <- function(X,filter=1,cutoff="zero",scale=TRUE){
     
     # checks
     if(nrow(X)>=ncol(X)){
@@ -528,10 +537,7 @@ NULL
     # Remove features with low abundance.
     lib.size <- Matrix::rowSums(X)
     abundance <- Matrix::colSums(X)
-    if(is.null(cutoff)){
-        cutoff <- nrow(X) # original: 0.05*nrow(X)
-    }
-    X <- X[,abundance>=cutoff]
+    X <- X[,abundance>=filter*nrow(X)]
     X <- Matrix::as.matrix(X)
     
     # Adjust for different library sizes.
@@ -540,22 +546,22 @@ NULL
     gamma <- matrix(gamma,nrow=nrow(X),ncol=ncol(X))
     X <- X / gamma
     
-    # transform Z
-    Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
-    if(is.null(quantile)){
-        Z[,] <- X > 0 # zero-indicator 
-    } else {
-        # Z[,] <- X > stats::quantile(X,probs=quantile) # quantile
-        Z[,] <- t(apply(X,1,function(x) x > stats::quantile(x=x,probs=quantile)))
-    }
-    
     # transform X
+    temp <- X
     X <- 2*sqrt(X+3/8) # Anscombe transform
     
+    # transform Z
+    Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
+    if(cutoff=="zero"){
+        Z[,] <- temp > 0 # or X > 2*sqrt(3/8)
+    } else if(cutoff=="knee"){
+        Z[,] <- palasso:::.knee(X)
+    } else if(cutoff=="half"){
+        Z[,] <- t(apply(X,1,function(x) x > stats::quantile(x=x,probs=0.5)))
+    }
+
     # properties
     prop <- mean(Z==0)
-    sdx <- apply(X,2,stats::sd)
-    sdz <- apply(Z,2,stats::sd)
     
     if(scale){
         # scaling X
@@ -573,6 +579,24 @@ NULL
     attributes(x)$info <- data.frame(n=nrow(X),p=ncol(X),prop=prop)
     return(x)
 }
+
+.knee <- function(X){
+    n <- nrow(X)
+    p <- ncol(X)
+    Z <- matrix(integer(),nrow=n,ncol=p)
+    prop <- seq(from=0,to=1,length.out=n-1)
+    weight <- log(prop)*log(1-prop)
+    for(j in seq_len(p)){
+        step <- sort(X[,j])
+        index <- which.max(diff(step)*weight)
+        Z[,j] <- X[,j] > step[index]
+        #plot(step)
+        #abline(v=index+0.5,col="blue",lty=2)
+    }
+    list <- list(X=X,Z=Z)
+    return(list)
+}
+
 
 #' @rdname other
 #' @keywords internal
