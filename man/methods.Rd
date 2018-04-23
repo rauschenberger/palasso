@@ -56,9 +56,6 @@ or \code{NULL}}
 \code{\link[glmnet]{coef.cv.glmnet}},
 or \code{\link[glmnet]{deviance.glmnet}}}
 }
-\value{
-to do
-}
 \description{
 This page lists the main methods for class "palasso".
 }

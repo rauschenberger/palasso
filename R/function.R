@@ -58,7 +58,7 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",max=10)
+#' object <- palasso(y=y,X=X,family="binomial",max=10,standard=TRUE)
 #' 
 palasso <- function(y,X,max=NULL,...){
     
@@ -178,10 +178,10 @@ palasso <- function(y,X,max=NULL,...){
         # names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
         # weight <- c(weight,temp)
         ### via univariate regression ###
-        family <- eval(parse(text=base$family))()
         if(base$family=="cox"){
-            stop("NOT YET IMPLEMENTED!")
+            mar <- abs(apply(base$x,2,function(x) survival::coxph(y~x)$coefficients))
         } else {
+            family <- eval(parse(text=base$family))()
             mar <- abs(apply(base$x,2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
         }
         mar[is.na(mar)] <- 0
@@ -194,69 +194,21 @@ palasso <- function(y,X,max=NULL,...){
         weight <- c(weight,temp)
     }
     
-    # weighted lasso
-    if(TRUE){ 
-        # among
-        temp <- list()
-        for(i in seq_len(k)){
-            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] 
-        }
-        temp[[k+1]] <- unlist(cor)
-        names(temp) <- paste0("among_",c(names,paste(names,collapse="")))
-        weight <- c(weight,temp)
-        # between and within
-        temp <- list() 
-        temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
-        temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
-        temp[[2]][is.na(temp[[2]])] <- 0
-        names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
-        weight <- c(weight,temp)
+    # weighted lasso (among)
+    temp <- list()
+    for(i in seq_len(k)){
+        temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] 
     }
-    
-    # weighted lasso
-    #if(FALSE){
-        ### trial start ### (remove this?)
-        ## multiply between and within weights
-        #extra <- list()
-        #extra[[1]] <- temp[[1]]*temp[[2]]
-        #names(extra) <- "combine_xz"
-        #weight <- c(weight,temp1)
-        ### trial end ### (remove this?)
-        ### trial start ###
-        ## obtain weights from xz correlations
-        #cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
-        #cc[is.na(cc)] <- 0
-        #extra <- list()
-        #extra[[1]] <- rep(x=(2-cc)/2,times=2)
-        #names(extra) <- "combine_xz"
-        #weight <- c(weight,extra)
-        ### trial end ###
-    #}
-    
-    # # naive lasso
-    # if(FALSE){
-    #     # standard deviation
-    #     sd <- list()
-    #     for(i in seq_len(k)){
-    #         sd[[i]] <- apply(X[[i]],2,stats::sd)
-    #     }
-    #     # scaling
-    #     cm1 <- lapply(X,function(x) apply(x,2,mean))
-    #     cm2 <- lapply(X,function(x) apply(x,2,stats::var))
-    #     cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
-    #     cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
-    #     if(any(cond1)|any(cond2)){ # too strict?
-    #         stop("Provide unstandardised covariates!")
-    #     }
-    #     # weighting
-    #     temp <- list()
-    #     groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-    #     pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
-    #     pairs[is.na(pairs)] <- 0
-    #     temp[[1]] <- groups*pairs
-    #     names(temp) <- "naive_xz"
-    #     weight <- c(weight,temp)
-    # }
+    temp[[k+1]] <- unlist(cor)
+    names(temp) <- paste0("among_",c(names,paste(names,collapse="")))
+    weight <- c(weight,temp)
+    # weighted lasso (between and within)
+    temp <- list() 
+    temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
+    temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
+    temp[[2]][is.na(temp[[2]])] <- 0
+    names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
+    weight <- c(weight,temp)
     
     # cross-validation
     model <- list()
@@ -277,6 +229,92 @@ palasso <- function(y,X,max=NULL,...){
     return(model)
 }
 
+.error <- function(x,args){
+    pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
+                 "replacement has length zero")
+    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+                   FUN.VALUE=logical(1))
+    if(all(cond)){
+        warning("Fitting intercept-only model.")
+        args$lambda <- c(99e99,99e98)
+        do.call(what=glmnet::cv.glmnet,args=args)
+    } else {
+        stop(x)
+    }
+}
+
+.warning <- function(x){
+    pattern <- c("from glmnet Fortran code \\(error code",
+                 "Number of nonzero coefficients along the path exceeds pmax=",
+                 "lambda value; solutions for larger lambdas returned")
+    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+                   FUN.VALUE=logical(1))
+    if(all(cond)){
+        invokeRestart("muffleWarning")
+    }
+}
+
+.cv.glmnet <- function(args){
+    withCallingHandlers(expr=tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
+                                      error=function(x) palasso:::.error(x,args)),
+                        warning=function(x) palasso:::.warning(x))
+}
+
+
+library(survival)
+
+# Create the simplest test data set 
+test1 <- list(time=c(4,3,1,1,2,2,3), 
+              status=c(1,1,1,0,1,1,0), 
+              x=c(0,2,1,1,1,0,0), 
+              sex=c(0,0,0,0,1,1,1)) 
+# Fit a stratified model 
+mar <- coxph(Surv(time, status) ~ x, test1)$coefficients 
+
+# weighted lasso
+#if(FALSE){
+### trial start ### (remove this?)
+## multiply between and within weights
+#extra <- list()
+#extra[[1]] <- temp[[1]]*temp[[2]]
+#names(extra) <- "combine_xz"
+#weight <- c(weight,temp1)
+### trial end ### (remove this?)
+### trial start ###
+## obtain weights from xz correlations
+#cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
+#cc[is.na(cc)] <- 0
+#extra <- list()
+#extra[[1]] <- rep(x=(2-cc)/2,times=2)
+#names(extra) <- "combine_xz"
+#weight <- c(weight,extra)
+### trial end ###
+#}
+
+# # naive lasso
+# if(FALSE){
+#     # standard deviation
+#     sd <- list()
+#     for(i in seq_len(k)){
+#         sd[[i]] <- apply(X[[i]],2,stats::sd)
+#     }
+#     # scaling
+#     cm1 <- lapply(X,function(x) apply(x,2,mean))
+#     cm2 <- lapply(X,function(x) apply(x,2,stats::var))
+#     cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
+#     cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
+#     if(any(cond1)|any(cond2)){ # too strict?
+#         stop("Provide unstandardised covariates!")
+#     }
+#     # weighting
+#     temp <- list()
+#     groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
+#     pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
+#     pairs[is.na(pairs)] <- 0
+#     temp[[1]] <- groups*pairs
+#     names(temp) <- "naive_xz"
+#     weight <- c(weight,temp)
+# }
 
 ## Original function
 # palasso <- function(y,X,trial=FALSE,...){
@@ -440,36 +478,3 @@ palasso <- function(y,X,max=NULL,...){
 #     class(model) <- "palasso"
 #     return(model)
 # }
-
-.error <- function(x,args){
-    pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
-                 "replacement has length zero")
-    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
-                   FUN.VALUE=logical(1))
-    if(all(cond)){
-        warning("Fitting intercept-only model.")
-        args$lambda <- c(99e99,99e98)
-        do.call(what=glmnet::cv.glmnet,args=args)
-    } else {
-        stop(x)
-    }
-}
-
-.warning <- function(x){
-    pattern <- c("from glmnet Fortran code \\(error code",
-                 "Number of nonzero coefficients along the path exceeds pmax=",
-                 "lambda value; solutions for larger lambdas returned")
-    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
-                   FUN.VALUE=logical(1))
-    if(all(cond)){
-        invokeRestart("muffleWarning")
-    }
-}
-
-.cv.glmnet <- function(args){
-    withCallingHandlers(expr=tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
-                        error=function(x) palasso:::.error(x,args)),
-                        warning=function(x) palasso:::.warning(x))
-}
-
-

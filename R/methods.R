@@ -42,9 +42,6 @@
 #' the linear predictor (\code{type="link"}).
 #' Consider predicting the response (\code{type="response"}).
 #' 
-#' @return
-#' to do
-#' 
 #' @seealso
 #' Use \link[palasso]{palasso} to fit the paired lasso.
 #' 
@@ -273,51 +270,19 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         }
     }
     
-    # start trial #
-    # sparse <- attributes(x)$info$sparse
-    # if(model!="paired"){
-    #     pattern <- model
-    # } else if(is.null(sparse)){
-    #     pattern <- "naive"
-    # } else if(is.na(sparse)){
-    #     pattern <- "adaptive|between|within"
-    # } else if(sparse){
-    #     pattern <- "adaptive|between|within"
-    # } else if(!sparse){
-    #     pattern <- "standard|between|within"
-    # }
-    if(model=="paired"){
-        pattern <- "among|between|within"
-    } else if(model=="trial1"){
-        pattern <- "adaptive|between|within"
-    } else if(model=="trial2"){
-        pattern <- "standard|between|within"
+    if(model %in% c("paired","trial1","trial2")){
+        if(model=="paired"){
+            pattern <- "among|between|within"
+        } else if(model=="trial1"){
+            pattern <- "adaptive|between|within"
+        } else if(model=="trial2"){
+            pattern <- "standard|between|within"
+        }
+        cond <- grepl(pattern=pattern,x=names(x))
     } else {
-        pattern <- model 
+        cond <- names(x)==model # important
     }
-    cond <- grepl(pattern=pattern,x=names(x))
-    # end trial
-    
-    #if(model=="devel"){
-    #    pattern <- "standard|between|within" # temporary
-    #} else {
-    #    pattern <- model
-    #}
-    
-    #cond <- grepl(pattern=pattern,x=names(x)) # trial
-    # cond <- names(x) %in% model # trial
-
-    ## original
-    # if(model=="paired"){
-    #     pattern <- "adaptive|between|within"
-    #     cond <- grepl(pattern=pattern,x=names(x))
-    # } else if(model=="trial"){
-    #     pattern <- "trial"
-    #     cond <- grepl(pattern=pattern,x=names(x))
-    # } else {
-    #     cond <- names(x)==model
-    # }
-    
+   
     object <- x[cond]
     if(name=="AUC"){
         loss <- vapply(X=object,FUN=function(x) max(x$cvm),FUN.VALUE=numeric(1))

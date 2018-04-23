@@ -153,7 +153,6 @@ for(family in c("gaussian","binomial","poisson","cox")){
 }
     
 
-
 # ### Cox regression ###
 #
 # # Here I verify whether the R packages survival, glmnet and palasso lead to
