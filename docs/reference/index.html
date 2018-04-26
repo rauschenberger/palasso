@@ -18,13 +18,19 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
-  
-  
+
+
+
+<meta property="og:title" content="Function reference" />
+
+
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
@@ -34,16 +40,14 @@
 <![endif]-->
 
 
-<!-- Google analytics -->
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-96845398-3"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-  ga('create', 'UA-96845398-3', 'auto');
-  ga('send', 'pageview');
-
+  gtag('config', 'UA-96845398-3');
 </script>
 
   </head>
@@ -59,8 +63,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">palasso</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">palasso</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">0.0.1</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
@@ -91,6 +99,7 @@
   </a>
 </li>
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -98,66 +107,61 @@
       
       </header>
 
-      <div class="row">
-  <div class="col-md-9">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1>
-        Reference
-        <small>version&nbsp;0.0.1</small>
-      </h1>
+      <h1>Reference</h1>
     </div>
 
-    <div class="contents">
-      <table class="ref-index">
+    <table class="ref-index">
 
-      <colgroup>
-        <col class="alias" />
-        <col class="title" />
-      </colgroup>
+    <colgroup>
+      <col class="alias" />
+      <col class="title" />
+    </colgroup>
 
-      <tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-user-functions" class="hasAnchor"><a href="#section-user-functions" class="anchor"></a>User functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="palasso.html">palasso</a></code> </p>
-          </td>
-          <td><p>Paired lasso</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="methods.html">predict</a></code> <code><a href="methods.html">coef</a></code> <code><a href="methods.html">weights</a></code> <code><a href="methods.html">fitted</a></code> <code><a href="methods.html">residuals</a></code> <code><a href="methods.html">deviance</a></code> <code><a href="methods.html">logLik</a></code> <code><a href="methods.html">summary</a></code> </p>
-          </td>
-          <td><p>Methods for class "palasso"</p></td>
-        </tr>
-      </tbody><tbody>
-        <tr>
-          <th colspan="2">
-            <h2 id="section-hidden-functions" class="hasAnchor"><a href="#section-hidden-functions" class="anchor"></a>Hidden functions</h2>
-            <p class="section-desc"></p>
-          </th>
-        </tr>
-        <tr>
-          <!--  -->
-          <td>
-            <p><code><a href="plots.html">plot_score</a></code> <code><a href="plots.html">plot_table</a></code> <code><a href="plots.html">plot_circle</a></code> <code><a href="plots.html">plot_box</a></code> <code><a href="plots.html">plot_pairs</a></code> <code><a href="plots.html">plot_diff</a></code> </p>
-          </td>
-          <td><p>Plot functions (manuscript)</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="other.html">.prepare</a></code> <code><a href="other.html">.simulate</a></code> <code><a href="other.html">.predict</a></code> <code><a href="other.html">.select</a></code> </p>
-          </td>
-          <td><p>Other functions (manuscript)</p></td>
-        </tr>
-      </tbody>
-      </table>
-    </div>
+    <tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-user-functions" class="hasAnchor"><a href="#section-user-functions" class="anchor"></a>User functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="palasso.html">palasso()</a></code> </p>
+        </td>
+        <td><p>Paired lasso</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="methods.html">predict(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">coef(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">weights(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">fitted(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">residuals(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">deviance(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">logLik(<i>&lt;palasso&gt;</i>)</a></code> <code><a href="methods.html">summary(<i>&lt;palasso&gt;</i>)</a></code> </p>
+        </td>
+        <td><p>Methods for class "palasso"</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-hidden-functions" class="hasAnchor"><a href="#section-hidden-functions" class="anchor"></a>Hidden functions</h2>
+          <p class="section-desc"></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="plots.html">plot_score()</a></code> <code><a href="plots.html">plot_table()</a></code> <code><a href="plots.html">plot_circle()</a></code> <code><a href="plots.html">plot_box()</a></code> <code><a href="plots.html">plot_pairs()</a></code> <code><a href="plots.html">plot_diff()</a></code> </p>
+        </td>
+        <td><p>Plot functions (manuscript)</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="other.html">.prepare()</a></code> <code><a href="other.html">.simulate()</a></code> <code><a href="other.html">.predict()</a></code> <code><a href="other.html">.select()</a></code> </p>
+        </td>
+        <td><p>Other functions (manuscript)</p></td>
+      </tr>
+    </tbody>
+    </table>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -175,11 +179,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

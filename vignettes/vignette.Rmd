@@ -8,9 +8,59 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The `palasso` vignette is in preparation.
+The R package `palasso` implements the paired lasso.
+
+```{r,eval=FALSE}
+library(devtools)
+install_github("rauschenberger/palasso")
+# install.packages("palasso")
+```
 
 ```{r}
-plot(rnorm(10))
+library(palasso)
 ```
+
+```{r}
+attach(toydata)
+```
+
+```{r, echo=FALSE}
+names <- names(toydata)
+for(i in 1:length(names)){
+    assign(names[i],toydata[[i]])
+}
+rm(names)
+```
+
+```{r}
+#library(glmnet)
+#net <- glmnet(y=y,x=X[[1]])
+```
+
+```{r}
+object <- palasso(y=y,X=X)
+```
+
+similar methods (to glmnet and stats)
+
+```{r}
+object
+```
+
+```{r,results='hide'}
+weights(object)
+```
+
+```{r,results='hide'}
+fitted(object)
+```
+
+```{r,results='hide'}
+residuals(object)
+```
+
+```{r,results='hide'}
+predict(object,newdata=X)
+```
+
 

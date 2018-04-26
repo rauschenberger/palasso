@@ -16,7 +16,7 @@ each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
 \item{max}{maximum number of non-zero coefficients\strong{:}
-positive numeric, or \code{NULL} \eqn{(2*p+1)}}
+positive numeric, or \code{NULL} \eqn{(no sparsity constraint)}}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}
@@ -34,16 +34,16 @@ Available methods include
 and \code{\link[=summary.palasso]{summary}}.
 }
 \description{
-The function \code{palasso} fits the paired lasso. Use this regression
-technique if the covariates are numerous and occur in pairs.
+The function \code{palasso} fits the paired lasso. Use this function if you
+have \emph{paired covariates} and want a \emph{sparse model}.
 }
 \details{
 Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 for alternative specifications of \code{y} and \code{x}. Among the further
 arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
 \code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
-used. Fit additional lasso models by setting the hidden arguments
-\code{standard} or \code{adaptive} to \code{TRUE}.
+used. Fit additional lasso models by setting the hidden argument
+\code{standard} to \code{TRUE}.
 }
 \examples{
 set.seed(1)

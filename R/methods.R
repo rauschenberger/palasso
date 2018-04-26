@@ -79,7 +79,7 @@ coef.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
 #' @importFrom stats weights
 #' 
 weights.palasso <- function(object,model="paired",max=NULL,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     x <- palasso:::subset.palasso(x=object,model=model,max=max)
     weights <- 1/x$glmnet.fit$call$penalty.factor
     palasso:::.split(x=weights,info=x$palasso)
@@ -90,7 +90,7 @@ weights.palasso <- function(object,model="paired",max=NULL,...){
 #' 
 fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
     x <- palasso:::subset.palasso(x=object,model=model,max=max)
-    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
+    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
@@ -101,7 +101,7 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
 #' 
 residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
     x <- palasso:::subset.palasso(x=object,model=model,max=max)
-    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.")}
+    if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     y <- x$glmnet.fit$call$y
@@ -121,7 +121,7 @@ deviance.palasso <- function(object,model="paired",max=NULL,...){
 #' @export
 #' 
 logLik.palasso <- function(object,model="paired",max=NULL,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     x <- palasso:::subset.palasso(x=object,model=model,max=max)$glmnet.fit
     if(x$call$family=="cox"){
         cox <- survival::coxph(x$call$y~1,weights=x$call$weights)
@@ -173,7 +173,7 @@ logLik.palasso <- function(object,model="paired",max=NULL,...){
 #' @export
 #' 
 summary.palasso <- function(object,model="paired",...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     
     # header
     title <- paste(object[[1]]$glmnet.fit$call$family,"palasso")
@@ -208,7 +208,7 @@ summary.palasso <- function(object,model="paired",...){
 #' @export
 #' 
 print.palasso <- function(x,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     info <- attributes(x)$info
     cat("palasso object: ")
     cat(info$n,"samples, ")
@@ -230,19 +230,19 @@ print.palasso <- function(x,...){
 #' 
 subset.palasso <- function(x,model="paired",max=NULL,...){
     
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     
     if(!inherits(x=x,what="palasso")){
-        warning("Fake palasso object?")
+        warning("Fake palasso object?",call.=FALSE)
     }
     
-    if(!model %in% c(names(x),"paired","trial1","trial2")){
-        stop("Invalid argument \"model\".")
+    if(!model %in% c(names(x),"paired")){ #,"trial1","trial2"
+        stop("Invalid argument \"model\".",call.=FALSE)
     }
     
     name <- unique(vapply(X=x,FUN=function(x) x$name,FUN.VALUE=character(1)))
     if(length(name)!=1){
-        stop("Different loss functions!")
+        stop("Different loss functions!",call.=FALSE)
     }
     
     if(is.null(max)){
@@ -270,14 +270,17 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         }
     }
     
-    if(model %in% c("paired","trial1","trial2")){
-        if(model=="paired"){
-            pattern <- "among|between|within"
-        } else if(model=="trial1"){
-            pattern <- "adaptive|between|within"
-        } else if(model=="trial2"){
-            pattern <- "standard|between|within"
-        }
+    #if(model %in% c("paired","trial1","trial2")){
+    #    if(model=="paired"){
+    #        pattern <- "among|between|within"
+    #    } else if(model=="trial1"){
+    #        pattern <- "adaptive|between|within"
+    #    } else if(model=="trial2"){
+    #        pattern <- "standard|between|within"
+    #    }
+    #    cond <- grepl(pattern=pattern,x=names(x))
+    if(model=="paired"){
+        pattern <- "adaptive|between|within"
         cond <- grepl(pattern=pattern,x=names(x))
     } else {
         cond <- names(x)==model # important
@@ -303,7 +306,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
 #' @importFrom stats df.residual
 #' 
 df.residual.glmnet <- function(object,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     if(object$call$alpha==1){
         # df <- Matrix::colSums(object$beta!=0)
         df <- Matrix::colSums(glmnet::coef.glmnet(object=object)!=0)
@@ -317,7 +320,7 @@ df.residual.glmnet <- function(object,...){
 #' @export
 #' 
 print.logLik.palasso <- function(x,...){
-    if(length(list(...))!=0){warning("Ignoring argument.")}
+    if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     X <- rbind(x,attributes(x)$df)
     rownames(X) <- c("log Lik.","eff. df")
     print(X)

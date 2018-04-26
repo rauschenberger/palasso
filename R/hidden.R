@@ -194,8 +194,8 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
     # par <- graphics::par(no.readonly=TRUE)
     
     # checks
-    if(any(dim(w)!=length(b))){stop("Invalid dimensions!")}
-    if(any(w!=t(w))){stop("Matrix X is asymmetric!")}
+    if(any(dim(w)!=length(b))){stop("Invalid dimensions!",call.=FALSE)}
+    if(any(w!=t(w))){stop("Matrix X is asymmetric!",call.=FALSE)}
     w[row(w)>=col(w)] <- NA
     p <- length(b)
     if(is.null(cutoff)){
@@ -528,10 +528,10 @@ NULL
     
     # checks
     if(nrow(X)>=ncol(X)){
-        stop("Low-dimensional data!")
+        stop("Low-dimensional data!",call.=FALSE)
     }
     if(any(X)<0 | any(X!=round(X))){
-        stop("Raw counts required!")
+        stop("Raw counts required!",call.=FALSE)
     }
     
     # Remove features with low abundance.
@@ -593,7 +593,6 @@ NULL
         #plot(step)
         #abline(v=index+0.5,col="blue",lty=2)
     }
-    # list <- list(X=X,Z=Z)
     return(Z)
 }
 
@@ -612,12 +611,12 @@ NULL
     ### end trial ###
     
     # covariates
-    if(length(x)!=length(effects)){stop("Invalid.")}
-    if(ncol(unique(sapply(x,dim),MARGIN=2))!=1){stop("Invalid.")}
+    if(length(x)!=length(effects)){stop("Invalid.",call.=FALSE)}
+    if(ncol(unique(sapply(x,dim),MARGIN=2))!=1){stop("Invalid.",call.=FALSE)}
     k <- length(x)
     n <- nrow(x[[1]])
     p <- ncol(x[[1]])
-    if(n>=p){warning("Low-dimensional data!")}
+    if(n>=p){warning("Low-dimensional data!",call.=FALSE)}
     
     # coefficients
     coef <- lapply(seq_len(k),function(i) 
@@ -639,7 +638,8 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,standard=TRUE,adaptive=TRUE,...){
+.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,standard=TRUE,
+                     family="binomial",...){
     
     start <- Sys.time()
     
@@ -649,27 +649,28 @@ NULL
     k <- length(X)
     
     # external folds
-    fold.ext <- rep(NA,times=length(y))
-    fold.ext[y==0] <- sample(rep(seq_len(nfolds.ext),
-                                 length.out=sum(y==0)))
-    fold.ext[y==1] <- sample(rep(seq_len(nfolds.ext),
-                                 length.out=sum(y==1)))
+    fold.ext <- palasso:::.folds(y=y,nfolds=nfolds.ext) # changed!
     
     model <- character()
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
-    if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
-    model <- c(model,paste0("among_",c("x","z","xz")),
-               "between_xz","within_xz","paired","trial1","trial2")
+    #if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
+    model <- c(model,paste0("adaptive_",c("x","z","xz")),
+               "between_xz","within_xz","paired") #,"trial1","trial2"
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
-    pred <- matrix(list(rep(NA,times=n)),nrow=length(nzero),
+    if(family=="binomial"){
+        pred <- matrix(list(rep(NA,times=n)),nrow=length(nzero),
                  ncol=length(model),dimnames=list(nzero,model))
-    #pred <- matrix(NA,nrow=n,ncol=length(model))
-    #temp <- rep(NA,times=length(model))
-    #names(temp) <- names
-    deviance <- auc <- mse <- mae <- class <- matrix(NA,nrow=length(nzero),
+        deviance <- auc <- mse <- mae <- class <- matrix(NA,nrow=length(nzero),
             ncol=length(model),dimnames=list(nzero,model))
+    }
+    if(family=="cox"){
+        cvraw <- matrix(list(rep(NA,times=nfolds.ext)),nrow=length(nzero),
+                       ncol=length(model),dimnames=list(nzero,model))
+        loss <- matrix(NA,nrow=length(nzero),ncol=length(model),
+                       dimnames=list(nzero,model))
+    }
     
     # cross-validation
     for(k in seq_len(nfolds.ext)){
@@ -679,33 +680,46 @@ NULL
         X1 <- lapply(X,function(x) x[fold.ext==k,,drop=FALSE])
         
         # internal folds
-        fold.int <- rep(NA,times=length(y0))
-        fold.int[y0==0] <- sample(rep(seq_len(nfolds.int),
-                                      length.out=sum(y0==0)))
-        fold.int[y0==1] <- sample(rep(seq_len(nfolds.int),
-                                      length.out=sum(y0==1)))
+        fold.int <- palasso:::.folds(y=y0,nfolds=nfolds.int) # changed!
         
-        object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family="binomial",
-                                   standard=standard,adaptive=adaptive,...)
+        object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
+                                   standard=standard,...)
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
-                temp <- palasso:::predict.palasso(object=object,
-                    newdata=X1,model=model[j],type="response",max=nzero[i])
-                pred[i,j][[1]][fold.ext==k] <- temp
+                if(family=="binomial"){
+                    temp <- palasso:::predict.palasso(object=object,
+                        newdata=X1,model=model[j],type="response",max=nzero[i])
+                    pred[i,j][[1]][fold.ext==k] <- temp
+                }
+                if(family=="cox"){
+                    beta <- palasso:::predict.palasso(object=object,newdata=X1,
+                                model=model[j],type="coeff",max=nzero[i])
+                    newX <- do.call(what="cbind",args=X)
+                    plfull <- glmnet::coxnet.deviance(x=newX,y=y,beta=beta)
+                    newX0 <- do.call(what="cbind",args=X0)
+                    plminusk <- glmnet::coxnet.deviance(x=newX0,y=y0,beta=beta)
+                    cvraw[i,j][[1]][k] <- plfull - plminusk
+                }
             }
         }
     }
     
     for(i in seq_along(nzero)){
         for(j in seq_along(model)){
-            y_hat <- pred[i,j][[1]]
-            mse[i,j] <- mean((y_hat-y)^2)
-            mae[i,j] <- mean(abs(y_hat-y))
-            class[i,j] <- mean(abs(round(y_hat)-y))
-            y_hat <- pmax(1e-05,pmin(y_hat,1-1e-05))
-            deviance[i,j] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
-            auc[i,j] <- pROC::roc(response=y,predictor=y_hat)$auc
+            if(family=="binomial"){
+                y_hat <- pred[i,j][[1]]
+                mse[i,j] <- mean((y_hat-y)^2)
+                mae[i,j] <- mean(abs(y_hat-y))
+                class[i,j] <- mean(abs(round(y_hat)-y))
+                y_hat <- pmax(1e-05,pmin(y_hat,1-1e-05))
+                deviance[i,j] <- mean(-2*(y*log(y_hat)+(1-y)*log(1-y_hat)))
+                auc[i,j] <- pROC::roc(response=y,predictor=y_hat)$auc
+            }
+            if(family=="cox"){
+                weights <- tapply(X=y[,"status"],INDEX=fold.ext,FUN=sum)
+                loss[i,j] <- mean(cvraw[i,j][[1]]/mean(weights))
+            }
         }
     }
     
@@ -713,7 +727,13 @@ NULL
     
     info <- data.frame(nfolds.ext=nfolds.ext,nfolds.int=nfolds.int,
                        time=format(end-start))
-    list <- list(info=info,deviance=deviance,auc=auc,mse=mse,mae=mae,class=class)
+    if(family=="binomial"){
+       list <- list(info=info,deviance=deviance,auc=auc,mse=mse,mae=mae,class=class) 
+    }
+    if(family=="cox"){
+        list <- list(info=info,loss=loss)
+    }
+    
     return(list)
 }
 
@@ -724,9 +744,9 @@ NULL
 .select <- function(y,X,index,nfolds=5,standard=TRUE,adaptive=TRUE,...){
     
     fit <- palasso::palasso(y=y,X=X,family="binomial",nfolds=nfolds,
-                            standard=standard,adaptive=adaptive,...)
+                            standard=standard,...)
     
-    names <- unique(c(names(fit),"paired","trial1","trial2"))
+    names <- unique(c(names(fit),"paired")) #,"trial1","trial2"
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     shots <- hits1 <- hits2 <- matrix(integer(),
