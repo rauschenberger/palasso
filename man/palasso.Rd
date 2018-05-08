@@ -4,7 +4,7 @@
 \alias{palasso}
 \title{Paired lasso}
 \usage{
-palasso(y, X, max = NULL, ...)
+palasso(y, X, max = 10, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -50,7 +50,7 @@ set.seed(1)
 n <- 50; p <- 20
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-object <- palasso(y=y,X=X,family="binomial",max=10,standard=TRUE)
+object <- palasso(y=y,X=X,family="binomial")
 
 }
 \references{

@@ -220,7 +220,7 @@ selected covariates, and the number of correctly selected covariates.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>set.seed</span>(<span class='fl'>1</span>)
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>100</span>
+<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>30</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>40</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>3</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))

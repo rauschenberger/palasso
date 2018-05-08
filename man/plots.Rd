@@ -12,15 +12,15 @@
 \usage{
 plot_score(X, choice = NULL)
 
-plot_table(X, margin = 2, labels = TRUE, las = 1)
+plot_table(X, margin = 2, labels = TRUE, colour = TRUE, las = 1)
 
 plot_circle(b, w, cutoff = NULL, group = NULL)
 
-plot_box(X, choice = NULL, ylab = "", ylim = NULL)
+plot_box(X, choice = NULL, ylab = "", ylim = NULL, zero = FALSE)
 
 plot_pairs(x, y = NULL, ...)
 
-plot_diff(x, y, prob = 0.95, ...)
+plot_diff(x, y, prob = 0.95, ylab = "", xlab = "", ...)
 }
 \arguments{
 \item{X}{matrix with \eqn{n} rows and \eqn{p} columns}

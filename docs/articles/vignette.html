@@ -90,21 +90,21 @@
     
     
 <p>The R package <code>palasso</code> implements the paired lasso.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(devtools)
-<span class="kw">install_github</span>(<span class="st">"rauschenberger/palasso"</span>)
-<span class="co"># install.packages("palasso")</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(palasso)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attach</span>(toydata)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#library(glmnet)</span>
-<span class="co">#net &lt;- glmnet(y=y,x=X[[1]])</span></code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">install_github</span>(<span class="st">"rauschenberger/palasso"</span>)</a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="co"># install.packages("palasso")</span></a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(palasso)</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">attach</span>(toydata)</a></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co">#library(glmnet)</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#net &lt;- glmnet(y=y,x=X[[1]])</span></a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X)</a></code></pre></div>
 <p>similar methods (to glmnet and stats)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">object</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">object</a></code></pre></div>
 <pre><code>## palasso object: 30 samples, 2*50 covariates</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">weights</span>(object)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">fitted</span>(object)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">residuals</span>(object)</code></pre></div>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predict</span>(object,<span class="dt">newdata=</span>X)</code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">weights</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">fitted</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">residuals</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">predict</span>(object,<span class="dt">newdata=</span>X)</a></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

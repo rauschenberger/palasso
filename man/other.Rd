@@ -77,7 +77,7 @@ selected covariates, and the number of correctly selected covariates.
 }
 \examples{
 set.seed(1)
-n <- 50; p <- 100
+n <- 30; p <- 40
 X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 x <- palasso:::.prepare(X)
 y <- palasso:::.simulate(x,effects=c(1,2))

@@ -58,9 +58,9 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",max=10,standard=TRUE)
+#' object <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,max=NULL,...){
+palasso <- function(y,X,max=10,...){
     
     # extract
     base <- list(...)
@@ -81,8 +81,8 @@ palasso <- function(y,X,max=NULL,...){
     if(!base$family %in% c("gaussian","binomial","poisson","cox")){
         stop("Invalid argument \"family\".",call.=FALSE)
     }
-    if(!is.null(base$dfmax) & base$alpha==0){
-        stop("Unexpected argument \"dfmax\" as \"alpha=0\".",call.=FALSE)
+    if(base$alpha==0 && !is.null(c(max,base$dfmax,base$pmax))){
+        stop("Unexpected argument \"max\", \"dfmax\" or \"pmax\" (\"alpha=0\").",call.=FALSE)
     }
     
     # dimensionality

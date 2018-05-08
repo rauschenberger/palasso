@@ -22,7 +22,7 @@ Penalised regression with paired covariates (extending [glmnet](https://CRAN.R-p
 
 ## Installation
 
-Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](https://cran.r-project.org/web/packages/devtools/README.html):
+Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](https://CRAN.R-project.org/package=devtools):
 
 ```{r eval=FALSE}
 library(devtools)

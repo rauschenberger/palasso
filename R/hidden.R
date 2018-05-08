@@ -89,6 +89,10 @@ plot_score <- function(X,choice=NULL){
     y$loss <- apply(X,2,function(x) sum(temp>x))
     y <- lapply(y,function(x) x[-choice])
     
+    #if(print){
+    #    print(round(y$gain/n,digits=3))
+    #}
+    
     # frame
     graphics::plot.new()
     graphics::plot.window(xlim=c(0.5,p-0.5),ylim=c(0,n))
@@ -126,7 +130,7 @@ plot_score <- function(X,choice=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_table(X,margin=2)
 #' 
-plot_table <- function(X,margin=2,labels=TRUE,las=1){
+plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1){
     #par <- graphics::par(no.readonly=TRUE)
     
     n <- nrow(X); p <- ncol(X)
@@ -153,10 +157,12 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
         temp <- apply(X,2,rank) # rank per column
     }
     
-    temp[is.na(X)] <- NA # temporary
-    image <- t(temp)[,seq(from=n,to=1,by=-1)]
-    col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
-    graphics::image(x=image,col=col,add=TRUE)
+    if(colour){
+        temp[is.na(X)] <- NA # temporary
+        image <- t(temp)[,seq(from=n,to=1,by=-1)]
+        col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
+        graphics::image(x=image,col=col,add=TRUE)
+    }
     
     if(margin==1){
         graphics::segments(x0=-h,x1=1+h,
@@ -171,9 +177,11 @@ plot_table <- function(X,margin=2,labels=TRUE,las=1){
     
     if(labels){
         labels <- round(as.numeric(X),digits=2)
+        labels <- format(labels,digits=2)
         xs <- rep(seq_len(p),each=n)
         ys <- rep(seq_len(n),times=p)
-        graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,col="white")
+        graphics::text(x=(xs-1)/(p-1),y=(n-ys)/(n-1),labels=labels,
+                       col=ifelse(colour,"white","black"))
     }
     
     graphics::par(usr=par_usr)
@@ -255,7 +263,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_box(X,choice=5)
 #' 
-plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
+plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
     
     # input
     n <- nrow(X); p <- ncol(X)
@@ -264,8 +272,9 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
     if(is.null(choice)){choice <- p}
     if(is.character(choice)){choice <- which(colnames(X)==choice)}
     
-    col <- rep(x="#CD0000",times=p)
-    col[choice] <- "#0000CD"
+    # col <- rep(x="#CD0000",times=p) # original
+    # col <- rep(x="#0000CD",times=p)
+    # col[choice] <- "#0000CD"
     
     graphics::plot.new()
     if(is.null(ylim)){ylim <- range(X)}
@@ -282,14 +291,56 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL){
         graphics::abline(h=min(apply(X,2,mean)),col="grey",lty=2)
         graphics::abline(h=min(apply(X,2,stats::median)),col="grey")
     }
+    
+    if(zero){
+        graphics::abline(h=0,col="grey",lty=1)
+    }
 
     for(i in seq_len(p)){
-        # vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
-        graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
-        graphics::points(y=mean(X[,i]),x=i,col="white",pch=16)
+        #vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
+        # graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
+        #graphics::points(y=mean(X[,i]),x=i,col="white",pch=16)
+        .boxplot(x=X[,i],at=i)
     }
     
 }
+
+
+.boxplot <- function(x,at=1,wex=0.25){
+    q <- quantile(x,p=c(0.05,0.25,0.75,0.95))
+    
+    blue <- "#0000CD"
+    red <- "#CD0000"
+    
+    # outliers
+    cond <- (x < q[1] | x > q[4]) & x > 0
+    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=red)
+    cond <- (x < q[1] | x > q[4]) & x < 0
+    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=blue)
+    
+    # box
+    top <- max(0,q[3]); bot <- max(0,q[2])
+    graphics::polygon(x=c(at-wex,at-wex,at+wex,at+wex),
+            y=c(bot,top,top,bot),col=red,border=NA)
+    top <- min(0,q[3]); bot <- min(0,q[2])
+    graphics::polygon(x=c(at-wex,at-wex,at+wex,at+wex),
+            y=c(bot,top,top,bot),col=blue,border=NA)
+    
+    # median
+    m <- median(x)
+    graphics::segments(x0=at-wex,x1=at+wex,y0=m,lwd=3,col="white")
+    
+    # box
+    graphics::polygon(x=c(at-wex,at-wex,at+wex,at+wex),
+            y=c(q[2],q[3],q[3],q[2]))
+    
+    # whiskers
+    graphics::segments(x0=at-wex/2,x1=at+wex/2,y0=q[1],col="black",lwd=2)
+    graphics::segments(x0=at,y0=q[1],y1=q[2],col="black",lwd=2)
+    graphics::segments(x0=at,y0=q[3],y1=q[4],col="black",lwd=2)
+    graphics::segments(x0=at-wex/2,x1=at+wex/2,y0=q[4],col="black",lwd=2)
+}
+
 
 #' @rdname plots
 #' @keywords internal
@@ -344,7 +395,7 @@ plot_pairs <- function(x,y=NULL,...){
 #' y <- runif(n)
 #' palasso:::plot_diff(x,y)
 #' 
-plot_diff <- function(x,y,prob=0.95,...){
+plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
     # par <- graphics::par(no.readonly=TRUE)
     
     # difference
@@ -352,15 +403,16 @@ plot_diff <- function(x,y,prob=0.95,...){
     cutoff <- stats::quantile(abs(diff),p=prob,na.rm=TRUE)
     index <- sign(diff)*(abs(diff) > cutoff) + 2
     pch <- c(16,1,16)[index]
-    col <- c("blue","grey","red")[index]
+    col <- c("red","grey","blue")[index]
     
     # visualisation
     par_mar <- graphics::par()$mar
-    graphics::par(mar=c(4,4,1,1))
+    #graphics::par(mar=c(4,4,1,1))
     ylim <- 1.2*range(c(-diff,diff),na.rm=TRUE)
-    graphics::plot(x=diff,ylim=ylim,
-                   ylab="difference",col=col,pch=pch)
-    graphics::abline(h=c(-1,0,1)*cutoff,lty=2)
+    graphics::plot(x=diff,ylim=ylim,xlab=xlab,
+                   ylab=ylab,col=col,pch=pch)
+    graphics::abline(h=c(-1,1)*cutoff,lty=2)
+    graphics::abline(h=0,lty=1)
     
     # legend: distribution
     mean <- signif(mean(diff,na.rm=TRUE),digits=3)
@@ -371,14 +423,24 @@ plot_diff <- function(x,y,prob=0.95,...){
     l2 <- as.expression(bquote(tilde(X)==.(median)))
     l3 <- as.expression(bquote(hat(sigma)==.(sd)))
     l4 <- as.expression(bquote(ring(m)==.(m)))
-    graphics::legend(x="topright",legend=c(l1,l2,l3,l4),bty="n")
+    #graphics::legend(x="topright",legend=c(l1,l2,l3,l4),bty="n")
     
     # legend: outliers
     nblue <- sum(col=="blue",na.rm=TRUE)
     nred <- sum(col=="red",na.rm=TRUE)
+    # if(nred==nblue){
+    #     legend <- bquote(.(nred)==.(nblue))
+    # }
+    # if(nred<nblue){
+    #     legend <- bquote(.(nred)<.(nblue))
+    # }
+    # if(nred>nblue){
+    #     legend <- bquote(.(nred)>.(nblue))
+    # }
     graphics::legend(x="bottomleft",
-                     legend=c(nblue," +",nred," =",nblue+nred),
-                     text.col=c("blue","black","red","black","black"),
+                     legend=c(nred,":",nblue), #," =",nblue+nred),
+                     text.col=c("red","black","blue"), # "black","black"),
+                     text.font=c(1,2,1),
                      bty="n",
                      horiz=TRUE,
                      x.intersp=0.5,
@@ -389,7 +451,7 @@ plot_diff <- function(x,y,prob=0.95,...){
     adhoc <- signif(1-stats::pbinom(q=nblue-1,size=nblue+nred,prob=0.5),digits=2)
     l1 <- paste0("wilcox = ",wilcox)
     l2 <- paste0("binom = ",adhoc)
-    graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
+    #graphics::legend(x="bottomright",legend=c(l1,l2),bty="n")
     
     graphics::par(mar=par_mar)
 }
@@ -513,7 +575,7 @@ plot_diff <- function(x,y,prob=0.95,...){
 #' 
 #' @examples 
 #' set.seed(1)
-#' n <- 50; p <- 100
+#' n <- 30; p <- 40
 #' X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 #' x <- palasso:::.prepare(X)
 #' y <- palasso:::.simulate(x,effects=c(1,2))
@@ -584,8 +646,10 @@ NULL
     n <- nrow(X)
     p <- ncol(X)
     Z <- matrix(integer(),nrow=n,ncol=p)
-    prop <- seq(from=0,to=1,length.out=n-1)
-    weight <- log(prop)*log(1-prop)
+    #prop <- seq(from=0,to=1,length.out=n-1) # original
+    #weight <- log(prop)*log(1-prop) # original
+    prop <- seq(from=1,to=n-1,by=1)/n # alternative
+    weight <- -prop*log(prop,base=2)-(1-prop)*log(1-prop,base=2) # alternative
     for(j in seq_len(p)){
         step <- sort(X[,j])
         index <- which.max(diff(step)*weight)
