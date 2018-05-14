@@ -307,7 +307,7 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
 
 
 .boxplot <- function(x,at=1,wex=0.25){
-    q <- quantile(x,p=c(0.05,0.25,0.75,0.95))
+    q <- stats::quantile(x,p=c(0.05,0.25,0.75,0.95))
     
     blue <- "#0000CD"
     red <- "#CD0000"
@@ -327,7 +327,7 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
             y=c(bot,top,top,bot),col=blue,border=NA)
     
     # median
-    m <- median(x)
+    m <- stats::median(x)
     graphics::segments(x0=at-wex,x1=at+wex,y0=m,lwd=3,col="white")
     
     # box
@@ -719,7 +719,7 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
     #if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
     model <- c(model,paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","paired") #,"trial1","trial2"
+               "between_xz","within_xz","paired","trial") # ,"trial"
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
@@ -810,7 +810,7 @@ NULL
     fit <- palasso::palasso(y=y,X=X,family="binomial",nfolds=nfolds,
                             standard=standard,...)
     
-    names <- unique(c(names(fit),"paired")) #,"trial1","trial2"
+    names <- unique(c(names(fit),"paired","trial")) #,"trial1","trial2"
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     shots <- hits1 <- hits2 <- matrix(integer(),
