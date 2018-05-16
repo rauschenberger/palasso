@@ -12,7 +12,6 @@ data(toydata)
 All entries are numeric.
 }
 \description{
-This dataset allows you to reproduce
-the examples shown in the vignette.
+Dataset for reproducing the vignette.
 }
 \keyword{internal}

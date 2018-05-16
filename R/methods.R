@@ -51,7 +51,7 @@ NULL
 #' @export
 #' 
 predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NULL,...){
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     newx <- do.call(what="cbind",args=newdata)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,...)
@@ -61,18 +61,15 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NUL
 #' @export
 #' 
 coef.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
     coef <- glmnet::coef.cv.glmnet(object=x,s=s,...)
     if(rownames(coef)[1]=="(Intercept)"){
         # intercept <- coef[1,]
         coef <- coef[-1,,drop=FALSE]
     }
-    palasso:::.split(x=coef,info=x$palasso)
+    .split(x=coef,info=x$palasso)
 }
-# CONTINUE HERE: Maybe it is better to return a matrix of coefficients
-# (including intercept). Then rows are covariates and columns are lambdas.
-# Use x and z for rownames. However, indices are less meaningful.
 
 #' @rdname methods
 #' @export
@@ -80,16 +77,16 @@ coef.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
 #' 
 weights.palasso <- function(object,model="paired",max=NULL,...){
     if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     weights <- 1/x$glmnet.fit$call$penalty.factor
-    palasso:::.split(x=weights,info=x$palasso)
+    .split(x=weights,info=x$palasso)
 }
 
 #' @rdname methods
 #' @export
 #' 
 fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
@@ -100,7 +97,7 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
 #' @export
 #' 
 residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
@@ -113,7 +110,7 @@ residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...)
 #' @export
 #' 
 deviance.palasso <- function(object,model="paired",max=NULL,...){
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)
+    x <- subset.palasso(x=object,model=model,max=max)
     glmnet::deviance.glmnet(x$glmnet.fit,...)
 }
 
@@ -122,7 +119,7 @@ deviance.palasso <- function(object,model="paired",max=NULL,...){
 #' 
 logLik.palasso <- function(object,model="paired",max=NULL,...){
     if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
-    x <- palasso:::subset.palasso(x=object,model=model,max=max)$glmnet.fit
+    x <- subset.palasso(x=object,model=model,max=max)$glmnet.fit
     if(x$call$family=="cox"){
         cox <- survival::coxph(x$call$y~1,weights=x$call$weights)
         ll0 <- cox$loglik # survival:::logLik.coxph.null(cox)
@@ -131,43 +128,11 @@ logLik.palasso <- function(object,model="paired",max=NULL,...){
         ll0 <- stats::logLik(glm)
     }
     ll1 <- x$nulldev/2 + ll0 - glmnet::deviance.glmnet(x)/2
-    attributes(ll1)$df <- palasso:::df.residual.glmnet(x)
+    attributes(ll1)$df <- df.residual.glmnet(x)
     attributes(ll1)$nobs <- x$nobs
     class(ll1) <- c("logLik.palasso","logLik")
     return(ll1)
 }
-
-# Consider modifying function "logLik.palasso"
-# by adding the logical argument "glmnet". 
-# If TRUE then calculate logLik from deviance,
-# if FALSE from fitted values.
-# logLik.palasso <- function(object,s=NULL,model="paired",...){
-# 
-#     x <- palasso:::subset.palasso(x=object,model=model)
-#     if(is.null(s)){s <- x$glmnet.fit$lambda}
-#     y <- x$glmnet.fit$call$y
-#     newx <- x$glmnet.fit$call$x
-#     family <- x$glmnet.fit$call$family
-# 
-#     eta <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="link",...)
-#     if(is.vector(eta)){eta <- as.matrix(eta)}
-# 
-#     ll <- rep(x=NA,times=length(s))
-#     for(i in seq_along(ll)){
-#         if(family=="gaussian"){
-#             mu <- eta[,i]
-#             sd <- sqrt(sum((y-mu)^2)/length(y))
-#             ll[i] <- sum(log(1/sqrt(2*pi*sd^2)*exp(-(y-mu)^2/(2*sd^2))))
-#         } else if(family=="binomial"){
-#             p <- exp(eta[,i])/(1+exp(eta[,i]))
-#             ll[i] <- sum(log(p^y*(1-p)^(1-y)))
-#         } else if(family=="poisson"){
-#             lambda <- exp(eta[,i])
-#             ll[i] <- sum(log(lambda^y*exp(-lambda)/factorial(y)))
-#         }
-#     }
-#     return(ll)
-# }
 
 #' @rdname methods
 #' @export
@@ -181,17 +146,17 @@ summary.palasso <- function(object,model="paired",...){
     cat("",line,"\n",title,"\n",line,"\n\n")
     
     # dimensions
-    palasso:::print.palasso(object)
+    print.palasso(object)
     cat("\n")
     
     # non-zero weights
-    weights <- palasso:::weights.palasso(object)
+    weights <- weights.palasso(object)
     name <- colnames(weights)
     number <- colSums(weights!=0)
     cat("non-zero weights:",paste(number,name,collapse=", "),"\n\n")
     
     # cross-validation
-    x <- palasso:::subset.palasso(x=object,model=model)
+    x <- subset.palasso(x=object,model=model)
     id <- list()
     id$min <- which(x$lambda==x$lambda.min)
     id$ose <- which(x$lambda==x$lambda.1se)
@@ -270,15 +235,6 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         }
     }
     
-    #if(model %in% c("paired","trial1","trial2")){
-    #    if(model=="paired"){
-    #        pattern <- "among|between|within"
-    #    } else if(model=="trial1"){
-    #        pattern <- "adaptive|between|within"
-    #    } else if(model=="trial2"){
-    #        pattern <- "standard|between|within"
-    #    }
-    #    cond <- grepl(pattern=pattern,x=names(x))
     if(model=="paired"){
         pattern <- "adaptive|between|within"
         cond <- grepl(pattern=pattern,x=names(x))

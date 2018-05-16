@@ -100,7 +100,7 @@ plot_score <- function(X,choice=NULL){
     graphics::abline(h=n/2,lwd=2,col="grey")
     graphics::axis(side=2)
     graphics::title(ylab="count",line=2.5)
-    palasso:::.mtext(text=colnames(X)[-choice],side=1)
+    .mtext(text=colnames(X)[-choice],side=1)
     
     # bars
     for(i in seq_len(p-1)){
@@ -130,7 +130,7 @@ plot_score <- function(X,choice=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_table(X,margin=2)
 #' 
-plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1){
+plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1){
     #par <- graphics::par(no.readonly=TRUE)
     
     n <- nrow(X); p <- ncol(X)
@@ -144,8 +144,8 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1){
     graphics::plot.window(xlim=c(-h,1+h),ylim=c(-v,1+v))
     par_usr <- graphics::par()$usr
     graphics::par(usr=c(-h,1+h,-v,1+v))
-    palasso:::.mtext(text=rev(rownames(X)),unit=TRUE,side=2,las=las)
-    palasso:::.mtext(text=colnames(X),unit=TRUE,side=3,las=las)
+    .mtext(text=rev(rownames(X)),unit=TRUE,side=2,las=las,cex=cex)
+    .mtext(text=colnames(X),unit=TRUE,side=3,las=las,cex=cex)
     
     if(margin==0){
         temp <- matrix(rank(X),nrow=n,ncol=p) # overall rank
@@ -263,7 +263,7 @@ plot_circle <- function(b,w,cutoff=NULL,group=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_box(X,choice=5)
 #' 
-plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
+plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE,invert=FALSE){
     
     # input
     n <- nrow(X); p <- ncol(X)
@@ -282,7 +282,7 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
     graphics::box()
     graphics::axis(side=2)
     graphics::title(ylab=ylab,line=2.5)
-    palasso:::.mtext(text=colnames(X),side=1)
+    .mtext(text=colnames(X),side=1)
     
     if(ylab %in% c("AUC","auc")){
         graphics::abline(h=max(apply(X,2,mean)),col="grey",lty=2)
@@ -300,31 +300,34 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE){
         #vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
         # graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
         #graphics::points(y=mean(X[,i]),x=i,col="white",pch=16)
-        .boxplot(x=X[,i],at=i)
+        .boxplot(x=X[,i],at=i,invert=invert)
     }
     
 }
 
 
-.boxplot <- function(x,at=1,wex=0.25){
+.boxplot <- function(x,at=1,wex=0.25,invert=FALSE){
     q <- stats::quantile(x,p=c(0.05,0.25,0.75,0.95))
     
-    blue <- "#0000CD"
-    red <- "#CD0000"
+    col <- c("#0000CD","#CD0000") # blue, red
+    if(invert){col <- rev(col)}
     
+    # blue <- "#0000CD"
+    # red <- "#CD0000" 
+
     # outliers
     cond <- (x < q[1] | x > q[4]) & x > 0
-    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=red)
+    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=col[2])
     cond <- (x < q[1] | x > q[4]) & x < 0
-    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=blue)
+    graphics::points(x=rep(at,sum(cond)),y=x[cond],col=col[1])
     
     # box
     top <- max(0,q[3]); bot <- max(0,q[2])
     graphics::polygon(x=c(at-wex,at-wex,at+wex,at+wex),
-            y=c(bot,top,top,bot),col=red,border=NA)
+            y=c(bot,top,top,bot),col=col[2],border=NA)
     top <- min(0,q[3]); bot <- min(0,q[2])
     graphics::polygon(x=c(at-wex,at-wex,at+wex,at+wex),
-            y=c(bot,top,top,bot),col=blue,border=NA)
+            y=c(bot,top,top,bot),col=col[1],border=NA)
     
     # median
     m <- stats::median(x)
@@ -456,7 +459,7 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
     graphics::par(mar=par_mar)
 }
 
-.mtext <- function(text,unit=FALSE,side=1,las=1){
+.mtext <- function(text,unit=FALSE,side=1,las=1,cex=1){
     p <- length(text)
     # separator
     pattern <- c("_",".","|","+","-",":","*","^","$"," ")
@@ -485,13 +488,13 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
         }
     }
     if(all(cond)){
-        graphics::mtext(text=names,side=side,at=at(seq_len(p)),las=las)
+        graphics::mtext(text=names,side=side,at=at(seq_len(p)),las=las,cex=cex)
         if(length(unique(groups))!=1){
-            graphics::mtext(text="|",side=side,at=at(border),font=2)
+            graphics::mtext(text="|",side=side,at=at(border),font=2,cex=cex)
         }
-        graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1)
+        graphics::mtext(text=groups[centre],side=side,at=at(centre),line=1,cex=cex)
     } else {
-        graphics::mtext(text=text,side=side,at=at(seq_len(p)),las=las)
+        graphics::mtext(text=text,side=side,at=at(seq_len(p)),las=las,cex=cex)
     }
 }
 
@@ -573,14 +576,14 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #' @seealso
 #' Use \link[palasso]{palasso} to fit the paired lasso.
 #' 
-#' @examples 
-#' set.seed(1)
+#' @examples
+#' \donttest{set.seed(1)
 #' n <- 30; p <- 40
 #' X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 #' x <- palasso:::.prepare(X)
 #' y <- palasso:::.simulate(x,effects=c(1,2))
 #' predict <- palasso:::.predict(y,x)
-#' select <- palasso:::.select(y,x,attributes(y))
+#' select <- palasso:::.select(y,x,attributes(y))}
 NULL
 
 #' @rdname other
@@ -617,7 +620,7 @@ NULL
     if(cutoff=="zero"){
         Z[,] <- temp > 0 # or X > 2*sqrt(3/8)
     } else if(cutoff=="knee"){
-        Z[,] <- palasso:::.knee(X)
+        Z[,] <- .knee(X)
     } else if(cutoff=="half"){
         Z[,] <- t(apply(X,1,function(x) x > stats::quantile(x=x,probs=0.5)))
     }
@@ -713,7 +716,7 @@ NULL
     k <- length(X)
     
     # external folds
-    fold.ext <- palasso:::.folds(y=y,nfolds=nfolds.ext) # changed!
+    fold.ext <- .folds(y=y,nfolds=nfolds.ext) # changed!
     
     model <- character()
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
@@ -744,7 +747,7 @@ NULL
         X1 <- lapply(X,function(x) x[fold.ext==k,,drop=FALSE])
         
         # internal folds
-        fold.int <- palasso:::.folds(y=y0,nfolds=nfolds.int) # changed!
+        fold.int <- .folds(y=y0,nfolds=nfolds.int) # changed!
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
                                    standard=standard,...)
@@ -752,12 +755,12 @@ NULL
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
                 if(family=="binomial"){
-                    temp <- palasso:::predict.palasso(object=object,
+                    temp <- predict.palasso(object=object,
                         newdata=X1,model=model[j],type="response",max=nzero[i])
                     pred[i,j][[1]][fold.ext==k] <- temp
                 }
                 if(family=="cox"){
-                    beta <- palasso:::predict.palasso(object=object,newdata=X1,
+                    beta <- predict.palasso(object=object,newdata=X1,
                                 model=model[j],type="coeff",max=nzero[i])
                     newX <- do.call(what="cbind",args=X)
                     plfull <- glmnet::coxnet.deviance(x=newX,y=y,beta=beta)
@@ -820,7 +823,7 @@ NULL
     
     for(i in seq_along(nzero)){
         for(j in seq_along(names)){
-            coef <- palasso:::coef.palasso(fit,model=names[j],max=nzero[i])
+            coef <- coef.palasso(fit,model=names[j],max=nzero[i])
             temp <- unlist(lapply(coef,function(x) Matrix::which(x!=0)))
             shots[i,j] <- length(temp)
             hits1[i,j] <- sum(unique(temp) %in% unlist(index)) # original

@@ -65,7 +65,6 @@ palasso <- function(y,X,max=10,...){
     # extract
     base <- list(...)
     standard <- !(is.null(base$standard)||!base$standard)
-    #adaptive <- !(is.null(base$adaptive)||!base$adaptive)
     base$standard <- base$adaptive <- NULL
     
     # checks
@@ -114,23 +113,19 @@ palasso <- function(y,X,max=10,...){
     }
     
     # fold identifier
-    #cond <- logical()
     c1 <- is.null(base$foldid)
     c2 <- base$family=="binomial" & is.vector(y)
     c3 <- base$family=="cox"
     if(c1 & (c2 | c3)){
-        base$foldid <- palasso:::.folds(y=y,nfolds=base$nfolds) # changed!
+        base$foldid <- .folds(y=y,nfolds=base$nfolds)
     }
     
     # names
-    #names <- names(X)
-    #if(is.null(names)||anyDuplicated(names)){
-        if(k==2){
-            names <- c("x","z") 
-        } else {
-            names <- letters[seq_len(k)]
-        }
-    #}
+    if(k==2){
+        names <- c("x","z") 
+    } else {
+        names <- letters[seq_len(k)]
+    }
     
     # Pearson correlation
     cor <- list()
@@ -173,6 +168,7 @@ palasso <- function(y,X,max=10,...){
         # temp[[k+1]] <- abs(glmnet::coef.cv.glmnet(model,s="lambda.min")[-1])
         # names(temp)[k+1] <- paste0("adaptive_",paste(names,collapse=""))
         # weight <- c(weight,temp)
+        #
         # ### via univariate regression ### (works!)
         # if(base$family=="cox"){
         #     mar <- abs(apply(base$x,2,function(x) survival::coxph(y~x)$coefficients))
@@ -212,7 +208,7 @@ palasso <- function(y,X,max=10,...){
     args <- base
     for(i in seq_along(weight)){
         args$penalty.factor <- 1/weight[[i]]
-        model[[i]] <- palasso:::.cv.glmnet(args)
+        model[[i]] <- .cv.glmnet(args)
         if(i > 1){ # free memory
             model[[i]]$glmnet.fit$call$x <- NULL 
         }
@@ -225,7 +221,6 @@ palasso <- function(y,X,max=10,...){
     class(model) <- "palasso"
     return(model)
 }
-
 
 .folds <- function(y,nfolds){
     if(survival::is.Surv(y)){y <- y[,"status"]}
@@ -250,9 +245,6 @@ palasso <- function(y,X,max=10,...){
 }
 
 .warning <- function(x){
-    #pattern <- c("from glmnet Fortran code \\(error code",
-    #             "Number of nonzero coefficients along the path exceeds pmax=",
-    #             "lambda value; solutions for larger lambdas returned")
     pattern <- c("from glmnet Fortran code \\(error code",
                  "Convergence for",
                  "lambda value not reached after maxit=",
@@ -266,14 +258,13 @@ palasso <- function(y,X,max=10,...){
 
 .cv.glmnet <- function(args){
     withCallingHandlers(expr=tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
-                                      error=function(x) palasso:::.error(x,args)),
-                        warning=function(x) palasso:::.warning(x))
+                                      error=function(x) .error(x,args)),
+                        warning=function(x) .warning(x))
 }
 
 #' Toydata
 #' 
-#' This dataset allows you to reproduce
-#' the examples shown in the vignette.
+#' Dataset for reproducing the vignette.
 #' 
 #' @docType data
 #' @keywords internal
@@ -282,211 +273,3 @@ palasso <- function(y,X,max=10,...){
 #' @return All entries are numeric.
 #' @format A list of numeric vectors and numeric matrices.
 NULL
-
-# weighted lasso
-#if(FALSE){
-### trial start ### (remove this?)
-## multiply between and within weights
-#extra <- list()
-#extra[[1]] <- temp[[1]]*temp[[2]]
-#names(extra) <- "combine_xz"
-#weight <- c(weight,temp1)
-### trial end ### (remove this?)
-### trial start ###
-## obtain weights from xz correlations
-#cc <- sapply(seq_len(p),function(i) abs(cor(X[[1]][,i],X[[2]][,i])))
-#cc[is.na(cc)] <- 0
-#extra <- list()
-#extra[[1]] <- rep(x=(2-cc)/2,times=2)
-#names(extra) <- "combine_xz"
-#weight <- c(weight,extra)
-### trial end ###
-#}
-
-# # naive lasso
-# if(FALSE){
-#     # standard deviation
-#     sd <- list()
-#     for(i in seq_len(k)){
-#         sd[[i]] <- apply(X[[i]],2,stats::sd)
-#     }
-#     # scaling
-#     cm1 <- lapply(X,function(x) apply(x,2,mean))
-#     cm2 <- lapply(X,function(x) apply(x,2,stats::var))
-#     cond1 <- sapply(cm1,function(x) all(x>-0.01 & x<+0.01))
-#     cond2 <- sapply(cm2,function(x) all(x>+0.99 & x<+1.01))
-#     if(any(cond1)|any(cond2)){ # too strict?
-#         stop("Provide unstandardised covariates!")
-#     }
-#     # weighting
-#     temp <- list()
-#     groups <- rep(1/k*sapply(cor,mean)/mean(unlist(cor)),each=p)
-#     pairs <- unlist(sd)/rowSums(do.call(cbind,sd))
-#     pairs[is.na(pairs)] <- 0
-#     temp[[1]] <- groups*pairs
-#     names(temp) <- "naive_xz"
-#     weight <- c(weight,temp)
-# }
-
-## Original function
-# palasso <- function(y,X,trial=FALSE,...){
-#     
-#     # checks
-#     base <- list(...)
-#     funs <- list(glmnet::glmnet,glmnet::cv.glmnet)
-#     formals <- unlist(lapply(funs,function(x) formals(x)),recursive=FALSE) # changed!
-#     if(any(!names(base) %in% names(formals))){stop("Invalid argument.")}
-#     
-#     # arguments
-#     base$y <- y
-#     base$x <- do.call(what="cbind",args=X)
-#     default <- list(family="gaussian",alpha=1,nfolds=10,type.measure="deviance")
-#     base <- c(base,default[!names(default) %in% names(base)])
-#     if(!base$family %in% c("gaussian","binomial","poisson","cox")){
-#         stop("Invalid argument \"family\".")
-#     }
-#     if(!is.null(base$pmax) & base$alpha==0){
-#         stop("Unexpected argument \"pmax\" as \"alpha=0\".")
-#     }
-#     
-#     # dimensionality
-#     k <- ifelse(is.list(X),length(X),1)
-#     if(k==1){
-#         stop("Invalid argument \"X\".")
-#     }
-#     n <- nrow(X[[1]])
-#     p <- ncol(X[[1]])
-#     
-#     # penalty factor (trial)
-#     if(!is.null(base$penalty.factor)){
-#         stop("Unexpected argument \"penalty.factor\".")
-#     }
-#     
-#     # distribution (trial)
-#     if(survival::is.Surv(y)){
-#         guess <- "cox"
-#     } else {
-#         guess <- "gaussian"
-#         guess[all(base$y%%1==0 & base$y>=0)] <- "poisson"
-#         guess[!is.vector(base$y) | length(unique(base$y))==2] <- "binomial"
-#     }
-#     if(guess!=base$family){
-#         warning(paste0("Consider family \"",guess,"\"."))
-#     }
-#     
-#     # fold identifier
-#     cond <- logical()
-#     cond[1] <- is.null(base$foldid)
-#     cond[2] <- base$family=="binomial"
-#     cond[3] <- is.vector(y)
-#     if(all(cond)){
-#         base$foldid <- rep(NA,times=n)
-#         base$foldid[y==0] <- sample(rep(seq_len(base$nfolds),
-#                                         length.out=sum(y==0)))
-#         base$foldid[y==1] <- sample(rep(seq_len(base$nfolds),
-#                                         length.out=sum(y==1)))
-#     }
-#     
-#     # marginal effects (correlation)
-#     mar <- list()
-#     for(i in seq_len(k)){
-#         if(base$family=="cox"){
-#             mar[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
-#         } else {
-#             mar[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
-#         }
-#         mar[[i]][is.na(mar[[i]])] <- 0
-#     }
-#     
-#     # # marginal effects (univariate regression)
-#     # family <- eval(parse(text=base$family))()
-#     # mar <- list()
-#     # for(i in seq_len(k)){
-#     #     mar[[i]] <- abs(apply(X[[i]],2,function(x) stats::glm.fit(y=y,x=cbind(1,x),family=family)$coefficients[2]))
-#     #     mar[[i]][is.na(mar[[i]])] <- 0
-#     # }
-#     
-#     # # trial: marginal effects (univariate regression, s.e. correction)
-#     #mar <- list()
-#     #for(i in seq_len(k)){
-#     #    reg <- apply(X,2,function(x) summary(glm(y~x,family=family)))
-#     #    beta <- sapply(reg,function(x) x$coefficients["x","Estimate"])
-#     #    sd <- sapply(reg,function(x) x$coefficients["x","Std. Error"])
-#     #    mar[[i]] <- abs(beta)/sd
-#     #}
-#     ## for object x of class "summary.glm":
-#     ## x$coefficients[,"Estimate"]/x$coefficients[,"Std. Error"]
-#     ## for object x of class "coxph":
-#     ## x$coefficients/sqrt(x$var)
-#     
-#     weight <- model <- list()
-#     
-#     # standard lasso
-#     for(i in seq_len(k)){
-#         weight[[i]] <- rep(1*(seq_len(k)==i),each=p)
-#     }
-#     weight[[k+1]] <- rep(1/k,times=k*p)
-#     
-#     # weighted lasso
-#     weight[[k+2]] <- rep(1/k*sapply(mar,mean)/mean(unlist(mar)),each=p)
-#     weight[[k+3]] <- unlist(mar)/rowSums(do.call(cbind,mar))
-#     weight[[k+3]][is.na(weight[[k+3]])] <- 0
-#     
-#     # adaptive lasso
-#     for(i in seq_len(k)){
-#         weight[[k+3+i]] <- weight[[i]]*mar[[i]]
-#     }
-#     weight[[2*k+4]] <- unlist(mar)
-#     
-#     if(trial){
-#         c1 = apply(X[[1]],2,stats::sd)
-#         c2 = apply(X[[2]],2,stats::sd)
-#         temp = c(c1/(c1+c2),c2/c(c1+c2))*weight[[k+2]]
-#         temp[is.na(temp)] = 0
-#         weight[[2*k+5]] = temp
-#     }
-#     
-#     # cross-validation
-#     args <- base
-#     for(i in seq_along(weight)){
-#         args$penalty.factor <- 1/weight[[i]]
-#         ### start original ###
-#         #model[[i]] <- tryCatch(expr=do.call(what=glmnet::cv.glmnet,args=args),
-#         #                       error=function(x) NA)
-#         #if(class(model[[i]])!="cv.glmnet"){
-#         #    # intercept-only model
-#         #    temp <- base
-#         #    temp$lambda <- c(99e99,99e98)
-#         #    model[[i]] <- do.call(what=glmnet::cv.glmnet,args=temp)
-#         #}
-#         ### end original ###
-#         model[[i]] <- palasso:::.cv.glmnet(args) ### trial
-#         if(i > 1){
-#             # free memory
-#             model[[i]]$glmnet.fit$call$x <- NULL
-#         }
-#     }
-#     
-#     # names
-#     if(k==2){
-#         names = c("x","z") 
-#     } else {
-#         names = letters[seq_len(k)]
-#     }  
-#     all = paste0(names,collapse="")
-#     if(trial){
-#         names(model) = c(paste0("standard_",c(names,all)),
-#                          paste0(c("between_","within_"),all),
-#                          paste0("adaptive_",c(names,all)),"trial")
-#     } else {
-#         names(model) = c(paste0("standard_",c(names,all)),
-#                          paste0(c("between_","within_"),all),
-#                          paste0("adaptive_",c(names,all)))
-#     }
-#     
-#     # output
-#     call <- sapply(list(...),function(x) deparse(x))
-#     attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call)
-#     class(model) <- "palasso"
-#     return(model)
-# }

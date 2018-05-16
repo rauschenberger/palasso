@@ -8,7 +8,7 @@ Status](https://codecov.io/github/rauschenberger/palasso/coverage.svg?branch=mas
 
 ## Scope
 
-Penalised regression with paired covariates (extending
+Sparse regression with paired covariates (extending
 [glmnet](https://CRAN.R-project.org/package=glmnet)).
 
 ## Installation
@@ -24,7 +24,7 @@ install_github("rauschenberger/palasso")
 ## Reference
 
 A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-Penalised regression with paired covariates. Manuscript in preparation.
+“Sparse regression with paired covariates”. Manuscript in preparation.
 
 <!--
 [![Bioconductor](https://www.bioconductor.org/images/logo/jpg/bioconductor_logo_grey.jpg){width=70px}](https://doi.org/10.18129/B9.bioc.globalSeq)

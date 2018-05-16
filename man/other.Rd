@@ -76,13 +76,13 @@ Limiting the number of covariates to \eqn{10}, it returns the number of
 selected covariates, and the number of correctly selected covariates.
 }
 \examples{
-set.seed(1)
+\donttest{set.seed(1)
 n <- 30; p <- 40
 X <- matrix(rpois(n*p,lambda=3),nrow=n,ncol=p)
 x <- palasso:::.prepare(X)
 y <- palasso:::.simulate(x,effects=c(1,2))
 predict <- palasso:::.predict(y,x)
-select <- palasso:::.select(y,x,attributes(y))
+select <- palasso:::.select(y,x,attributes(y))}
 
 
 

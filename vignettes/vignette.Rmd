@@ -8,12 +8,16 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The R package `palasso` implements the paired lasso.
+The R package `palasso` implements the paired lasso. This vignette is in preparation.
 
 ```{r,eval=FALSE}
+#install.packages("devtools")
 library(devtools)
 install_github("rauschenberger/palasso")
-# install.packages("palasso")
+```
+
+```{r,eval=FALSE}
+install.packages("palasso")
 ```
 
 ```{r}
@@ -41,8 +45,6 @@ rm(names)
 object <- palasso(y=y,X=X)
 ```
 
-similar methods (to glmnet and stats)
-
 ```{r}
 object
 ```
@@ -62,5 +64,3 @@ residuals(object)
 ```{r,results='hide'}
 predict(object,newdata=X)
 ```
-
-

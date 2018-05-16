@@ -12,11 +12,13 @@
 \usage{
 plot_score(X, choice = NULL)
 
-plot_table(X, margin = 2, labels = TRUE, colour = TRUE, las = 1)
+plot_table(X, margin = 2, labels = TRUE, colour = TRUE, las = 1,
+  cex = 1)
 
 plot_circle(b, w, cutoff = NULL, group = NULL)
 
-plot_box(X, choice = NULL, ylab = "", ylim = NULL, zero = FALSE)
+plot_box(X, choice = NULL, ylab = "", ylim = NULL, zero = FALSE,
+  invert = FALSE)
 
 plot_pairs(x, y = NULL, ...)
 
