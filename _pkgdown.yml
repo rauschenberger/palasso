@@ -1,7 +1,6 @@
 template:
   params:
     bootswatch: spacelab
-    ganalytics: UA-96845398-3
 
 home:
    links:
