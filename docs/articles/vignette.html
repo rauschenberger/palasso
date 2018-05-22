@@ -89,25 +89,73 @@
 
     
     
-<p>The R package <code>palasso</code> implements the paired lasso. This vignette is in preparation.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">#install.packages("devtools")</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">library</span>(devtools)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">install_github</span>(<span class="st">"rauschenberger/palasso"</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"palasso"</span>)</a></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(palasso)</a></code></pre></div>
+<p>The R package <code>palasso</code> implements the paired lasso.</p>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
+<p>Installing the current release from <a href="https://CRAN.R-project.org/package=palasso">CRAN</a>:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">"palasso"</span>)</a></code></pre></div>
+<p>Installing the latest development version from <a href="https://github.com/rauschenberger/palasso">GitHub</a>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co">#install.packages("devtools")</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3"><span class="kw">install_github</span>(<span class="st">"rauschenberger/palasso"</span>)</a></code></pre></div>
+</div>
+<div id="initialisation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#initialisation" class="anchor"></a>Initialisation</h2>
+<p>We use <a href="https://CRAN.R-project.org/package=glmnet">glmnet</a> for the standard lasso, and <a href="https://CRAN.R-project.org/package=palasso">palasso</a> for the paired lasso.</p>
+<p>Loading and attaching the packages:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(glmnet)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2"><span class="kw">library</span>(palasso)</a></code></pre></div>
+<p>Attaching some data to reproduce the examples:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">attach</span>(toydata)</a></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="co">#library(glmnet)</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="co">#net &lt;- glmnet(y=y,x=X[[1]])</span></a></code></pre></div>
+<p>Data are available for <span class="math inline">\(n=30\)</span> samples and <span class="math inline">\(p=50\)</span> covariate pairs. The object <code>y</code> contains the response (numeric vector of length <span class="math inline">\(n\)</span>). The object <code>X</code> contains the covariates (list of two numeric matrices with <span class="math inline">\(n\)</span> rows and <span class="math inline">\(p\)</span> columns).</p>
+</div>
+<div id="standard-lasso" class="section level2">
+<h2 class="hasAnchor">
+<a href="#standard-lasso" class="anchor"></a>Standard lasso</h2>
+<p>The standard lasso is a good choice for exploiting either the first or the second covariate group:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">object &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">y=</span>y,<span class="dt">x=</span>X[[<span class="dv">1</span>]])</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">object &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class="dt">y=</span>y,<span class="dt">x=</span>X[[<span class="dv">2</span>]])</a></code></pre></div>
+</div>
+<div id="paired-lasso" class="section level2">
+<h2 class="hasAnchor">
+<a href="#paired-lasso" class="anchor"></a>Paired lasso</h2>
+<p>But the paired lasso might be a better choice for exploiting both covariates groups at once:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X)</a></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">object</a></code></pre></div>
-<pre><code>## palasso object: 30 samples, 2*50 covariates</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">weights</span>(object)</a></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">fitted</span>(object)</a></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">residuals</span>(object)</a></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">predict</span>(object,<span class="dt">newdata=</span>X)</a></code></pre></div>
+<p>In contrast to the standard lasso, the paired lasso accounts for the structure between the covariate groups.</p>
+<p>If the number of non-zero coefficients is limited, we expect the paired lasso to outperform the standard lasso:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X,<span class="dt">max=</span><span class="dv">10</span>)</a></code></pre></div>
+</div>
+<div id="methods" class="section level2">
+<h2 class="hasAnchor">
+<a href="#methods" class="anchor"></a>Methods</h2>
+<p>Standard methods are available for the paired lasso:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">weights</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">fitted</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">residuals</span>(object)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">predict</span>(object,<span class="dt">newdata=</span>X)</a></code></pre></div>
+</div>
+<div id="reference" class="section level2">
+<h2 class="hasAnchor">
+<a href="#reference" class="anchor"></a>Reference</h2>
+<p>A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018). “Sparse regression with paired covariates”. Manuscript in preparation.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+        <div id="tocnav">
+      <h2 class="hasAnchor">
+<a href="#tocnav" class="anchor"></a>Contents</h2>
+      <ul class="nav nav-pills nav-stacked">
+<li><a href="#installation">Installation</a></li>
+      <li><a href="#initialisation">Initialisation</a></li>
+      <li><a href="#standard-lasso">Standard lasso</a></li>
+      <li><a href="#paired-lasso">Paired lasso</a></li>
+      <li><a href="#methods">Methods</a></li>
+      <li><a href="#reference">Reference</a></li>
+      </ul>
+</div>
       </div>
 
 </div>

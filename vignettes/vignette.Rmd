@@ -8,7 +8,17 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The R package `palasso` implements the paired lasso. This vignette is in preparation.
+The R package `palasso` implements the paired lasso.
+
+## Installation
+
+Installing the current release from [CRAN](https://CRAN.R-project.org/package=palasso):
+
+```{r,eval=FALSE}
+install.packages("palasso")
+```
+
+Installing the latest development version from [GitHub](https://github.com/rauschenberger/palasso):
 
 ```{r,eval=FALSE}
 #install.packages("devtools")
@@ -16,15 +26,20 @@ library(devtools)
 install_github("rauschenberger/palasso")
 ```
 
-```{r,eval=FALSE}
-install.packages("palasso")
-```
+## Initialisation
 
-```{r}
+We use [glmnet](https://CRAN.R-project.org/package=glmnet) for the standard lasso, and [palasso](https://CRAN.R-project.org/package=palasso) for the paired lasso.
+
+Loading and attaching the packages:
+
+```{r, message=FALSE}
+library(glmnet)
 library(palasso)
 ```
 
-```{r}
+Attaching some data to reproduce the examples:
+
+```{r, eval=FALSE}
 attach(toydata)
 ```
 
@@ -36,18 +51,36 @@ for(i in 1:length(names)){
 rm(names)
 ```
 
+Data are available for $n=30$ samples and $p=50$ covariate pairs. The object `y` contains the response (numeric vector of length $n$). The object `X` contains the covariates (list of two numeric matrices with $n$ rows and $p$ columns).
+
+## Standard lasso
+
+The standard lasso is a good choice for exploiting either the first or the second covariate group:
+
 ```{r}
-#library(glmnet)
-#net <- glmnet(y=y,x=X[[1]])
+object <- glmnet(y=y,x=X[[1]])
+object <- glmnet(y=y,x=X[[2]])
 ```
+
+## Paired lasso
+
+But the paired lasso might be a better choice for exploiting both covariates groups at once:
 
 ```{r}
 object <- palasso(y=y,X=X)
 ```
 
+In contrast to the standard lasso, the paired lasso accounts for the structure between the covariate groups.
+
+Given a limited number of non-zero coefficients, we expect the paired lasso to outperform the standard lasso: 
+
 ```{r}
-object
+object <- palasso(y=y,X=X,max=10)
 ```
+
+## Methods
+
+Standard methods are available for the paired lasso:
 
 ```{r,results='hide'}
 weights(object)
@@ -64,3 +97,8 @@ residuals(object)
 ```{r,results='hide'}
 predict(object,newdata=X)
 ```
+
+## Reference
+
+A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
+"Sparse regression with paired covariates". Manuscript in preparation.
