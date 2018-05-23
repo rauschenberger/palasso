@@ -1,7 +1,7 @@
 Package: palasso
 Version: 0.0.1
 Title: Paired Lasso Regression
-Description: Implements sparse regression with paired covariates (Rauschenberger et al. 2018).
+Description: Implements sparse regression with paired covariates (Rauschenberger et al. 2018.).
 Depends: R (>= 3.0.0)
 Imports: glmnet, stats, Matrix, survival
 Suggests: knitr, testthat, edgeR, pROC
