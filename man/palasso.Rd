@@ -42,8 +42,8 @@ Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 for alternative specifications of \code{y} and \code{x}. Among the further
 arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
 \code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
-used. Fit additional lasso models by setting the hidden argument
-\code{standard} to \code{TRUE}.
+used. Deactivate adaptive lasso by setting \code{adaptive} to \code{FALSE},
+and activate standard lasso by setting \code{standard} to \code{TRUE}.
 }
 \examples{
 set.seed(1)

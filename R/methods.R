@@ -201,7 +201,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         warning("Fake palasso object?",call.=FALSE)
     }
     
-    if(!model %in% c(names(x),"paired","trial")){
+    if(!model %in% c(names(x),paste0("paired",c("",".adaptive",".standard",".combined")))){
         stop("Invalid argument \"model\".",call.=FALSE)
     }
     
@@ -235,12 +235,35 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         }
     }
     
+    #if(is.null(standard)){standard <- attributes(x)$info$standard}
+    #if(is.null(adaptive)){adaptive <- attributes(x)$info$adaptive}
+    #if(standard&!attributes(x)$info$standard){stop("Missing standard models.")}
+    #if(adaptive&!attributes(x)$info$adaptive){stop("Missing adaptive models.")}
+    
     if(model=="paired"){
+        adaptive <- attributes(x)$info$adaptive
+        standard <- attributes(x)$info$standard
+        if(adaptive & !standard){
+            model <- "paired.adaptive"
+        } else if(!adaptive & standard){
+            model <- "paired.standard"
+        } else if(adaptive & standard){
+            model <- "paired.combined"
+        }
+    }
+    
+    if(model=="paired.adaptive"){
         pattern <- "adaptive|between|within"
         cond <- grepl(pattern=pattern,x=names(x))
-    } else if(model=="trial"){
+        if(sum(cond)!=attributes(x)$info$k+3){stop("Mismatch.")}
+    } else if(model=="paired.standard"){
         pattern <- "standard|between|within"
         cond <- grepl(pattern=pattern,x=names(x))
+        if(sum(cond)!=attributes(x)$info$k+3){stop("Mismatch.")}
+    } else if(model=="paired.combined"){
+        pattern <- "standard|adaptive|between|within"
+        cond <- grepl(pattern=pattern,x=names(x))
+        if(sum(cond)!=2*attributes(x)$info$k+4){stop("Mismatch.")}
     } else {
         cond <- names(x)==model # important
     }

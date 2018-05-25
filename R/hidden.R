@@ -161,6 +161,10 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1){
         temp[is.na(X)] <- NA # temporary
         image <- t(temp)[,seq(from=n,to=1,by=-1)]
         col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
+        #col <- grDevices::colorRampPalette(colors=c("#081d58",
+        #        "#253494","#225ea8","#1d91c0","#41b6c4",
+        #        "#7fcdbb","#c7e9b4","#edf8b1","#ffffd9"))(n*p)
+        #col <- grDevices::colorRampPalette(colors=rev(RColorBrewer::brewer.pal(n=9,name="Blues")))(n*p)
         graphics::image(x=image,col=col,add=TRUE)
     }
     
@@ -722,7 +726,7 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
     #if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
     model <- c(model,paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","paired","trial") # ,"trial"
+               "between_xz","within_xz","paired.adaptive","paired.standard","paired.combined")
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
@@ -813,7 +817,7 @@ NULL
     fit <- palasso::palasso(y=y,X=X,family="binomial",nfolds=nfolds,
                             standard=standard,...)
     
-    names <- unique(c(names(fit),"paired","trial")) #,"trial1","trial2"
+    names <- unique(c(names(fit),"paired.adaptive","paired.standard","paired.combined"))
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     shots <- hits1 <- hits2 <- matrix(integer(),

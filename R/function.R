@@ -33,8 +33,8 @@
 #' for alternative specifications of \code{y} and \code{x}. Among the further
 #' arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
 #' \code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
-#' used. Fit additional lasso models by setting the hidden argument
-#' \code{standard} to \code{TRUE}.
+#' used. Deactivate adaptive lasso by setting \code{adaptive} to \code{FALSE},
+#' and activate standard lasso by setting \code{standard} to \code{TRUE}.
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -64,6 +64,7 @@ palasso <- function(y,X,max=10,...){
     
     # extract
     base <- list(...)
+    adaptive <- is.null(base$adaptive)||base$adaptive
     standard <- !(is.null(base$standard)||!base$standard)
     base$standard <- base$adaptive <- NULL
     
@@ -187,18 +188,21 @@ palasso <- function(y,X,max=10,...){
     #}
     
     # adaptive lasso
-    temp <- list()
-    for(i in seq_len(k)){
-        temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] 
+    if(adaptive){
+        temp <- list()
+        for(i in seq_len(k)){
+            temp[[i]] <- rep(1*(seq_len(k)==i),each=p)*cor[[i]] 
+        }
+        temp[[k+1]] <- unlist(cor)
+        names(temp) <- paste0("adaptive_",c(names,paste(names,collapse="")))
+        weight <- c(weight,temp)
     }
-    temp[[k+1]] <- unlist(cor)
-    names(temp) <- paste0("adaptive_",c(names,paste(names,collapse="")))
-    weight <- c(weight,temp)
     
     # weighted lasso
     temp <- list() 
     temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
-    temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor))
+    #temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor)) # original
+    temp[[2]] <- unlist(cor)^2/rowSums(do.call(cbind,cor)) # trial
     temp[[2]][is.na(temp[[2]])] <- 0
     names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
     weight <- c(weight,temp)
@@ -217,7 +221,8 @@ palasso <- function(y,X,max=10,...){
     
     # output
     call <- lapply(list(...),function(x) unlist(x))
-    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max)
+    attributes(model)$info <- list(n=n,k=k,p=p,names=names,call=call,max=max,
+                                   standard=standard,adaptive=adaptive)
     class(model) <- "palasso"
     return(model)
 }
