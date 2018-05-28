@@ -754,7 +754,19 @@ NULL
         fold.int <- .folds(y=y0,nfolds=nfolds.int) # changed!
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-                                   standard=standard,...)
+                                   standard=standard,...) # activate
+        message("reactivate!")
+        
+        # start trial #
+        #message(paste("start ",k))
+        #object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
+        #                           standard=standard,lambda=lambda) # remove this
+        min <- round(sapply(object,function(x) min(x$lambda)),3)
+        sel <- round(sapply(object,function(x) x$lambda.min),3)
+        max <- round(sapply(object,function(x) max(x$lambda)),3)
+        print(data.frame(min=min,sel=sel,max=max))
+        message(paste("finish ",k))
+        # end trial #
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){

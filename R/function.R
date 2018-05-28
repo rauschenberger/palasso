@@ -235,28 +235,72 @@ palasso <- function(y,X,max=10,...){
     return(foldid)
 }
 
+# .error <- function(x,args){
+#     pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
+#                  "replacement has length zero")
+#     cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+#                    FUN.VALUE=logical(1))
+#     if(all(cond)){
+#         warning("Fitting intercept-only model.",call.=FALSE)
+#         args$lambda <- c(99e99,99e98)
+#         do.call(what=glmnet::cv.glmnet,args=args)
+#     } else {
+#         stop(x,call.=FALSE)
+#     }
+# }
+
+# .warning <- function(x){
+#     pattern <- c("from glmnet Fortran code \\(error code",
+#                  "Convergence for",
+#                  "lambda value not reached after maxit=",
+#                  "iterations; solutions for larger lambdas returned")
+#     cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+#                    FUN.VALUE=logical(1))
+#     if(all(cond)){
+#         invokeRestart("muffleWarning")
+#     }
+# }
+
 .error <- function(x,args){
-    pattern <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
+    pattern1 <- c("Error in predmat\\[which, seq\\(nlami\\)\\] <- preds",
                  "replacement has length zero")
-    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+    pattern2 <- c("Matrices must have same number of columns in",
+                 "rbind2\\(.Call\\(dense_to_Csparse, x\\), y\\)")
+    cond1 <- vapply(X=pattern1,FUN=function(p) grepl(pattern=p,x=x),
                    FUN.VALUE=logical(1))
-    if(all(cond)){
-        warning("Fitting intercept-only model.",call.=FALSE)
-        args$lambda <- c(99e99,99e98)
-        do.call(what=glmnet::cv.glmnet,args=args)
+    cond2 <- vapply(X=pattern2,FUN=function(p) grepl(pattern=p,x=x),
+                    FUN.VALUE=logical(1))
+    if(all(cond1)|all(cond2)){
+        warning("Modified lambda sequence!",call.=FALSE)
+        #args$lambda <- c(99e99,exp(seq(from=log(1e+06),to=log(1),length.out=100)))
+        #initial <- do.call(what=glmnet::cv.glmnet,args=args)
+        #lambda.max <- 100 # min(initial$lambda[initial$nzero==0])
+        #if(is.null(args$lambda.min.ratio)){args$lambda.min.ratio <- 0.01}
+        #if(is.null(args$nlambda)){args$nlambda <- 100}
+        #sequence <- exp(seq(from=log(lambda.max),
+        #                    to=log(lambda.max*args$lambda.min.ratio),
+        #                    length.out=args$nlambda))
+        #args$lambda <- c(99e99,sequence)
+        args$lambda <- c(10^c(12,9,6,3),exp(seq(from=log(100),to=log(0.001),length.out=100)))
+        do.call(what=glmnet::cv.glmnet,args=args) 
     } else {
         stop(x,call.=FALSE)
     }
 }
 
+
 .warning <- function(x){
-    pattern <- c("from glmnet Fortran code \\(error code",
+    pattern1 <- c("from glmnet Fortran code \\(error code",
                  "Convergence for",
                  "lambda value not reached after maxit=",
                  "iterations; solutions for larger lambdas returned")
-    cond <- vapply(X=pattern,FUN=function(p) grepl(pattern=p,x=x),
+    pattern2 <- c("In getcoef\\(fit, nvars, nx, vnames\\) :",
+                  "an empty model has been returned; probably a convergence issue")
+    cond1 <- vapply(X=pattern1,FUN=function(p) grepl(pattern=p,x=x),
                    FUN.VALUE=logical(1))
-    if(all(cond)){
+    cond2 <- vapply(X=pattern2,FUN=function(p) grepl(pattern=p,x=x),
+                    FUN.VALUE=logical(1))
+    if(all(cond1)|all(cond2)){
         invokeRestart("muffleWarning")
     }
 }
