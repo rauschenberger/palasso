@@ -272,17 +272,14 @@ palasso <- function(y,X,max=10,...){
                     FUN.VALUE=logical(1))
     if(all(cond1)|all(cond2)){
         warning("Modified lambda sequence!",call.=FALSE)
-        #args$lambda <- c(99e99,exp(seq(from=log(1e+06),to=log(1),length.out=100)))
-        #initial <- do.call(what=glmnet::cv.glmnet,args=args)
-        #lambda.max <- 100 # min(initial$lambda[initial$nzero==0])
-        #if(is.null(args$lambda.min.ratio)){args$lambda.min.ratio <- 0.01}
-        #if(is.null(args$nlambda)){args$nlambda <- 100}
-        #sequence <- exp(seq(from=log(lambda.max),
-        #                    to=log(lambda.max*args$lambda.min.ratio),
-        #                    length.out=args$nlambda))
-        #args$lambda <- c(99e99,sequence)
-        #args$lambda <- c(10^c(12,9,6,3),exp(seq(from=log(100),to=log(0.001),length.out=100)))
-        args$lambda <- exp(seq(from=log(1e+06),to=log(1e-06),length.out=100))
+        args$lambda <- exp(seq(from=log(99e99),to=log(99),length.out=100))
+        initial <- do.call(what=glmnet::cv.glmnet,args=args)
+        lambda.max <- min(initial$lambda[initial$nzero==0])
+        if(is.null(args$lambda.min.ratio)){args$lambda.min.ratio <- 0.01}
+        if(is.null(args$nlambda)){args$nlambda <- 100}
+        sequence <- exp(seq(from=log(lambda.max),
+                            to=log(lambda.max*args$lambda.min.ratio),
+                            length.out=args$nlambda))
         do.call(what=glmnet::cv.glmnet,args=args) 
     } else {
         stop(x,call.=FALSE)

@@ -214,47 +214,47 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>3</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               min  sel  max
-#&gt; standard_x  0.003 0.30  0.3
-#&gt; standard_z  0.003 0.09  0.2
-#&gt; standard_xz 0.003 0.05  0.3
-#&gt; adaptive_x  0.020 0.50  1.0
-#&gt; adaptive_z  0.008 0.10  0.7
-#&gt; adaptive_xz 0.030 0.70  2.0
-#&gt; between_xz  0.003 0.30  0.3
-#&gt; within_xz   0.200 2.00 10.0</div><div class='output co'>#&gt; <span class='message'>finish  1</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               min   sel   max
-#&gt; standard_x  0.003  0.20   0.2
-#&gt; standard_z  0.003  0.04   0.3
-#&gt; standard_xz 0.003  0.20   0.3
-#&gt; adaptive_x  0.020  0.50   2.0
-#&gt; adaptive_z  0.005  0.02   0.4
-#&gt; adaptive_xz 0.030  0.40   2.0
-#&gt; between_xz  0.003  0.20   0.3
-#&gt; within_xz   1.000 20.00 100.0</div><div class='output co'>#&gt; <span class='message'>finish  2</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               min   sel   max
-#&gt; standard_x  3e-03 2e-01 2e-01
-#&gt; standard_z  3e-03 3e-02 3e-01
-#&gt; standard_xz 3e-03 9e-02 3e-01
-#&gt; adaptive_x  6e-02 2e+00 5e+00
-#&gt; adaptive_z  4e-03 1e-02 3e-01
-#&gt; adaptive_xz 7e-02 8e-01 6e+00
-#&gt; between_xz  3e-03 8e-02 3e-01
-#&gt; within_xz   2e+01 2e+02 2e+03</div><div class='output co'>#&gt; <span class='message'>finish  3</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               min   sel   max
-#&gt; standard_x  4e-03 3e-01 3e-01
-#&gt; standard_z  2e-03 4e-02 2e-01
-#&gt; standard_xz 4e-03 3e-01 3e-01
-#&gt; adaptive_x  1e-01 3e+00 8e+00
-#&gt; adaptive_z  4e-03 1e-02 3e-01
-#&gt; adaptive_xz 1e-01 3e+00 8e+00
-#&gt; between_xz  4e-03 3e-01 3e-01
-#&gt; within_xz   6e+01 1e+03 5e+03</div><div class='output co'>#&gt; <span class='message'>finish  4</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               min  sel max
-#&gt; standard_x  0.003 0.06 0.3
-#&gt; standard_z  0.002 0.03 0.2
-#&gt; standard_xz 0.003 0.07 0.3
-#&gt; adaptive_x  0.010 0.30 0.9
-#&gt; adaptive_z  0.005 0.03 0.4
-#&gt; adaptive_xz 0.020 0.10 1.0
-#&gt; between_xz  0.003 0.10 0.3
-#&gt; within_xz   0.060 0.30 5.0</div><div class='output co'>#&gt; <span class='message'>finish  5</span></div><div class='input'><span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='input'>
+<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               lambda       nzero
+#&gt; 1  [0.3,(0.3),0.003]  [0,(0),14]
+#&gt; 2 [0.2,(0.09),0.003] [0,(10),19]
+#&gt; 3 [0.3,(0.05),0.003] [0,(11),14]
+#&gt; 4     [1,(0.5),0.02]  [0,(3),11]
+#&gt; 5  [0.7,(0.1),0.008] [0,(10),15]
+#&gt; 6     [2,(0.7),0.03]  [0,(6),12]
+#&gt; 7  [0.3,(0.3),0.003]  [0,(0),13]
+#&gt; 8       [10,(2),0.2]  [0,(9),10]</div><div class='output co'>#&gt; <span class='message'>finish  1</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               lambda       nzero
+#&gt; 1  [0.2,(0.2),0.003]  [0,(1),18]
+#&gt; 2 [0.3,(0.04),0.003] [0,(12),17]
+#&gt; 3  [0.3,(0.2),0.003]  [0,(3),23]
+#&gt; 4     [2,(0.5),0.02]  [0,(7),14]
+#&gt; 5 [0.4,(0.02),0.005] [0,(11),17]
+#&gt; 6     [2,(0.4),0.03]  [0,(8),17]
+#&gt; 7  [0.3,(0.2),0.003]  [0,(2),19]
+#&gt; 8       [100,(20),1]  [0,(9),14]</div><div class='output co'>#&gt; <span class='message'>finish  2</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               lambda       nzero
+#&gt; 1  [0.2,(0.2),0.003]  [0,(0),14]
+#&gt; 2 [0.3,(0.03),0.003] [0,(14),15]
+#&gt; 3 [0.3,(0.09),0.003] [0,(10),17]
+#&gt; 4       [5,(2),0.06]  [0,(4),13]
+#&gt; 5 [0.3,(0.01),0.004]  [0,(7),12]
+#&gt; 6     [6,(0.8),0.07]  [0,(9),12]
+#&gt; 7 [0.3,(0.08),0.003] [0,(10),17]
+#&gt; 8    [2000,(200),20] [0,(11),14]</div><div class='output co'>#&gt; <span class='message'>finish  3</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               lambda       nzero
+#&gt; 1  [0.3,(0.3),0.004]  [0,(0),17]
+#&gt; 2 [0.2,(0.04),0.002] [0,(15),17]
+#&gt; 3  [0.3,(0.3),0.004]  [0,(0),20]
+#&gt; 4        [8,(3),0.1]  [0,(1),11]
+#&gt; 5 [0.3,(0.01),0.004] [0,(15),16]
+#&gt; 6        [8,(3),0.1]  [0,(5),13]
+#&gt; 7  [0.3,(0.3),0.004]  [0,(0),21]
+#&gt; 8   [5000,(1000),60]  [0,(3),13]</div><div class='output co'>#&gt; <span class='message'>finish  4</span></div><div class='output co'>#&gt; <span class='message'>reactivate!</span></div><div class='output co'>#&gt;               lambda       nzero
+#&gt; 1 [0.3,(0.06),0.003] [0,(13),17]
+#&gt; 2 [0.2,(0.03),0.002] [0,(14),17]
+#&gt; 3 [0.3,(0.07),0.003] [0,(13),16]
+#&gt; 4   [0.9,(0.3),0.01]  [0,(4),12]
+#&gt; 5 [0.4,(0.03),0.005] [0,(12),15]
+#&gt; 6     [1,(0.1),0.02]  [0,(9),12]
+#&gt; 7  [0.3,(0.1),0.003]  [0,(8),14]
+#&gt; 8     [5,(0.3),0.06] [0,(11),11]</div><div class='output co'>#&gt; <span class='message'>finish  5</span></div><div class='input'><span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='input'>
 
 
 </div></pre>

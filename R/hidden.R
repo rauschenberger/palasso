@@ -761,10 +761,17 @@ NULL
         #message(paste("start ",k))
         #object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
         #                           standard=standard,lambda=lambda) # remove this
-        min <- signif(sapply(object,function(x) min(x$lambda)),1)
-        sel <- signif(sapply(object,function(x) x$lambda.min),1)
         max <- signif(sapply(object,function(x) max(x$lambda)),1)
-        print(data.frame(min=min,sel=sel,max=max))
+        sel <- signif(sapply(object,function(x) x$lambda.min),1)
+        min <- signif(sapply(object,function(x) min(x$lambda)),1)
+        one <- paste0("[",max,",(",sel,"),",min,"]")
+        
+        min <- sapply(object,function(x) min(x$nzero))
+        sel <- sapply(object,function(x) x$nzero[x$lambda==x$lambda.min])
+        max <- sapply(object,function(x) max(x$nzero))
+        two <- paste0("[",min,",(",sel,"),",max,"]")
+        
+        print(data.frame(lambda=one,nzero=two))
         message(paste("finish ",k))
         # end trial #
        
