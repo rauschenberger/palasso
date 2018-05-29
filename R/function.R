@@ -282,7 +282,7 @@ palasso <- function(y,X,max=10,...){
         #                    length.out=args$nlambda))
         #args$lambda <- c(99e99,sequence)
         #args$lambda <- c(10^c(12,9,6,3),exp(seq(from=log(100),to=log(0.001),length.out=100)))
-        args$lambda <- exp(seq(from=log(1e+09),to=log(1e-06),length.out=200))
+        args$lambda <- exp(seq(from=log(1e+06),to=log(1e-06),length.out=100))
         do.call(what=glmnet::cv.glmnet,args=args) 
     } else {
         stop(x,call.=FALSE)

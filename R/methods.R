@@ -217,6 +217,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     if(!is.null(max)){
         for(i in seq_along(x)){
             cond <- x[[i]]$nzero<=max
+            if(length(cond)==0){stop("Adapt lambda sequence!",call.=FALSE)}
             for(j in c("lambda","cvm","cvsd","cvup","cvlo","nzero")){
                 x[[i]][[j]] <- x[[i]][[j]][cond] 
             }
