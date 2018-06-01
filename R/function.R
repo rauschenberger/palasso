@@ -128,7 +128,7 @@ palasso <- function(y,X,max=10,...){
         names <- letters[seq_len(k)]
     }
     
-    # Pearson correlation
+    # Pearson correlation (original)
     cor <- list()
     for(i in seq_len(k)){
         if(base$family=="cox"){
@@ -138,7 +138,14 @@ palasso <- function(y,X,max=10,...){
         }
         cor[[i]][is.na(cor[[i]])] <- 0
     }
-
+    
+    # # shrinkage (trial)
+    # cor <- list()
+    # for(i in seq_len(k)){
+    #     cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family))
+    #     cor[[i]][is.na(cor[[i]])] <- 0
+    # }
+    
     weight <- list()
     
     # standard lasso
@@ -308,6 +315,52 @@ palasso <- function(y,X,max=10,...){
                                       error=function(x) .error(x,args)),
                         warning=function(x) .warning(x))
 }
+
+
+# .mar <- function(y,X,family){
+#     beta = se = trim = rep(NA,times=ncol(X))
+#     if(family=="cox"){
+#         cox <- abs(apply(X,2,function(x) summary(survival::coxph(y~x))))
+#         beta <- sapply(cox,function(x) x$coefficients["x","coef"])
+#         se <- sapply(cox,function(x) x$coefficients["x","se(coef)"])
+#         beta[is.na(beta)] <- 0
+#         se[is.na(se)] <- 0
+#     } else {
+#         for(i in seq_len(ncol(X))){
+#             x <- X[,i]
+#             glm <- stats::glm(y~x,family=family)
+#             trim[i] = any(glm$fitted.values>1-1e-14 | glm$fitted.values<1e-14)
+#             temp = summary(glm)$coefficients
+#             if(nrow(temp)==1){
+#                 beta[i] = se[i] = 0
+#             } else {
+#                 beta[i] <- temp["x","Estimate"]
+#                 se[i] <- temp["x","Std. Error"]
+#             }
+#         }
+#     }
+# 
+#     # trimming
+#     if(family=="binomial"){
+#         #trim <- sapply(glm,function(x) any(x$fitted.values>1-1e-14 | x$fitted.values<1e-14))
+#         cutoff <- max(abs(beta[!trim]))
+#         beta[beta < -cutoff] <- -cutoff
+#         beta[beta > cutoff] <- cutoff
+#         cutoff <- max(se[!trim])
+#         se[se > cutoff] <- cutoff
+#     }
+# 
+#     # shrinkage
+#     tausq <- pmax(0,var(beta)-mean(se^2))
+#     weight <- (tausq)/(tausq+se^2)
+#     # eb <- mean(beta) + weight*(beta-mean(beta)) # original
+#     eb <- weight*beta # trial
+# 
+#     # absolute value
+#     #eb = abs(eb) + mean(eb) # trial
+#     return(list(beta=beta,se=se,eb=eb,trim=trim))
+# }
+
 
 #' Toydata
 #' 

@@ -726,7 +726,7 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
     #if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
     model <- c(model,paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","paired.adaptive","paired.standard","paired.combined")
+               "between_xz","within_xz","paired.adaptive","paired.standard","paired.adaptive1","paired.standard1","paired.combined")
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
@@ -757,7 +757,7 @@ NULL
                                    standard=standard,...) # activate
         message("reactivate!")
         
-        # start trial #
+        ### start trial ###
         #message(paste("start ",k))
         #object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
         #                           standard=standard,lambda=lambda) # remove this
@@ -765,15 +765,14 @@ NULL
         sel <- signif(sapply(object,function(x) x$lambda.min),1)
         min <- signif(sapply(object,function(x) min(x$lambda)),1)
         one <- paste0("[",max,",(",sel,"),",min,"]")
-        
         min <- sapply(object,function(x) min(x$nzero))
         sel <- sapply(object,function(x) x$nzero[x$lambda==x$lambda.min])
         max <- sapply(object,function(x) max(x$nzero))
         two <- paste0("[",min,",(",sel,"),",max,"]")
-        
-        print(data.frame(lambda=one,nzero=two))
+        three <- sapply(object,function(x) length(x$lambda))
+        print(data.frame(lambda=one,nzero=two,length=three))
         message(paste("finish ",k))
-        # end trial #
+        ### end trial ###
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
