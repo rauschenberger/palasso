@@ -1,11 +1,17 @@
-citHeader("The R package palasso is based on the following article:")
+citHeader("The R package palasso builts upon the following article:")
 
 citEntry(entry="Article",
-    title = "XXX",
-    author = personList(as.person("XXX XXX")),
-    journal = "Manuscript in preparation",
+    title = "Sparse regression with paired covariates",
+    author = personList(
+		as.person("Armin Rauschenberger"),
+		as.person("Renee X. Menezes"),
+		as.person("Marianne A. Jonker"),
+		as.person("Mark A. van de Wiel"))
+    journal = "In preparation",
     volume= "0:0",
     year = 2018,
-    url = "http://dx.doi.org/",
-    textVersion = paste("XXX.")
+    url = "http://dx.doi.org/...",
+    textVersion = paste("Armin Rauschenberger, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2018)",
+		\"Sparse regression with paired covariates.\",
+		"In preparation.")
 )
