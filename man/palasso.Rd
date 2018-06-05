@@ -2,6 +2,7 @@
 % Please edit documentation in R/function.R
 \name{palasso}
 \alias{palasso}
+\alias{palasso-package}
 \title{Paired lasso}
 \usage{
 palasso(y, X, max = 10, ...)

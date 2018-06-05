@@ -22,11 +22,12 @@ Sparse regression with paired covariates (extending [glmnet](https://CRAN.R-proj
 
 ## Installation
 
-Install [palasso](https://github.com/rauschenberger/palasso) using [devtools](https://CRAN.R-project.org/package=devtools):
+Install the current release from [CRAN](https://CRAN.R-project.org/package=palasso),
+or the latest development version from [GitHub](https://github.com/rauschenberger/palasso):
 
-```{r eval=FALSE}
-library(devtools)
-install_github("rauschenberger/palasso")
+```{r,eval=FALSE}
+install.packages("palasso")
+#devtools::install_github("rauschenberger/palasso")
 ```
 
 ## Reference
@@ -37,4 +38,3 @@ A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
 <!--
 [![Github](https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png){width=50px}](https://doi.org/10.18129/B9.bioc.globalSeq)
 -->
-

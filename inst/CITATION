@@ -2,11 +2,10 @@ citHeader("The R package palasso builts upon the following article:")
 
 citEntry(entry="Article",
     title = "Sparse regression with paired covariates",
-    author = personList(
-		as.person("Armin Rauschenberger"),
-		as.person("Renee X. Menezes"),
-		as.person("Marianne A. Jonker"),
-		as.person("Mark A. van de Wiel"))
+    author = personList(as.person("Armin Rauschenberger"),
+			as.person("Renee X. Menezes"),
+			as.person("Marianne A. Jonker"),
+			as.person("Mark A. van de Wiel")),
     journal = "In preparation",
     volume= "0:0",
     year = 2018,

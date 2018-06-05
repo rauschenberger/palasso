@@ -5,6 +5,7 @@
 #' Paired lasso
 #' 
 #' @export
+#' @aliases palasso-package
 #' 
 #' @description
 #' The function \code{palasso} fits the paired lasso. Use this function if you
