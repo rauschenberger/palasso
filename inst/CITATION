@@ -1,4 +1,4 @@
-citHeader("The R package palasso builts upon the following article:")
+citHeader("To cite palasso in publications use:")
 
 citEntry(entry="Article",
     title = "Sparse regression with paired covariates",
@@ -10,7 +10,7 @@ citEntry(entry="Article",
     volume= "0:0",
     year = 2018,
     url = "http://dx.doi.org/...",
-    textVersion = paste("Armin Rauschenberger, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2018)",
-		\"Sparse regression with paired covariates.\",
+    textVersion = paste("Armin Rauschenberger, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2018).",
+		"\"Sparse regression with paired covariates\",",
 		"In preparation.")
 )
