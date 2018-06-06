@@ -1,7 +1,8 @@
 ## Test environments
 
-* Windows (local)
-* Ubuntu (travis)
+* windows (local)
+* linux (travis)
+* osx (travis)
 
 ## R CMD check results
 

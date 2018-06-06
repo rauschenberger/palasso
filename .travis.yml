@@ -2,17 +2,18 @@
 
 language: R
 
-os:
-  - linux
-  - osx
-
-sudo: false
+matrix:
+    include:
+	- os: linux
+	  sudo: false
+	  r: devel
+	- os: osx
+	  r: release
+	
 cache: packages
 use_bioc: true
 bioc_required: true
 
-r:
-  - devel
 
 r_packages:
   - covr
