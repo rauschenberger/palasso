@@ -1,8 +1,7 @@
 ## Test environments
 
-* windows (local)
+* windows (appveyor)
 * linux (travis)
-* osx (travis)
 
 ## R CMD check results
 

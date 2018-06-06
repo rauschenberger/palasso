@@ -2,6 +2,10 @@ template:
   params:
     bootswatch: spacelab
 
+authors:
+  Armin Rauschenberger:
+    href: https://rauschenberger.github.io
+
 home:
    links:
    - text: "Download package"
@@ -22,7 +26,7 @@ navbar:
     - icon: fa-github
       href: https://github.com/rauschenberger/palasso
     - icon: fa-download
-      href: https://github.com/rauschenberger/palasso
+      href: https://cran.r-project.org/package=palasso
 
 reference:
   - title: "User functions"
