@@ -22,7 +22,11 @@ development version from
 
 ``` r
 install.packages("palasso")
-#devtools::install_github("rauschenberger/palasso")
+```
+
+``` r
+#install.packages("devtools")
+devtools::install_github("rauschenberger/palasso")
 ```
 
 ## Reference
@@ -36,8 +40,3 @@ version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.o
 downloads](https://cranlogs.r-pkg.org/badges/palasso)](https://CRAN.R-project.org/package=palasso)
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://www.r-pkg.org/pkg/palasso)
-
-<!--
-[![GitHub](https://assets-cdn.github.com/images/modules/logos_page/GitHub-Logo.png)](https://github.com/rauschenberger/palasso)
-[![CRAN](https://www.r-project.org/logo/Rlogo.svg)](https://CRAN.R-project.org/package=palasso)
--->

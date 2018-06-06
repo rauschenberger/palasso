@@ -3,7 +3,7 @@
 title: Sparse regression with paired covariates
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{pkgdown}
+  %\VignetteIndexEntry{vignette}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
