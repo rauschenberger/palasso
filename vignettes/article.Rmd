@@ -8,4 +8,4 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The `palasso` manuscript is in preparation.
+The `palasso` manuscript is in preparation. Click [here](https://CRAN.R-project.org/package=palasso) for the R package.
