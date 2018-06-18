@@ -134,21 +134,21 @@ palasso <- function(y,X,max=10,shrink=FALSE,...){
     }
     
     ## Pearson correlation (original) deactivated on 18 June 2018
-    #cor <- list()
-    #for(i in seq_len(k)){
-    #    if(base$family=="cox"){
-    #        cor[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
-    #    } else {
-    #        cor[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
-    #    }
-    #    cor[[i]][is.na(cor[[i]])] <- 0
-    #}
-    
-    # # shrinkage (trial) activated on 18 June 2018
     cor <- list()
     for(i in seq_len(k)){
-         cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family,shrink=shrink)$beta_eb)
+        if(base$family=="cox"){
+            cor[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
+        } else {
+            cor[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
+        }
+        cor[[i]][is.na(cor[[i]])] <- 0
     }
+    
+    # # shrinkage (trial) activated on 18 June 2018
+    #cor <- list()
+    #for(i in seq_len(k)){
+    #     cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family,shrink=shrink)$beta_eb)
+    #}
     
     weight <- list()
     
