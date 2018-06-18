@@ -65,7 +65,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,max=10,shrink=FALSE,...){
+palasso <- function(y,X,max=10,shrink=TRUE,...){
     
     # extract
     base <- list(...)
@@ -133,7 +133,7 @@ palasso <- function(y,X,max=10,shrink=FALSE,...){
         names <- letters[seq_len(k)]
     }
     
-    ## Pearson correlation (original) deactivated on 18 June 2018
+    ## Pearson correlation (original) # 18 June 2018
     cor <- list()
     for(i in seq_len(k)){
         if(base$family=="cox"){
@@ -144,7 +144,16 @@ palasso <- function(y,X,max=10,shrink=FALSE,...){
         cor[[i]][is.na(cor[[i]])] <- 0
     }
     
-    # # shrinkage (trial) activated on 18 June 2018
+    ### trial start ### 18 June 2018
+    if(shrink){
+        for(i in 1:2){
+            cor[[i]] <- CorShrink::CorShrinkVector(corvec=cor[[i]],nsamp_vec=n)
+            if(all(cor[[i]]==0)){cor[[i]] <- rep(0.001,times=p)} # warning?
+        }
+    }
+    ### trial end ###
+    
+    # # shrinkage (trial) #  18 June 2018
     #cor <- list()
     #for(i in seq_len(k)){
     #     cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family,shrink=shrink)$beta_eb)
@@ -334,61 +343,61 @@ palasso <- function(y,X,max=10,shrink=FALSE,...){
 }
 
 
-
-.mar <- function(y,X,family,shrink=FALSE){
-    
-    beta <- se <- rep(NA,times=ncol(X))
-    if(family=="cox"){
-        #cox <- apply(X,2,function(x) summary(survival::coxph(y~x))$coefficients)
-        #beta <- sapply(cox,function(x) x["x","coef"])
-        #se <- sapply(cox,function(x) x["x","se(coef)"])
-        for(i in seq_len(ncol(X))){
-            x <- X[,i]
-            cox <- summary(survival::coxph(y~x))$coefficients
-            if(any(dim(cox)!=c(1,5))){
-                beta[i] <- se[i] <- NA
-            } else {
-                beta[i] <- cox["x","coef"]
-                se[i] <- cox["x","se(coef)"]
-            }
-        }
-    } else {
-        for(i in seq_len(ncol(X))){
-            x <- X[,i]
-            glm <- summary(stats::glm(y~x,family=family))$coefficients
-            if(any(dim(glm)!=c(2,4))){
-                beta[i] <- se[i] <- NA
-            } else {
-                beta[i] <- glm["x","Estimate"]
-                se[i] <- glm["x","Std. Error"]
-            }
-        }
-    }
-    beta_hat <- beta/se
-    
-    if(shrink){
-        se <- rep(x=1,times=length(beta_hat))
-        shrinkage <- ashr::ash(betahat=beta_hat,sebetahat=se,
-                               mixcompdist="normal",pointmass=TRUE,
-                               optmethod="mixEM")
-        beta_eb <- shrinkage$result[,"PosteriorMean"]
-    }
-    
-    if(!shrink||all(beta_eb==0)){
-        beta_eb <- beta_hat
-        beta_eb[is.na(beta_eb)] <- 0
-    }
-    
-    #beta_eb <- abs(beta_eb)
-
-    return(list(beta_hat=beta_hat,beta_eb=beta_eb))
-}
+## ashr shrinkage
+# .mar <- function(y,X,family,shrink=FALSE){
+#     
+#     beta <- se <- rep(NA,times=ncol(X))
+#     if(family=="cox"){
+#         #cox <- apply(X,2,function(x) summary(survival::coxph(y~x))$coefficients)
+#         #beta <- sapply(cox,function(x) x["x","coef"])
+#         #se <- sapply(cox,function(x) x["x","se(coef)"])
+#         for(i in seq_len(ncol(X))){
+#             x <- X[,i]
+#             cox <- summary(survival::coxph(y~x))$coefficients
+#             if(any(dim(cox)!=c(1,5))){
+#                 beta[i] <- se[i] <- NA
+#             } else {
+#                 beta[i] <- cox["x","coef"]
+#                 se[i] <- cox["x","se(coef)"]
+#             }
+#         }
+#     } else {
+#         for(i in seq_len(ncol(X))){
+#             x <- X[,i]
+#             glm <- summary(stats::glm(y~x,family=family))$coefficients
+#             if(any(dim(glm)!=c(2,4))){
+#                 beta[i] <- se[i] <- NA
+#             } else {
+#                 beta[i] <- glm["x","Estimate"]
+#                 se[i] <- glm["x","Std. Error"]
+#             }
+#         }
+#     }
+#     beta_hat <- beta/se
+#     
+#     if(shrink){
+#         se <- rep(x=1,times=length(beta_hat))
+#         shrinkage <- ashr::ash(betahat=beta_hat,sebetahat=se,
+#                                mixcompdist="normal",pointmass=TRUE,
+#                                optmethod="mixEM")
+#         beta_eb <- shrinkage$result[,"PosteriorMean"]
+#     }
+#     
+#     if(!shrink||all(beta_eb==0)){
+#         beta_eb <- beta_hat
+#         beta_eb[is.na(beta_eb)] <- 0
+#     }
+#     
+#     #beta_eb <- abs(beta_eb)
+# 
+#     return(list(beta_hat=beta_hat,beta_eb=beta_eb))
+# }
 
 #list <- .mar(y=y,X=X[[1]],family="binomial")
 #plot(x=list$beta_hat,y=list$beta_eb)
 
 
-
+## own shrinkage
 # .mar <- function(y,X,family){
 #     beta <- se <- trim <- rep(NA,times=ncol(X))
 #     if(family=="cox"){
