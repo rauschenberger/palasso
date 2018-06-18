@@ -5,7 +5,7 @@
 \alias{palasso-package}
 \title{Paired lasso}
 \usage{
-palasso(y, X, max = 10, shrink = TRUE, ...)
+palasso(y, X, max = 10, shrink = FALSE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}

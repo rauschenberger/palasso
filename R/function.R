@@ -65,7 +65,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,max=10,shrink=TRUE,...){
+palasso <- function(y,X,max=10,shrink=FALSE,...){
     
     # extract
     base <- list(...)
@@ -335,7 +335,7 @@ palasso <- function(y,X,max=10,shrink=TRUE,...){
 
 
 
-.mar <- function(y,X,family,shrink=TRUE){
+.mar <- function(y,X,family,shrink=FALSE){
     
     beta <- se <- rep(NA,times=ncol(X))
     if(family=="cox"){
