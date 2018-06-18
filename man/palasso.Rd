@@ -5,7 +5,7 @@
 \alias{palasso-package}
 \title{Paired lasso}
 \usage{
-palasso(y, X, max = 10, ...)
+palasso(y, X, max = 10, shrink = TRUE, ...)
 }
 \arguments{
 \item{y}{response\strong{:}
@@ -17,7 +17,10 @@ each with \eqn{n} rows (samples)
 and \eqn{p} columns (variables)}
 
 \item{max}{maximum number of non-zero coefficients\strong{:}
-positive numeric, or \code{NULL} \eqn{(no sparsity constraint)}}
+positive numeric, or \code{NULL} (no sparsity constraint)}
+
+\item{shrink}{adaptive shrinkage of the initial coefficients\strong{:}
+logical}
 
 \item{...}{further arguments for \code{\link[glmnet]{cv.glmnet}} or
 \code{\link[glmnet]{glmnet}}}

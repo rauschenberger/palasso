@@ -3,7 +3,7 @@ Version: 0.0.1
 Title: Paired Lasso Regression
 Description: Implements sparse regression with paired covariates (Rauschenberger et al.).
 Depends: R (>= 3.0.0)
-Imports: glmnet, Matrix, survival
+Imports: glmnet, Matrix, survival, ashr
 Suggests: knitr, testthat, pROC, edgeR
 Authors@R: person("Armin","Rauschenberger",email="a.rauschenberger@vumc.nl",role=c("aut","cre"))
 VignetteBuilder: knitr

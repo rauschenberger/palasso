@@ -56,10 +56,10 @@ for(family in c("gaussian","binomial","poisson","cox")){
         testthat::expect_true(x)
     })
     
-    testthat::test_that("weights are small",{
-        x <- all(sapply(weights,function(x) all(x<=1)))
-        testthat::expect_true(x)
-    })
+    #testthat::test_that("weights are small",{ # only if correlation-based
+    #    x <- all(sapply(weights,function(x) all(x<=1)))
+    #    testthat::expect_true(x)
+    #})
     
     testthat::test_that("max is effective",{
         x <- all(sapply(coef,function(x) sum(x$x!=0)+sum(x$z!=0))<=max)

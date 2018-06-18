@@ -23,7 +23,11 @@
 #' 
 #' @param max
 #' maximum number of non-zero coefficients\strong{:}
-#' positive numeric, or \code{NULL} \eqn{(no sparsity constraint)}
+#' positive numeric, or \code{NULL} (no sparsity constraint)
+#' 
+#' @param shrink
+#' adaptive shrinkage of the initial coefficients\strong{:}
+#' logical
 #' 
 #' @param ...
 #' further arguments for \code{\link[glmnet]{cv.glmnet}} or
@@ -61,7 +65,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,max=10,...){
+palasso <- function(y,X,max=10,shrink=TRUE,...){
     
     # extract
     base <- list(...)
@@ -129,23 +133,22 @@ palasso <- function(y,X,max=10,...){
         names <- letters[seq_len(k)]
     }
     
-    # Pearson correlation (original)
+    ## Pearson correlation (original) deactivated on 18 June 2018
+    #cor <- list()
+    #for(i in seq_len(k)){
+    #    if(base$family=="cox"){
+    #        cor[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
+    #    } else {
+    #        cor[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
+    #    }
+    #    cor[[i]][is.na(cor[[i]])] <- 0
+    #}
+    
+    # # shrinkage (trial) activated on 18 June 2018
     cor <- list()
     for(i in seq_len(k)){
-        if(base$family=="cox"){
-            cor[[i]] <- apply(X[[i]],2,function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
-        } else {
-            cor[[i]] <- suppressWarnings(as.vector(abs(stats::cor(X[[i]],y))))
-        }
-        cor[[i]][is.na(cor[[i]])] <- 0
+         cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family,shrink=shrink)$beta_eb)
     }
-    
-    # # shrinkage (trial)
-    # cor <- list()
-    # for(i in seq_len(k)){
-    #     cor[[i]] <- abs(.mar(y=y,X=X[[i]],family=base$family))
-    #     cor[[i]][is.na(cor[[i]])] <- 0
-    # }
     
     weight <- list()
     
@@ -206,14 +209,27 @@ palasso <- function(y,X,max=10,...){
         weight <- c(weight,temp)
     }
     
-    # weighted lasso
-    temp <- list() 
-    temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
-    #temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor)) # original
-    temp[[2]] <- unlist(cor)^2/rowSums(do.call(cbind,cor)) # trial
-    temp[[2]][is.na(temp[[2]])] <- 0
-    names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
-    weight <- c(weight,temp)
+    # weighted lasso # replaced on 18 June 2018
+    #temp <- list() 
+    #temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
+    ##temp[[2]] <- unlist(cor)/rowSums(do.call(cbind,cor)) # standard (old)
+    #temp[[2]] <- unlist(cor)^2/rowSums(do.call(cbind,cor)) # adaptive (new)
+    #temp[[2]][is.na(temp[[2]])] <- 0
+    #names(temp) <- paste0(c("between_","within_"),paste(names,collapse=""))
+    #weight <- c(weight,temp)
+    if(standard){
+        temp <- list()
+        #temp[[1]] <- unlist(cor)/rowSums(do.call(cbind,cor))
+        temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
+        names(temp) <- paste0("between_",paste(names,collapse=""))
+        weight <- c(weight,temp)
+    }
+    if(adaptive){
+        temp <- list()
+        temp[[1]] <- unlist(cor)^2/rowSums(do.call(cbind,cor))
+        names(temp) <- paste0("within_",paste(names,collapse=""))
+        weight <- c(weight,temp)
+    }
     
     # cross-validation
     model <- list()
@@ -318,8 +334,63 @@ palasso <- function(y,X,max=10,...){
 }
 
 
+
+.mar <- function(y,X,family,shrink=TRUE){
+    
+    beta <- se <- rep(NA,times=ncol(X))
+    if(family=="cox"){
+        #cox <- apply(X,2,function(x) summary(survival::coxph(y~x))$coefficients)
+        #beta <- sapply(cox,function(x) x["x","coef"])
+        #se <- sapply(cox,function(x) x["x","se(coef)"])
+        for(i in seq_len(ncol(X))){
+            x <- X[,i]
+            cox <- summary(survival::coxph(y~x))$coefficients
+            if(any(dim(cox)!=c(1,5))){
+                beta[i] <- se[i] <- NA
+            } else {
+                beta[i] <- cox["x","coef"]
+                se[i] <- cox["x","se(coef)"]
+            }
+        }
+    } else {
+        for(i in seq_len(ncol(X))){
+            x <- X[,i]
+            glm <- summary(stats::glm(y~x,family=family))$coefficients
+            if(any(dim(glm)!=c(2,4))){
+                beta[i] <- se[i] <- NA
+            } else {
+                beta[i] <- glm["x","Estimate"]
+                se[i] <- glm["x","Std. Error"]
+            }
+        }
+    }
+    beta_hat <- beta/se
+    
+    if(shrink){
+        se <- rep(x=1,times=length(beta_hat))
+        shrinkage <- ashr::ash(betahat=beta_hat,sebetahat=se,
+                               mixcompdist="normal",pointmass=TRUE,
+                               optmethod="mixEM")
+        beta_eb <- shrinkage$result[,"PosteriorMean"]
+    }
+    
+    if(!shrink||all(beta_eb==0)){
+        beta_eb <- beta_hat
+        beta_eb[is.na(beta_eb)] <- 0
+    }
+    
+    #beta_eb <- abs(beta_eb)
+
+    return(list(beta_hat=beta_hat,beta_eb=beta_eb))
+}
+
+#list <- .mar(y=y,X=X[[1]],family="binomial")
+#plot(x=list$beta_hat,y=list$beta_eb)
+
+
+
 # .mar <- function(y,X,family){
-#     beta = se = trim = rep(NA,times=ncol(X))
+#     beta <- se <- trim <- rep(NA,times=ncol(X))
 #     if(family=="cox"){
 #         cox <- abs(apply(X,2,function(x) summary(survival::coxph(y~x))))
 #         beta <- sapply(cox,function(x) x$coefficients["x","coef"])
@@ -342,24 +413,25 @@ palasso <- function(y,X,max=10,...){
 #     }
 # 
 #     # trimming
-#     if(family=="binomial"){
-#         #trim <- sapply(glm,function(x) any(x$fitted.values>1-1e-14 | x$fitted.values<1e-14))
-#         cutoff <- max(abs(beta[!trim]))
-#         beta[beta < -cutoff] <- -cutoff
-#         beta[beta > cutoff] <- cutoff
-#         cutoff <- max(se[!trim])
-#         se[se > cutoff] <- cutoff
-#     }
+#     #if(family=="binomial"){
+#     #    #trim <- sapply(glm,function(x) any(x$fitted.values>1-1e-14 | x$fitted.values<1e-14))
+#     #    cutoff <- max(abs(beta[!trim]))
+#     #    beta[beta < -cutoff] <- -cutoff
+#     #    beta[beta > cutoff] <- cutoff
+#     #    cutoff <- max(se[!trim])
+#     #    se[se > cutoff] <- cutoff
+#     #}
 # 
 #     # shrinkage
-#     tausq <- pmax(0,var(beta)-mean(se^2))
+#     tausq <- pmax(0,var(beta)-mean(se^2)) # originally "mean"
 #     weight <- (tausq)/(tausq+se^2)
-#     # eb <- mean(beta) + weight*(beta-mean(beta)) # original
-#     eb <- weight*beta # trial
+#     eb <- mean(beta) + weight*(beta-mean(beta))
+#     # eb <- weight*beta # trial
 # 
 #     # absolute value
-#     #eb = abs(eb) + mean(eb) # trial
-#     return(list(beta=beta,se=se,eb=eb,trim=trim))
+#     cor <- as.numeric(cor(y,X))
+#     
+#     return(list(beta=beta,se=se,eb=eb,trim=trim,cor=cor))
 # }
 
 

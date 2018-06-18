@@ -116,7 +116,7 @@ have <em>paired covariates</em> and want a <em>sparse model</em>.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>palasso</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>shrink</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -136,7 +136,12 @@ and \(p\) columns (variables)</p></td>
     <tr>
       <th>max</th>
       <td><p>maximum number of non-zero coefficients<strong>:</strong>
-positive numeric, or <code>NULL</code> \((no sparsity constraint)\)</p></td>
+positive numeric, or <code>NULL</code> (no sparsity constraint)</p></td>
+    </tr>
+    <tr>
+      <th>shrink</th>
+      <td><p>adaptive shrinkage of the initial coefficients<strong>:</strong>
+logical</p></td>
     </tr>
     <tr>
       <th>...</th>

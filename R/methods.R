@@ -249,24 +249,17 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         } else if(!adaptive & standard){
             model <- "paired.standard"
         } else if(adaptive & standard){
-            model <- "paired.combined"
+            model <- "paired.combined" # original
+            warning("Consider model=\"paired.adaptive\" or model=\"paired.standard\".")
         }
     }
     
     if(model=="paired.adaptive"){
-        pattern <- "adaptive|between|within" # was "adaptive|between|within"
-        cond <- grepl(pattern=pattern,x=names(x))
-        if(sum(cond)!=attributes(x)$info$k+3){stop("Mismatch.")}
-    } else if(model=="paired.adaptive1"){
-        pattern <- "adaptive|within" # was "adaptive|between|within"
+        pattern <- "adaptive|within"
         cond <- grepl(pattern=pattern,x=names(x))
         if(sum(cond)!=attributes(x)$info$k+2){stop("Mismatch.")}
     } else if(model=="paired.standard"){
-        pattern <- "standard|between|within" # was "standard|between|within"
-        cond <- grepl(pattern=pattern,x=names(x))
-        if(sum(cond)!=attributes(x)$info$k+3){stop("Mismatch.")}
-    } else if(model=="paired.standard1"){
-        pattern <- "standard|between" # was "standard|between|within"
+        pattern <- "standard|between"
         cond <- grepl(pattern=pattern,x=names(x))
         if(sum(cond)!=attributes(x)$info$k+2){stop("Mismatch.")}
     } else if(model=="paired.combined"){

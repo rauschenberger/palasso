@@ -709,7 +709,7 @@ NULL
 #' @keywords internal
 #' @examples
 #' 
-.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,standard=TRUE,
+.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,standard=TRUE,
                      family="binomial",...){
     
     start <- Sys.time()
@@ -723,10 +723,13 @@ NULL
     fold.ext <- .folds(y=y,nfolds=nfolds.ext) # changed!
     
     model <- character()
-    if(standard){model <- c(model,paste0("standard_",c("x","z","xz")))}
-    #if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")))}
-    model <- c(model,paste0("adaptive_",c("x","z","xz")),
-               "between_xz","within_xz","paired.adaptive","paired.standard","paired.adaptive1","paired.standard1","paired.combined")
+    if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")),
+                            "within_xz","paired.adaptive")}
+    if(standard){model <- c(model,paste0("standard_",c("x","z","xz")),
+                            "between_xz","paired.standard")}
+    if(adaptive&standard){model <- c(model,"paired.combined")}
+    #model <- c(model,paste0("adaptive_",c("x","z","xz")),
+    #           "between_xz","within_xz","paired.adaptive","paired.standard","paired.combined")
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
