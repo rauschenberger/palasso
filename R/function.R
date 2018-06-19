@@ -228,14 +228,16 @@ palasso <- function(y,X,max=10,shrink=TRUE,...){
     #weight <- c(weight,temp)
     if(standard){
         temp <- list()
-        #temp[[1]] <- unlist(cor)/rowSums(do.call(cbind,cor))
-        temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p)
+        temp[[1]] <- unlist(cor)/rowSums(do.call(cbind,cor)) # covariate-specific
+        #temp[[1]] <- rep(1/k*vapply(cor,mean,numeric(1))/mean(unlist(cor)),each=p) # group-specific
+        temp[[1]][is.na(temp[[1]])] <- 0
         names(temp) <- paste0("between_",paste(names,collapse=""))
         weight <- c(weight,temp)
     }
     if(adaptive){
         temp <- list()
         temp[[1]] <- unlist(cor)^2/rowSums(do.call(cbind,cor))
+        temp[[1]][is.na(temp[[1]])] <- 0
         names(temp) <- paste0("within_",paste(names,collapse=""))
         weight <- c(weight,temp)
     }
