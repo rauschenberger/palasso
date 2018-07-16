@@ -72,7 +72,7 @@ NULL
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_score(X)
 #' 
-plot_score <- function(X,choice=NULL){
+plot_score <- function(X,choice=NULL,ylab="count"){
     
     # input
     n <- nrow(X); p <- ncol(X)
@@ -99,7 +99,7 @@ plot_score <- function(X,choice=NULL){
     graphics::box()
     graphics::abline(h=n/2,lwd=2,col="grey")
     graphics::axis(side=2)
-    graphics::title(ylab="count",line=2.5)
+    graphics::title(ylab=ylab,line=2.5)
     .mtext(text=colnames(X)[-choice],side=1)
     
     # bars
@@ -130,7 +130,7 @@ plot_score <- function(X,choice=NULL){
 #' X <- matrix(rnorm(n*p),nrow=n,ncol=p)
 #' palasso:::plot_table(X,margin=2)
 #' 
-plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1){
+plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1,cutoff=NA){
     #par <- graphics::par(no.readonly=TRUE)
     
     n <- nrow(X); p <- ncol(X)
@@ -147,6 +147,20 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1){
     .mtext(text=rev(rownames(X)),unit=TRUE,side=2,las=las,cex=cex)
     .mtext(text=colnames(X),unit=TRUE,side=3,las=las,cex=cex)
     
+    if(margin==-1){
+        #temp <- matrix(NA,nrow=nrow(X),ncol=ncol(X))
+        #temp[X < 0.80] <- 1
+        #temp[0.80 < X & X < 0.90] <- 2
+        #temp[0.80 < X & X < 0.95] <- 3
+        #temp[0.95 < X & X < 0.975] <- 4
+        #temp[0.975 < X & X < 0.99] <- 5
+        #temp[X > 0.99] <- 6
+        #probs <- seq(from=0,to=1,by=0.2)
+        #breaks <- stats::quantile(X,na.rm=TRUE,probs=probs)
+        breaks <- c(0,0.9,0.95,0.96,0.97,0.98,0.99,1)
+        temp <- apply(X=X,MARGIN=1,FUN=function(x) cut(x=x,breaks=breaks,labels=seq_len(length(breaks)-1)))
+        temp <- apply(X=temp,MARGIN=1,FUN=function(x) as.numeric(x))
+    }
     if(margin==0){
         temp <- matrix(rank(X),nrow=n,ncol=p) # overall rank
     }
@@ -156,11 +170,18 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1){
     if(margin==2){
         temp <- apply(X,2,rank) # rank per column
     }
+    if(!is.na(cutoff)){
+        temp <- X > cutoff
+    }
     
     if(colour){
         temp[is.na(X)] <- NA # temporary
         image <- t(temp)[,seq(from=n,to=1,by=-1)]
-        col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p)
+        if(margin==-1){
+            col <- grDevices::colorRampPalette(colors=c("navyblue","white"))(6)
+        } else {
+            col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p) 
+        }
         #col <- grDevices::colorRampPalette(colors=c("#081d58",
         #        "#253494","#225ea8","#1d91c0","#41b6c4",
         #        "#7fcdbb","#c7e9b4","#edf8b1","#ffffd9"))(n*p)
@@ -712,6 +733,8 @@ NULL
 .predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,standard=TRUE,
                      family="binomial",...){
     
+    if(survival::is.Surv(y)!=(family=="cox")){stop("Survival?")}
+    
     start <- Sys.time()
     
     # dimensionality
@@ -758,7 +781,7 @@ NULL
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
                                    standard=standard,...) # activate
-        message("reactivate!")
+        #message("reactivate!")
         
         ### start trial ###
         #message(paste("start ",k))
@@ -774,7 +797,7 @@ NULL
         two <- paste0("[",min,",(",sel,"),",max,"]")
         three <- sapply(object,function(x) length(x$lambda))
         print(data.frame(lambda=one,nzero=two,length=three))
-        message(paste("finish ",k))
+        #message(paste("finish ",k))
         ### end trial ###
        
         for(i in seq_along(nzero)){
@@ -823,7 +846,7 @@ NULL
        list <- list(info=info,deviance=deviance,auc=auc,mse=mse,mae=mae,class=class) 
     }
     if(family=="cox"){
-        list <- list(info=info,loss=loss)
+        list <- list(info=info,partial.likelihood=loss)
     }
     
     return(list)

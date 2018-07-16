@@ -114,10 +114,10 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>plot_score</span>(<span class='no'>X</span>, <span class='kw'>choice</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+    <pre class="usage"><span class='fu'>plot_score</span>(<span class='no'>X</span>, <span class='kw'>choice</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ylab</span> <span class='kw'>=</span> <span class='st'>"count"</span>)
 
 <span class='fu'>plot_table</span>(<span class='no'>X</span>, <span class='kw'>margin</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>labels</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>colour</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>las</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+  <span class='kw'>cex</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
 
 <span class='fu'>plot_circle</span>(<span class='no'>b</span>, <span class='no'>w</span>, <span class='kw'>cutoff</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>group</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
@@ -144,6 +144,10 @@
       <td><p>\(0\) (none), \(1\) (rows), or \(2\) (columns)</p></td>
     </tr>
     <tr>
+      <th>cutoff</th>
+      <td><p>numeric between \(0\) and \(1\)</p></td>
+    </tr>
+    <tr>
       <th>b</th>
       <td><p>between-group correlation<strong>:</strong>
 vector of length \(p\)</p></td>
@@ -152,10 +156,6 @@ vector of length \(p\)</p></td>
       <th>w</th>
       <td><p>within-group correlation<strong>:</strong>
 matrix with \(p\) rows and \(p\) columns</p></td>
-    </tr>
-    <tr>
-      <th>cutoff</th>
-      <td><p>numeric between \(0\) and \(1\)</p></td>
     </tr>
     <tr>
       <th>group</th>
