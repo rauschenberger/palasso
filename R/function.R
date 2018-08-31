@@ -5,7 +5,6 @@
 #' Paired lasso
 #' 
 #' @export
-#' @aliases palasso-package
 #' 
 #' @description
 #' The function \code{palasso} fits the paired lasso. Use this function if you
@@ -54,8 +53,8 @@
 #' and \code{\link[=summary.palasso]{summary}}.
 #' 
 #' @references
-#' A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-#' "Sparse regression with paired covariates."
+#' A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker,
+#' and MA van de Wiel (2018). "Sparse regression with paired covariates."
 #' \emph{Manuscript in preparation.} \email{a.rauschenberger@vumc.nl}
 #' 
 #' @examples
@@ -65,7 +64,7 @@
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 #' object <- palasso(y=y,X=X,family="binomial")
 #' 
-palasso <- function(y,X,max=10,shrink=TRUE,...){
+legacy <- function(y,X,max=10,shrink=TRUE,...){ # name: "palasso"
     
     # extract
     base <- list(...)
@@ -146,7 +145,7 @@ palasso <- function(y,X,max=10,shrink=TRUE,...){
     
     ### trial start ### 18 June 2018
     if(shrink){
-        for(i in 1:2){
+        for(i in seq_len(k)){ # was 1:2
             cor[[i]] <- CorShrink::CorShrinkVector(corvec=cor[[i]],nsamp_vec=n)
             if(all(cor[[i]]==0)){cor[[i]] <- rep(0.001,times=p)} # warning?
         }
@@ -315,6 +314,7 @@ palasso <- function(y,X,max=10,shrink=TRUE,...){
         sequence <- exp(seq(from=log(lambda.max),
                             to=log(lambda.max*args$lambda.min.ratio),
                             length.out=args$nlambda))
+        # Why not "args$lambda" instead of "sequence"?
         do.call(what=glmnet::cv.glmnet,args=args) 
     } else {
         stop(x,call.=FALSE)

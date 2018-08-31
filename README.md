@@ -31,8 +31,9 @@ devtools::install_github("rauschenberger/palasso")
 
 ## Reference
 
-A Rauschenberger, RX Menezes, MA Jonker, and MA van de Wiel (2018).
-“Sparse regression with paired covariates”. Manuscript in preparation.
+A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA
+van de Wiel (2018). “Sparse regression with paired covariates”.
+Manuscript in preparation.
 
 [![CRAN
 version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso)

@@ -273,9 +273,11 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     object <- x[cond]
     if(name=="AUC"){
         loss <- vapply(X=object,FUN=function(x) max(x$cvm),FUN.VALUE=numeric(1))
+        # trial: na.rm=TRUE
         select <- which.max(loss)
     } else {
         loss <- vapply(X=object,FUN=function(x) min(x$cvm),FUN.VALUE=numeric(1)) 
+        # trial: na.rm=TRUE
         select <- which.min(loss)
     }
     object <- object[[select]]

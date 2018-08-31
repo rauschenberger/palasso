@@ -106,7 +106,7 @@ plot_score <- function(X,choice=NULL,ylab="count"){
     for(i in seq_len(p-1)){
         graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
                           y=c(0,y$gain[i],y$gain[i],0),
-                          col="#0000CD")
+                          col="#00007F") # was "#0000CD"
         graphics::polygon(x=c(i-0.25,i-0.25,i+0.25,i+0.25),
                           y=c(y$gain[i],
                               y$gain[i]+y$equal[i],
@@ -118,7 +118,7 @@ plot_score <- function(X,choice=NULL,ylab="count"){
                               y$gain[i]+y$equal[i]+y$loss[i],
                               y$gain[i]+y$equal[i]+y$loss[i],
                               y$gain[i]+y$equal[i]),
-                          col="#CD0000")
+                          col="#FF3535") # was "CD0000"
     }
 }
 
@@ -334,11 +334,10 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE,invert=FALSE){
 .boxplot <- function(x,at=1,wex=0.25,invert=FALSE){
     q <- stats::quantile(x,p=c(0.05,0.25,0.75,0.95))
     
-    col <- c("#0000CD","#CD0000") # blue, red
+    col <- c("#00007F","#FF3535")
+    # was col <- c("#0000CD","#CD0000")
     if(invert){col <- rev(col)}
-    
-    # blue <- "#0000CD"
-    # red <- "#CD0000" 
+
 
     # outliers
     cond <- (x < q[1] | x > q[4]) & x > 0
@@ -386,7 +385,7 @@ plot_pairs <- function(x,y=NULL,...){
     if(is.null(y)){y <- 1-x}
     if(is.null(args$lwd)){args$lwd <- 50/length(x)}
     if(is.null(args$main)){args$main <- ""}
-    if(is.null(args$col)){args$col <- c("#0000CD","#CD0000")}
+    if(is.null(args$col)){args$col <- c("#00007F","#FF3535")} # was c("#0000CD","#CD0000")
     
     # initialise
     graphics::plot.new()

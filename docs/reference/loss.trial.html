@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Paired lasso regression — palasso • palasso</title>
+<title>to do — loss.trial • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Paired lasso regression — palasso" />
+<meta property="og:title" content="to do — loss.trial" />
 
-<meta property="og:description" content="trial" />
+<meta property="og:description" content="to do" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -103,75 +103,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Paired lasso regression</h1>
+    <h1>to do</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/trial.R'><code>R/trial.R</code></a></small>
-    <div class="hidden name"><code>palasso.Rd</code></div>
+    <div class="hidden name"><code>loss.trial.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>trial</p>
+    <p>to do</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>palasso</span>(<span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>X</span>, <span class='kw'>max</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>loss.trial</span>(<span class='no'>y</span>, <span class='no'>fit</span>, <span class='no'>family</span>, <span class='no'>type.measure</span>, <span class='kw'>foldid</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>y</th>
-      <td><p>trial</p></td>
+      <td><p>response</p></td>
     </tr>
     <tr>
-      <th>X</th>
-      <td><p>trial</p></td>
+      <th>fit</th>
+      <td><p>see ..</p></td>
     </tr>
     <tr>
-      <th>max</th>
-      <td><p>trial</p></td>
+      <th>family</th>
+      <td><p>...</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>trial</p></td>
+      <th>type.measure</th>
+      <td><p>...</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>trial</p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>trial</p>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>trial</p>
+    <p>to do</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span>(<span class='fl'>FALSE</span>){
-    <span class='no'>start</span> <span class='kw'>&lt;-</span> <span class='fu'>Sys.time</span>()
-    <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>100</span>){
-        <span class='fu'>cat</span>(<span class='st'>"i ="</span>,<span class='no'>i</span>,<span class='st'>"\n"</span>)
-        <span class='fu'>set.seed</span>(<span class='no'>i</span>)
-        <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
-        <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'>rbinom</span>(<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>prob</span><span class='kw'>=</span><span class='fl'>0.5</span>)
-        <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>lapply</span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'>matrix</span>(<span class='fu'>rnorm</span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>))
-        <span class='no'>object</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>)
-        <span class='no'>a</span> <span class='kw'>&lt;-</span> <span class='fu'>predict</span>(<span class='no'>object</span>,<span class='kw'>newdata</span><span class='kw'>=</span><span class='no'>X</span>)
-        <span class='no'>b</span> <span class='kw'>&lt;-</span> <span class='fu'>coef</span>(<span class='no'>object</span>)
-        <span class='no'>c</span> <span class='kw'>&lt;-</span> <span class='fu'>weights</span>(<span class='no'>object</span>)
-        <span class='no'>d</span> <span class='kw'>&lt;-</span> <span class='fu'>fitted</span>(<span class='no'>object</span>)
-        <span class='no'>e</span> <span class='kw'>&lt;-</span> <span class='fu'>residuals</span>(<span class='no'>object</span>)
-        <span class='no'>f</span> <span class='kw'>&lt;-</span> <span class='fu'>deviance</span>(<span class='no'>object</span>)
-        <span class='no'>g</span> <span class='kw'>&lt;-</span> <span class='fu'>logLik</span>(<span class='no'>object</span>)
-        <span class='co'>#h &lt;- summary(object)</span>
-    }
-    <span class='no'>end</span> <span class='kw'>&lt;-</span> <span class='fu'>Sys.time</span>()
-    <span class='no'>end</span>-<span class='no'>start</span>
-}</div></pre>
+    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -179,10 +151,6 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#references">References</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

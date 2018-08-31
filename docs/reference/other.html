@@ -215,50 +215,50 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
 <span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt;                         lambda       nzero length
-#&gt; standard_x   [0.3,(0.3),0.003]  [0,(0),14]     97
-#&gt; standard_z  [0.2,(0.09),0.003] [0,(10),19]     95
-#&gt; standard_xz [0.3,(0.05),0.003] [0,(11),14]     97
-#&gt; adaptive_x   [0.1,(0.1),0.002]  [0,(0),14]     97
-#&gt; adaptive_z  [0.1,(0.05),0.002] [0,(10),19]     95
-#&gt; adaptive_xz [0.3,(0.05),0.003] [0,(11),14]     97
-#&gt; between_xz  [0.3,(0.05),0.003] [0,(11),14]     97
-#&gt; within_xz   [0.3,(0.05),0.003] [0,(11),14]     97
+#&gt; standard_x   [0.3,(0.3),0.003]  [0,(0),14]    100
+#&gt; standard_z   [0.2,(0.1),0.002]  [0,(3),20]    100
+#&gt; standard_xz  [0.3,(0.3),0.003]  [0,(0),14]    100
+#&gt; adaptive_x   [0.1,(0.1),0.001]  [0,(0),14]    100
+#&gt; adaptive_z  [0.1,(0.07),0.001]  [0,(3),20]    100
+#&gt; adaptive_xz [0.3,(0.05),0.003] [0,(11),14]    100
+#&gt; between_xz   [0.3,(0.3),0.003]  [0,(0),14]    100
+#&gt; within_xz   [0.3,(0.05),0.003] [0,(11),14]    100
+#&gt;                         lambda      nzero length
+#&gt; standard_x   [0.2,(0.2),0.002] [0,(1),18]    100
+#&gt; standard_z   [0.3,(0.2),0.003] [0,(1),17]    100
+#&gt; standard_xz  [0.3,(0.2),0.003] [0,(2),23]    100
+#&gt; adaptive_x   [0.1,(0.1),0.001] [0,(1),18]    100
+#&gt; adaptive_z  [0.1,(0.08),0.001] [0,(1),17]    100
+#&gt; adaptive_xz  [0.3,(0.2),0.003] [0,(2),23]    100
+#&gt; between_xz   [0.3,(0.2),0.003] [0,(2),23]    100
+#&gt; within_xz    [0.3,(0.2),0.003] [0,(2),23]    100
+#&gt;                         lambda      nzero length
+#&gt; standard_x   [0.2,(0.2),0.002] [0,(0),14]    100
+#&gt; standard_z   [0.3,(0.1),0.003] [0,(4),15]    100
+#&gt; standard_xz  [0.3,(0.1),0.003] [0,(6),17]    100
+#&gt; adaptive_x   [0.1,(0.1),0.001] [0,(0),14]    100
+#&gt; adaptive_z  [0.1,(0.07),0.001] [0,(4),15]    100
+#&gt; adaptive_xz  [0.3,(0.1),0.003] [0,(6),17]    100
+#&gt; between_xz   [0.3,(0.1),0.003] [0,(6),17]    100
+#&gt; within_xz    [0.3,(0.1),0.003] [0,(6),17]    100
 #&gt;                         lambda       nzero length
-#&gt; standard_x   [0.2,(0.2),0.003]  [0,(1),18]     98
-#&gt; standard_z  [0.3,(0.04),0.003] [0,(12),17]     97
-#&gt; standard_xz  [0.3,(0.2),0.003]  [0,(3),23]     97
-#&gt; adaptive_x   [0.1,(0.1),0.001]  [0,(1),18]     98
-#&gt; adaptive_z  [0.1,(0.02),0.002] [0,(11),17]     97
-#&gt; adaptive_xz  [0.3,(0.2),0.003]  [0,(3),23]     97
-#&gt; between_xz   [0.3,(0.2),0.003]  [0,(3),23]     97
-#&gt; within_xz    [0.3,(0.2),0.003]  [0,(3),23]     97
+#&gt; standard_x   [0.3,(0.3),0.003]  [0,(0),17]    100
+#&gt; standard_z  [0.2,(0.08),0.002] [0,(12),17]    100
+#&gt; standard_xz  [0.3,(0.3),0.003]  [0,(0),20]    100
+#&gt; adaptive_x   [0.1,(0.1),0.001]  [0,(0),17]    100
+#&gt; adaptive_z  [0.1,(0.04),0.001] [0,(12),17]    100
+#&gt; adaptive_xz  [0.3,(0.3),0.003]  [0,(0),20]    100
+#&gt; between_xz   [0.3,(0.3),0.003]  [0,(0),20]    100
+#&gt; within_xz    [0.3,(0.3),0.003]  [0,(0),20]    100
 #&gt;                         lambda       nzero length
-#&gt; standard_x   [0.2,(0.2),0.003]  [0,(0),14]     95
-#&gt; standard_z  [0.3,(0.03),0.003] [0,(14),15]     97
-#&gt; standard_xz [0.3,(0.09),0.003] [0,(10),17]     97
-#&gt; adaptive_x   [0.1,(0.1),0.002]  [0,(0),14]     95
-#&gt; adaptive_z  [0.1,(0.01),0.002] [0,(14),15]     97
-#&gt; adaptive_xz [0.3,(0.09),0.003] [0,(10),17]     97
-#&gt; between_xz  [0.3,(0.09),0.003] [0,(10),17]     97
-#&gt; within_xz   [0.3,(0.09),0.003] [0,(10),17]     97
-#&gt;                         lambda       nzero length
-#&gt; standard_x   [0.3,(0.3),0.004]  [0,(0),17]     95
-#&gt; standard_z  [0.2,(0.04),0.002] [0,(15),17]     97
-#&gt; standard_xz  [0.3,(0.3),0.004]  [0,(0),20]     95
-#&gt; adaptive_x   [0.1,(0.1),0.002]  [0,(0),17]     95
-#&gt; adaptive_z  [0.1,(0.02),0.001] [0,(15),17]     97
-#&gt; adaptive_xz  [0.3,(0.3),0.004]  [0,(0),20]     95
-#&gt; between_xz   [0.3,(0.3),0.004]  [0,(0),20]     95
-#&gt; within_xz    [0.3,(0.3),0.004]  [0,(0),20]     95
-#&gt;                         lambda       nzero length
-#&gt; standard_x  [0.3,(0.06),0.003] [0,(13),17]     97
-#&gt; standard_z  [0.2,(0.03),0.002] [0,(14),17]     96
-#&gt; standard_xz [0.3,(0.07),0.003] [0,(13),16]     97
-#&gt; adaptive_x  [0.1,(0.03),0.001] [0,(13),17]     97
-#&gt; adaptive_z  [0.1,(0.01),0.001] [0,(14),17]     96
-#&gt; adaptive_xz [0.3,(0.07),0.003] [0,(13),16]     97
-#&gt; between_xz  [0.3,(0.07),0.003] [0,(13),16]     97
-#&gt; within_xz   [0.3,(0.07),0.003] [0,(13),16]     97</div><div class='input'><span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='input'>
+#&gt; standard_x   [0.3,(0.2),0.003]  [0,(2),17]    100
+#&gt; standard_z  [0.2,(0.05),0.002] [0,(14),17]    100
+#&gt; standard_xz  [0.3,(0.2),0.003]  [0,(2),16]    100
+#&gt; adaptive_x   [0.1,(0.1),0.001]  [0,(2),17]    100
+#&gt; adaptive_z  [0.1,(0.02),0.001] [0,(14),17]    100
+#&gt; adaptive_xz  [0.3,(0.2),0.003]  [0,(2),16]    100
+#&gt; between_xz   [0.3,(0.2),0.003]  [0,(2),16]    100
+#&gt; within_xz    [0.3,(0.2),0.003]  [0,(2),16]    100</div><div class='input'><span class='no'>select</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.select</a></span>(<span class='no'>y</span>,<span class='no'>x</span>,<span class='fu'>attributes</span>(<span class='no'>y</span>))</div><div class='input'>
 
 
 </div></pre>

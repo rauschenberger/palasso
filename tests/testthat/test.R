@@ -7,6 +7,8 @@ set.seed(1)
 
 for(family in c("gaussian","binomial","poisson","cox")){
     
+    # if(family=="cox"){stop("C")}
+    
     rm(list=setdiff(ls(),c("start","family")))
     
     n <- 20; p <- 30; k <- 2
@@ -56,10 +58,10 @@ for(family in c("gaussian","binomial","poisson","cox")){
         testthat::expect_true(x)
     })
     
-    #testthat::test_that("weights are small",{ # only if correlation-based
-    #    x <- all(sapply(weights,function(x) all(x<=1)))
-    #    testthat::expect_true(x)
-    #})
+    testthat::test_that("weights are small",{ # only if correlation-based
+        x <- all(sapply(weights,function(x) all(x<=1)))
+        testthat::expect_true(x)
+    })
     
     testthat::test_that("max is effective",{
         x <- all(sapply(coef,function(x) sum(x$x!=0)+sum(x$z!=0))<=max)
@@ -67,17 +69,20 @@ for(family in c("gaussian","binomial","poisson","cox")){
     })
     
     testthat::test_that("deviance decreases",{
-        x <- all(sapply(deviance,function(x) all(diff(x)<0)))
+        x <- all(sapply(deviance,function(x) all(diff(x)<=0)))
         testthat::expect_true(x)
     })
     
     testthat::test_that("logLik increaes",{
-        x <- all(sapply(logLik,function(x) all(diff(x)>0)))
+        x <- all(sapply(logLik,function(x) all(diff(x)>=0)))
         testthat::expect_true(x)
     })
     
     testthat::test_that("deviance and logLik are perfectly correlated",{
         diff <- 1+sapply(seq_along(names),function(i) cor(deviance[[i]],logLik[[i]],method="spearman"))
+        rm0 <- sapply(X=deviance,FUN=function(x) length(unique(x))==1)
+        rm1 <- sapply(X=logLik,FUN=function(x) length(unique(x))==1)
+        diff[rm0 & rm1] <- 0
         x <- all(abs(diff)<1e-06)
         testthat::expect_true(x)
     })
