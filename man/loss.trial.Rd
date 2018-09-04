@@ -14,6 +14,8 @@ loss.trial(y, fit, family, type.measure, foldid = NULL)
 \item{family}{...}
 
 \item{type.measure}{...}
+
+\item{foldid}{to do}
 }
 \value{
 to do

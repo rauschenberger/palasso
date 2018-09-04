@@ -1,4 +1,39 @@
 
+if(FALSE){
+    ### comparison old and new version ###
+    family <- "cox"
+    list <- palasso::sim.trial(family=family)
+    y <- list[["y"]]; X <- list[c("X","Z")]
+    net <- list()
+    set.seed(1)
+    net[[1]] <- palasso::legacy(y=y,X=X,family=family,adaptive=FALSE,standard=TRUE,type.measure="deviance")
+    set.seed(1)
+    net[[2]] <- palasso::palasso(y=y,X=X,family=family,adaptive=FALSE,standard=TRUE,type.measure="deviance")
+    sapply(net,function(x) x$standard_x$lambda) # same
+    a <- sapply(net,function(x) x$standard_x$cvm) # different
+    sapply(net,function(x) as.numeric(coef(x,model="standard_x",s=0)$x)) # same
+    n <- min(sapply(a,length))
+    max(abs(a[[1]][seq_len(n)]-a[[2]][seq_len(n)]))
+    
+}
+
+if(FALSE){
+    ### instability of weights ###
+    
+    #y <- original
+    #y <- rnorm(83)
+    #y <- rbinom(n=83,size=1,prob=0.5)
+    foldid <- palasso:::folds.trial(y=y,nfolds=5,foldid=NULL)
+    weights <- list()
+    for(i in seq_len(5)){
+        fit <- palasso::palasso(y=y[foldid==i],X=lapply(x,function(x) x[foldid==i,]),family="binomial")
+        weights[[i]] <- palasso:::weights.palasso(fit,model="adaptive_xz")
+    }
+    w <- sapply(weights,function(x) x[,"x"])
+    cor(w)
+    plot(w[,1],w[,3])
+}
+
 #' @export
 #' @title
 #' Paired lasso regression
@@ -94,11 +129,10 @@ palasso <- function(y=y,X=X,max=10,...){
     return(model)
 }
 
-
 #' @export
 #' @title to do
 #' @description to do
-#' @param family
+#' @param family to do
 #' @param n sample size
 #' @param p number of covariates
 #' @return to do
@@ -168,7 +202,7 @@ dim.trial <- function(y,X,args=NULL){
 #' @export
 #' @title to do
 #' @description to do
-#' @param ...
+#' @param ... to do
 #' @return to do
 #' @examples
 #' NA
@@ -274,7 +308,6 @@ folds.trial <- function(y,nfolds,foldid){
     return(foldid)
 }
 
-
 #' @export
 #' @title fit models
 #' @description this function ...
@@ -365,7 +398,6 @@ fit.trial <- function(y,X,args){
     names(net) <- names(weight)
     return(net)
 }
-
 
 #' @export
 #' @title correlation
@@ -462,6 +494,7 @@ cv.trial <- function(y,x,foldid,lambda,args){
         for(j in seq_len(args$num)){
             if(args$family=="cox"){
                 beta <- glmnet::predict.coxnet(object=fit.sub[[j]],newx=X1,type="coeff",s=lambda[[j]])
+                # check whether these are the betas !!!
                 if(args$grouped){
                     plfull <- glmnet::coxnet.deviance(x=x,y=y,beta=beta)
                     plminusk <- glmnet::coxnet.deviance(x=X0,y=y0,beta=beta)
@@ -471,7 +504,9 @@ cv.trial <- function(y,x,foldid,lambda,args){
                 }
                 fit[[j]][i,seq_along(temp)] <- temp
             } else {
-                temp <- glmnet::predict.glmnet(object=fit.sub[[j]],newx=X1,type="response",s=lambda[[j]])
+                #temp <- glmnet::predict.glmnet(object=fit.sub[[j]],newx=X1,type="response",s=lambda[[j]])
+                temp <- stats::predict(object=fit.sub[[j]],newx=X1,type="response",s=lambda[[j]])
+                # check whether 0 < temp < 1 in binomial
                 if(any(is.na(temp))|(ncol(temp)==1)){
                     stop("Prediction problem.",call.=FALSE)
                 }
@@ -489,7 +524,7 @@ cv.trial <- function(y,x,foldid,lambda,args){
 #' @param fit see ..
 #' @param family ...
 #' @param type.measure ...
-#' @param foldid
+#' @param foldid to do
 #' @return to do
 #' @examples
 #' NA

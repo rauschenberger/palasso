@@ -7,6 +7,8 @@
 sim.trial(family, n = 200, p = 150)
 }
 \arguments{
+\item{family}{to do}
+
 \item{n}{sample size}
 
 \item{p}{number of covariates}

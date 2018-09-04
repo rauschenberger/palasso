@@ -6,6 +6,9 @@
 \usage{
 args.trial(...)
 }
+\arguments{
+\item{...}{to do}
+}
 \value{
 to do
 }
