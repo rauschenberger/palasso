@@ -92,9 +92,9 @@ palasso <- function(y=y,X=X,max=10,...){
     ### start function ###
     ## INCLUDE: test whether y and family are compatible
     ## INCLUDE: test whether any arguments are redundant
-    ## ALSO: fuse functions args.trial and dim.trial
+    ## ALSO: fuse functions args.trial and dims.trial
     args <- args.trial(...) # (...)
-    args <- c(args,dim.trial(y=y,X=X,args=args))
+    args <- c(args,dims.trial(y=y,X=X,args=args))
     x <- do.call(what="cbind",args=X) # fuse covariates
     ### end function ###
 
@@ -157,18 +157,27 @@ sim.trial <- function(family,n=200,p=150){
     return(list(y=y,X=X,Z=Z))
 }
 
-# param y
-# param X
-# param args
+
 #' @export
 #' @title
+#' dimensionality
+#' 
 #' @description
-#' @param ...
-#' @details
+#' this function ...
+#' 
+#' @param y
+#' to do
+#' @param X
+#' to do
+#' @param args
+#' to do
+#' 
 #' @return
+#' to do
+#' 
 #' @examples
 #' NA
-dim.trial <- function(y,X,args=NULL){
+dims.trial <- function(y,X,args=NULL){
     
     # dimensionality
     if(length(unique(lapply(X=X,FUN=dim)))!=1){
