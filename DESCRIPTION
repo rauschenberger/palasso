@@ -1,5 +1,5 @@
 Package: palasso
-Version: 0.0.1
+Version: 0.0.2
 Title: Paired Lasso Regression
 Description: Implements sparse regression with paired covariates (Rauschenberger et al.).
 Depends: R (>= 3.0.0)
