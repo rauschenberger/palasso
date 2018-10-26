@@ -6,7 +6,7 @@
 \alias{.simulate}
 \alias{.predict}
 \alias{.select}
-\title{Other functions (manuscript)}
+\title{Analysis functions}
 \usage{
 .prepare(X, filter = 1, cutoff = "zero", scale = TRUE)
 
@@ -62,7 +62,7 @@ scales all covariates to mean zero and unit variance.
 (If the cutoff differed from zero, we would have to first normalise,
 then binarise, and finally filter the raw counts.)
 
-The function \code{.simulate} simulates a response. Exploiting an
+The functions \code{.simulate} simulates a response. Exploiting an
 experimental covariate matrix, it allows for different numbers of non-zero
 coefficients for X and Z.
 
@@ -84,9 +84,6 @@ x <- palasso:::.prepare(X)
 y <- palasso:::.simulate(x,effects=c(1,2))
 predict <- palasso:::.predict(y,x)
 select <- palasso:::.select(y,x,attributes(y))}
-
-
-
 }
 \seealso{
 Use \link[palasso]{palasso} to fit the paired lasso.

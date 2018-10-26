@@ -8,7 +8,7 @@
 \alias{plot_box}
 \alias{plot_pairs}
 \alias{plot_diff}
-\title{Plot functions (manuscript)}
+\title{Plot functions}
 \usage{
 plot_score(X, choice = NULL, ylab = "count")
 
@@ -43,7 +43,7 @@ matrix with \eqn{p} rows and \eqn{p} columns}
 
 \item{x, y}{vectors of equal length}
 
-\item{...}{to do}
+\item{...}{additional arguments}
 
 \item{prob}{confidence interval\strong{:}
 numeric between \eqn{0} and \eqn{1}}

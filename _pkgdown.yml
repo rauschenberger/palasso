@@ -33,7 +33,9 @@ reference:
     contents:
       - palasso
       - methods
-  - title: "Hidden functions"
+  - title: "Internal functions"
     contents:
       - plots
       - other
+
+

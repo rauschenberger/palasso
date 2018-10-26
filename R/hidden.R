@@ -4,7 +4,7 @@
 #' @name plots
 #' 
 #' @title
-#' Plot functions (manuscript)
+#' Plot functions
 #' 
 #' @description
 #' Functions for the \code{palasso} manuscript.
@@ -40,7 +40,7 @@
 #' \eqn{0} (none), \eqn{1} (rows), or \eqn{2} (columns)
 #' 
 #' @param ...
-#' to do
+#' additional arguments
 #' 
 #' @details
 #' The function \code{plot_score} compares a selected column to each of the
@@ -525,7 +525,7 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #--- Application ---------------------------------------------------------------
 
 #' @title
-#' Other functions (manuscript)
+#' Analysis functions
 #' 
 #' @name other
 #' 
@@ -580,7 +580,7 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #' (If the cutoff differed from zero, we would have to first normalise,
 #' then binarise, and finally filter the raw counts.)
 #' 
-#' The function \code{.simulate} simulates a response. Exploiting an
+#' The functions \code{.simulate} simulates a response. Exploiting an
 #' experimental covariate matrix, it allows for different numbers of non-zero
 #' coefficients for X and Z.
 #' 
@@ -690,7 +690,6 @@ NULL
 
 #' @rdname other
 #' @keywords internal
-#' @examples
 #' 
 .simulate <- function(x,effects){
     
@@ -725,9 +724,28 @@ NULL
     return(y)
 }
 
+# simulation without effects
+.simulate0 <- function(family,n=200,p=150){
+  X <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
+  Z <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
+  if(family=="gaussian"){
+    y <- stats::rnorm(n=n)
+  } else if(family=="binomial"){
+    y <- stats::rbinom(n=n,size=1,prob=0.2)
+  } else if(family=="poisson"){
+    y <- stats::rpois(n=n,lambda=4)
+  } else if(family=="cox"){
+    event <- stats::rbinom(n=n,size=1,prob=0.3)
+    time <- stats::rpois(n=n,lambda=4)+1
+    y <- survival::Surv(time=time,event=event)
+  } else {
+    stop("Invalid family.")
+  }
+  return(list(y=y,X=X,Z=Z))
+}
+
 #' @rdname other
 #' @keywords internal
-#' @examples
 #' 
 .predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,standard=TRUE,
                      family="binomial",...){
@@ -742,7 +760,7 @@ NULL
     k <- length(X)
     
     # external folds
-    fold.ext <- .folds(y=y,nfolds=nfolds.ext) # changed!
+    fold.ext <- .folds(y=y,nfolds=nfolds.ext)
     
     model <- character()
     if(adaptive){model <- c(model,paste0("adaptive_",c("x","z","xz")),
@@ -776,7 +794,7 @@ NULL
         X1 <- lapply(X,function(x) x[fold.ext==k,,drop=FALSE])
         
         # internal folds
-        fold.int <- .folds(y=y0,nfolds=nfolds.int) # changed!
+        fold.int <- .folds(y=y0,nfolds=nfolds.int)
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
                                    standard=standard,...) # activate
@@ -853,7 +871,6 @@ NULL
 
 #' @rdname other
 #' @keywords internal
-#' @examples
 #' 
 .select <- function(y,X,index,nfolds=5,standard=TRUE,adaptive=TRUE,...){
     

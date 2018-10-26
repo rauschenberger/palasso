@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>dimensionality — dims.trial • palasso</title>
+<title>Weighting schemes — .weight • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="dimensionality — dims.trial" />
+<meta property="og:title" content="Weighting schemes — .weight" />
 
-<meta property="og:description" content="this function ..." />
+<meta property="og:description" content="Calculates the weighting schemes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,43 +106,45 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>dimensionality</h1>
+    <h1>Weighting schemes</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/function.R'><code>R/function.R</code></a></small>
-    <div class="hidden name"><code>dims.trial.Rd</code></div>
+    <div class="hidden name"><code>dot-weight.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>this function ...</p>
+    <p>Calculates the weighting schemes.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>dims.trial</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>args</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>.weight</span>(<span class='no'>cor</span>, <span class='no'>args</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>y</th>
-      <td><p>to do</p></td>
-    </tr>
-    <tr>
-      <th>X</th>
-      <td><p>to do</p></td>
+      <th>cor</th>
+      <td><p>correlation coefficients<strong>:</strong>
+list of \(k\) vectors of length \(p\)
+(one vector for each covariate set with
+one entry for each covariate)</p></td>
     </tr>
     <tr>
       <th>args</th>
-      <td><p>to do</p></td>
+      <td><p>options for paired lasso<strong>:</strong>
+list of arguments
+(output from <a href='dot-dims.html'>.dims</a> and <a href='dot-args.html'>.args</a>)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>to do</p>
+    <p>list of named vectors (one for each weighting scheme)</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div></pre>
+    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -35,15 +35,19 @@ Available methods include
 and \code{\link[=summary.palasso]{summary}}.
 }
 \description{
-The function \code{palasso} fits the paired lasso. Use this function if you
-have \emph{paired covariates} and want a \emph{sparse model}.
+The function \code{palasso} fits the paired lasso.
+Use this function if you have \emph{paired covariates}
+and want a \emph{sparse model}.
 }
 \details{
 Let \code{x} denote one entry of the list \code{X}. See \link[glmnet]{glmnet}
 for alternative specifications of \code{y} and \code{x}. Among the further
 arguments, \code{family} must equal \code{"gaussian"}, \code{"binomial"},
 \code{"poisson"}, or \code{"cox"}, and \code{penalty.factor} must not be
-used. Deactivate adaptive lasso by setting \code{adaptive} to \code{FALSE},
+used.
+
+Hidden arguments:
+Deactivate adaptive lasso by setting \code{adaptive} to \code{FALSE},
 activate standard lasso by setting \code{standard} to \code{TRUE},
 and deactivate shrinkage by setting \code{shrink} to \code{FALSE}.
 }

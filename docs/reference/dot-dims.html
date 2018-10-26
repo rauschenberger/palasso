@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>fit models — fit.trial • palasso</title>
+<title>Dimensionality — .dims • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="fit models — fit.trial" />
+<meta property="og:title" content="Dimensionality — .dims" />
 
-<meta property="og:description" content="this function ..." />
+<meta property="og:description" content="This function extracts the dimensions." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,43 +106,54 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>fit models</h1>
+    <h1>Dimensionality</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/function.R'><code>R/function.R</code></a></small>
-    <div class="hidden name"><code>fit.trial.Rd</code></div>
+    <div class="hidden name"><code>dot-dims.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>this function ...</p>
+    <p>This function extracts the dimensions.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>fit.trial</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='no'>args</span>)</pre>
+    <pre class="usage"><span class='fu'>.dims</span>(<span class='no'>y</span>, <span class='no'>X</span>, <span class='kw'>args</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>y</th>
-      <td><p>response</p></td>
+      <td><p>response<strong>:</strong>
+vector of length \(n\)</p></td>
     </tr>
     <tr>
       <th>X</th>
-      <td><p>covariates</p></td>
+      <td><p>covariates<strong>:</strong>
+list of matrices,
+each with \(n\) rows (samples)
+and \(p\) columns (variables)</p></td>
     </tr>
     <tr>
       <th>args</th>
-      <td><p>see ...</p></td>
+      <td><p>options for paired lasso<strong>:</strong>
+list of arguments
+(output from .dims and <a href='dot-args.html'>.args</a>)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of glmnet-like objects</p>
+    <p>The function <code>.dims</code> extracts the dimensionality.
+It returns the numbers of samples,
+covariate pairs and covariate sets.
+It also returns the number of weighting schemes,
+and the names of these weighting schemes.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div></pre>
+    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>compute weights — weight.trial • palasso</title>
+<title>Arguments for "palasso" — arguments • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="compute weights — weight.trial" />
+<meta property="og:title" content="Arguments for "palasso" — arguments" />
 
-<meta property="og:description" content="this function ..." />
+<meta property="og:description" content="This page lists the arguments for the (internal) &quot;palasso&quot; function(s)." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,49 +106,113 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>compute weights</h1>
+    <h1>Arguments for "palasso"</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/function.R'><code>R/function.R</code></a></small>
-    <div class="hidden name"><code>weight.trial.Rd</code></div>
+    <div class="hidden name"><code>arguments.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>this function ...</p>
+    <p>This page lists the arguments for the (internal) "palasso" function(s).</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>weight.trial</span>(<span class='no'>cor</span>, <span class='no'>args</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>cor</th>
-      <td><p>see ...</p></td>
+      <th>y</th>
+      <td><p>response<strong>:</strong>
+vector of length \(n\)</p></td>
+    </tr>
+    <tr>
+      <th>X</th>
+      <td><p>covariates<strong>:</strong>
+list of matrices,
+each with \(n\) rows (samples)
+and \(p\) columns (variables)</p></td>
+    </tr>
+    <tr>
+      <th>max</th>
+      <td><p>maximum number of non-zero coefficients<strong>:</strong>
+positive numeric, or <code>NULL</code> (no sparsity constraint)</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>further arguments for <code><a href='http://www.rdocumentation.org/packages/glmnet/topics/cv.glmnet'>cv.glmnet</a></code> or
+<code><a href='http://www.rdocumentation.org/packages/glmnet/topics/glmnet'>glmnet</a></code></p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>covariates<strong>:</strong>
+matrix with \(n\) rows (samples)
+and \(k * p\) columns (variables)</p></td>
     </tr>
     <tr>
       <th>args</th>
-      <td><p>see ...</p></td>
+      <td><p>options for paired lasso<strong>:</strong>
+list of arguments
+(output from <a href='dot-dims.html'>.dims</a> and <a href='dot-args.html'>.args</a>)</p></td>
+    </tr>
+    <tr>
+      <th>nfolds</th>
+      <td><p>number of folds<strong>:</strong>
+positive integer
+(\(&gt;= 10\) recommended)</p></td>
+    </tr>
+    <tr>
+      <th>foldid</th>
+      <td><p>fold identifiers<strong>:</strong>
+vector of length \(n\),
+with entries from \(1\) to <code>nfolds</code></p></td>
+    </tr>
+    <tr>
+      <th>cor</th>
+      <td><p>correlation coefficients<strong>:</strong>
+list of \(k\) vectors of length \(p\)
+(one vector for each covariate set with
+one entry for each covariate)</p></td>
+    </tr>
+    <tr>
+      <th>lambda</th>
+      <td><p>lambda sequence<strong>:</strong>
+vector of decreasing positive values</p></td>
+    </tr>
+    <tr>
+      <th>family</th>
+      <td><p>model family<strong>:</strong>
+character "gaussian", "binomial", "poisson", or "cox"</p></td>
+    </tr>
+    <tr>
+      <th>type.measure</th>
+      <td><p>...
+loss function<strong>:</strong>
+character "deviance", "mse", "mae", "class", or "auc"</p></td>
+    </tr>
+    <tr>
+      <th>fit</th>
+      <td><p>matrix with one row for each sample
+("gaussian", "binomial" and "poisson"),
+or one row for each fold (only "cox"),
+and one column for each <code>lambda</code>
+(output from <a href='dot-fit.html'>.fit</a>)</p></td>
+    </tr>
+    <tr>
+      <th>cvm</th>
+      <td><p>mean cross-validated loss<strong>:</strong>
+vector of same length as <code>lambda</code>
+(output from <a href='dot-loss.html'>.loss</a>)</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list of vectors</p>
-    
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

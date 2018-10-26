@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>to do — sim.trial • palasso</title>
+<title>Model bag — .fit • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="to do — sim.trial" />
+<meta property="og:title" content="Model bag — .fit" />
 
-<meta property="og:description" content="to do" />
+<meta property="og:description" content="Fits all models from the chosen bag." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,39 +106,44 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>to do</h1>
+    <h1>Model bag</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/function.R'><code>R/function.R</code></a></small>
-    <div class="hidden name"><code>sim.trial.Rd</code></div>
+    <div class="hidden name"><code>dot-fit.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>to do</p>
+    <p>Fits all models from the chosen bag.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>sim.trial</span>(<span class='no'>family</span>, <span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>p</span> <span class='kw'>=</span> <span class='fl'>150</span>)</pre>
+    <pre class="usage"><span class='fu'>.fit</span>(<span class='no'>y</span>, <span class='no'>x</span>, <span class='no'>args</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>family</th>
-      <td><p>to do</p></td>
+      <th>y</th>
+      <td><p>response<strong>:</strong>
+vector of length \(n\)</p></td>
     </tr>
     <tr>
-      <th>n</th>
-      <td><p>sample size</p></td>
+      <th>x</th>
+      <td><p>covariates<strong>:</strong>
+matrix with \(n\) rows (samples)
+and \(k * p\) columns (variables)</p></td>
     </tr>
     <tr>
-      <th>p</th>
-      <td><p>number of covariates</p></td>
+      <th>args</th>
+      <td><p>options for paired lasso<strong>:</strong>
+list of arguments
+(output from <a href='dot-dims.html'>.dims</a> and <a href='dot-args.html'>.args</a>)</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>to do</p>
+    <p>list of <code>glmnet</code>-like objects</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

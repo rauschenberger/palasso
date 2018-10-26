@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>to do — args.trial • palasso</title>
+<title>Cross-validation loss — .loss • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,9 +30,9 @@
 
 
 
-<meta property="og:title" content="to do — args.trial" />
+<meta property="og:title" content="Cross-validation loss — .loss" />
 
-<meta property="og:description" content="to do" />
+<meta property="og:description" content="Calculates mean cross-validated loss" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -106,35 +106,62 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>to do</h1>
+    <h1>Cross-validation loss</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/function.R'><code>R/function.R</code></a></small>
-    <div class="hidden name"><code>args.trial.Rd</code></div>
+    <div class="hidden name"><code>dot-loss.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>to do</p>
+    <p>Calculates mean cross-validated loss</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>args.trial</span>(<span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>.loss</span>(<span class='no'>y</span>, <span class='no'>fit</span>, <span class='no'>family</span>, <span class='no'>type.measure</span>, <span class='kw'>foldid</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>...</th>
-      <td><p>to do</p></td>
+      <th>y</th>
+      <td><p>response<strong>:</strong>
+vector of length \(n\)</p></td>
+    </tr>
+    <tr>
+      <th>fit</th>
+      <td><p>matrix with one row for each sample
+("gaussian", "binomial" and "poisson"),
+or one row for each fold (only "cox"),
+and one column for each <code>lambda</code>
+(output from <a href='dot-fit.html'>.fit</a>)</p></td>
+    </tr>
+    <tr>
+      <th>family</th>
+      <td><p>model family<strong>:</strong>
+character "gaussian", "binomial", "poisson", or "cox"</p></td>
+    </tr>
+    <tr>
+      <th>type.measure</th>
+      <td><p>...
+loss function<strong>:</strong>
+character "deviance", "mse", "mae", "class", or "auc"</p></td>
+    </tr>
+    <tr>
+      <th>foldid</th>
+      <td><p>fold identifiers<strong>:</strong>
+vector of length \(n\),
+with entries from \(1\) to <code>nfolds</code></p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>to do</p>
+    <p>Returns list of vectors, one for each model.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div></pre>
+    <pre class="examples"><div class='input'><span class='fl'>NA</span></div><div class='output co'>#&gt; [1] NA</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
