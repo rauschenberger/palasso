@@ -166,7 +166,6 @@ palasso <- function(y=y,X=X,max=10,...){
 #' 
 NULL
 
-#' @export
 #' @title Arguments
 #' 
 #' @description
@@ -219,32 +218,12 @@ NULL
     if(is.null(args$standard)){args$standard <- FALSE}
     if(is.null(args$adaptive)){args$adaptive <- TRUE}
     
-    # # model bag
-    # adaptive <- is.null(base$adaptive)||base$adaptive
-    # standard <- !(is.null(base$standard)||!base$standard)
-    
-    # # default cv.glmnet
-    #names0 <- names(formals(glmnet::cv.glmnet))
-    #args0 <- args[names(args) %in% names0]
-    #def0 <- list(type.measure="deviance",nfolds=10)
-    #base0 <- c(args0,def0[!names(def0) %in% names(args)])
-    
-    # # default glmnet
-    #names1 <- names(formals(glmnet::glmnet))
-    #args1 <- args[names(args) %in% names1]
-    #def1 <- list(family="gaussian",alpha=1,nlambda=100)
-    #base1 <- c(args1,def1[!names(def1) %in% names(args)])
-    
-    # base0$adaptive <- adaptive
-    # base0$standard <- standard
-    # base0$glmnet <- base1
-    
     # check consistency
     if(!args$family %in% c("gaussian","binomial","poisson","cox")){
         stop("Invalid argument \"family\".",call.=FALSE)
     }
     #if(args$alpha==0 && !is.null(c(max,args$dfmax,args$pmax))){
-    #    # missing argument "max"!!!
+    #    # argument "max" here unavailable
     #    stop("Unexpected argument \"max\", \"dfmax\" or \"pmax\" (\"alpha=0\").",call.=FALSE)
     #}
     if(!is.null(args$penalty.factor)){
@@ -254,7 +233,6 @@ NULL
     return(args)
 }
 
-#' @export
 #' @title
 #' Dimensionality
 #' 
@@ -316,7 +294,6 @@ NULL
   list <- list(n=n,p=p,k=k,num=num,names=names)
 }
 
-#' @export
 #' @title Cross-validation folds
 #' 
 #' @description
@@ -344,7 +321,6 @@ NULL
     return(foldid)
 }
 
-#' @export
 #' @title Model bag
 #' 
 #' @description Fits all models from the chosen bag.
@@ -394,7 +370,6 @@ NULL
     return(net)
 }
 
-#' @export
 #' @title Correlation
 #' 
 #' @description
@@ -481,7 +456,6 @@ NULL
     return(weight)
 }
 
-#' @export
 #' @title Cross-validation
 #' 
 #' @description
@@ -528,7 +502,6 @@ NULL
     return(fit) 
 }
 
-#' @export
 #' @title Cross-validation loss
 #' 
 #' @description
@@ -607,7 +580,6 @@ NULL
     return(loss)
 }
 
-#' @export
 #' @title Extraction
 #' 
 #' @description

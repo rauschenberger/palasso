@@ -5,4 +5,4 @@
 
 ## R CMD check results
 
-## Downstream dependencies
+* no errors, warnings, or notes

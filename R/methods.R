@@ -236,11 +236,6 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         }
     }
     
-    #if(is.null(standard)){standard <- attributes(x)$info$standard}
-    #if(is.null(adaptive)){adaptive <- attributes(x)$info$adaptive}
-    #if(standard&!attributes(x)$info$standard){stop("Missing standard models.")}
-    #if(adaptive&!attributes(x)$info$adaptive){stop("Missing adaptive models.")}
-    
     if(model=="paired"){
         adaptive <- attributes(x)$info$adaptive
         standard <- attributes(x)$info$standard
@@ -272,12 +267,10 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
    
     object <- x[cond]
     if(name=="AUC"){
-        loss <- vapply(X=object,FUN=function(x) max(x$cvm),FUN.VALUE=numeric(1))
-        # trial: na.rm=TRUE
+        loss <- vapply(X=object,FUN=function(x) max(x$cvm),FUN.VALUE=numeric(1)) # trial: na.rm=TRUE
         select <- which.max(loss)
     } else {
-        loss <- vapply(X=object,FUN=function(x) min(x$cvm),FUN.VALUE=numeric(1)) 
-        # trial: na.rm=TRUE
+        loss <- vapply(X=object,FUN=function(x) min(x$cvm),FUN.VALUE=numeric(1)) # trial: na.rm=TRUE
         select <- which.min(loss)
     }
     object <- object[[select]]

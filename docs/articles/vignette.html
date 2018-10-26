@@ -97,13 +97,13 @@
 <div id="initialisation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#initialisation" class="anchor"></a>Initialisation</h2>
-<p>We use <a href="https://CRAN.R-project.org/package=glmnet">glmnet</a> for the standard lasso, and <a href="https://CRAN.R-project.org/package=palasso">palasso</a> for the paired lasso.</p>
+<p>We use <a href="https://CRAN.R-project.org/package=glmnet">glmnet</a> for the <em>standard lasso</em>, and <a href="https://CRAN.R-project.org/package=palasso">palasso</a> for the <em>paired lasso</em>.</p>
 <p>Loading and attaching the packages:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(glmnet)
 <span class="kw">library</span>(palasso)</code></pre></div>
 <p>Attaching some data to reproduce the examples:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attach</span>(toydata)</code></pre></div>
-<p>Data are available for <span class="math inline">\(n=30\)</span> samples and <span class="math inline">\(p=50\)</span> covariate pairs. The object <code>y</code> contains the response (numeric vector of length <span class="math inline">\(n\)</span>). The object <code>X</code> contains the covariates (list of two numeric matrices with <span class="math inline">\(n\)</span> rows and <span class="math inline">\(p\)</span> columns).</p>
+<p>Data are available for <span class="math inline">\(n=30\)</span> samples and <span class="math inline">\(p=50\)</span> covariate pairs. The object <code>y</code> contains the response (numeric vector of length <span class="math inline">\(n\)</span>). The object <code>X</code> contains the covariates (list of two numeric matrices, both with <span class="math inline">\(n\)</span> rows and <span class="math inline">\(p\)</span> columns).</p>
 </div>
 <div id="standard-lasso" class="section level2">
 <h2 class="hasAnchor">

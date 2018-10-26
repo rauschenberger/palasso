@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Analysis functions — other • palasso</title>
+<title>Analysis functions for manuscript — other • palasso</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -30,7 +30,7 @@
 
 
 
-<meta property="og:title" content="Analysis functions — other" />
+<meta property="og:title" content="Analysis functions for manuscript — other" />
 
 <meta property="og:description" content="Functions for the palasso manuscript." />
 <meta name="twitter:card" content="summary" />
@@ -106,7 +106,7 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Analysis functions</h1>
+    <h1>Analysis functions for manuscript</h1>
     <small class="dont-index">Source: <a href='https://github.com/rauschenberger/palasso/blob/master/R/hidden.R'><code>R/hidden.R</code></a></small>
     <div class="hidden name"><code>other.Rd</code></div>
     </div>
@@ -183,29 +183,31 @@ including vectors</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>to do</p>
-    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The function <code>.prepare</code> pre-processes sequencing data. It removes
-features with a low total abundance, adjusts for different library sizes,
-binarises the counts with cutoff zero or takes the Anscombe transform, and
-scales all covariates to mean zero and unit variance.
-(If the cutoff differed from zero, we would have to first normalise,
-then binarise, and finally filter the raw counts.)</p>
-<p>The functions <code>.simulate</code> simulates a response. Exploiting an
-experimental covariate matrix, it allows for different numbers of non-zero
-coefficients for X and Z.</p>
-<p>The function <code>.predict</code> estimates the predictive performance of
-different lasso models (standard X and/or Z, adaptive X and/or Z, paired
-X and Z). Minimising the deviance, it returns the deviance and the area
-under the curve. Currently, only the binomial family is implemented.</p>
-<p>The function <code>.select</code> estimates the selective performance of different
-lasso models (standard X and/or Z, adaptive X and/or Z, paired X and Z).
-Limiting the number of covariates to \(10\), it returns the number of
-selected covariates, and the number of correctly selected covariates.</p>
+    <p><code>.prepare</code><strong>:</strong>
+pre-processes sequencing data by
+removing features with a low total abundance,
+and adjusting for different library sizes;
+obtains two transformations of the same data
+by (1) binarising the counts with some cutoff
+and (2) taking the Anscombe transform;
+scales all covariates to mean zero and unit variance.</p>
+<p><code>.simulate</code><strong>:</strong>
+simulates the response by
+exploiting two experimental covariate matrices;
+allows for different numbers of non-zero coefficients for X and Z.</p>
+<p><code>.predict</code><strong>:</strong>
+estimates the predictive performance of different lasso models
+(standard X and/or Z, adaptive X and/or Z, paired X and Z);
+minimises the loss function "deviance", but also returns other loss functions;
+supports logistic and Cox regression.</p>
+<p><code>.select</code><strong>:</strong>
+estimates the selective performance of different lasso models
+(standard X and/or Z, adaptive X and/or Z, paired X and Z);
+limits the number of covariates to \(10\);
+returns the number of selected covariates,
+and the number of correctly selected covariates.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
@@ -217,7 +219,7 @@ selected covariates, and the number of correctly selected covariates.</p>
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>30</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>40</span>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'>matrix</span>(<span class='fu'>rpois</span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>3</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
-<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'>.simulate</span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
+<span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
 <span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='http://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt;                         lambda       nzero length
 #&gt; standard_x   [0.3,(0.3),0.003]  [0,(0),14]    100
 #&gt; standard_z  [0.2,(0.09),0.002] [0,(10),20]    100
@@ -269,8 +271,6 @@ selected covariates, and the number of correctly selected covariates.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#value">Value</a></li>
-
       <li><a href="#details">Details</a></li>
 
       <li><a href="#see-also">See also</a></li>

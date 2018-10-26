@@ -6,7 +6,7 @@
 \alias{.simulate}
 \alias{.predict}
 \alias{.select}
-\title{Analysis functions}
+\title{Analysis functions for manuscript}
 \usage{
 .prepare(X, filter = 1, cutoff = "zero", scale = TRUE)
 
@@ -48,33 +48,36 @@ including vectors}
 
 \item{trial}{development option}
 }
-\value{
-to do
-}
 \description{
 Functions for the \code{palasso} manuscript.
 }
 \details{
-The function \code{.prepare} pre-processes sequencing data. It removes
-features with a low total abundance, adjusts for different library sizes,
-binarises the counts with cutoff zero or takes the Anscombe transform, and
+\code{.prepare}\strong{:}
+pre-processes sequencing data by
+removing features with a low total abundance,
+and adjusting for different library sizes;
+obtains two transformations of the same data
+by (1) binarising the counts with some cutoff
+and (2) taking the Anscombe transform;
 scales all covariates to mean zero and unit variance.
-(If the cutoff differed from zero, we would have to first normalise,
-then binarise, and finally filter the raw counts.)
 
-The functions \code{.simulate} simulates a response. Exploiting an
-experimental covariate matrix, it allows for different numbers of non-zero
-coefficients for X and Z.
+\code{.simulate}\strong{:}
+simulates the response by
+exploiting two experimental covariate matrices;
+allows for different numbers of non-zero coefficients for X and Z.
 
-The function \code{.predict} estimates the predictive performance of
-different lasso models (standard X and/or Z, adaptive X and/or Z, paired
-X and Z). Minimising the deviance, it returns the deviance and the area
-under the curve. Currently, only the binomial family is implemented.
+\code{.predict}\strong{:}
+estimates the predictive performance of different lasso models
+(standard X and/or Z, adaptive X and/or Z, paired X and Z);
+minimises the loss function "deviance", but also returns other loss functions;
+supports logistic and Cox regression.
 
-The function \code{.select} estimates the selective performance of different
-lasso models (standard X and/or Z, adaptive X and/or Z, paired X and Z).
-Limiting the number of covariates to \eqn{10}, it returns the number of
-selected covariates, and the number of correctly selected covariates.
+\code{.select}\strong{:}
+estimates the selective performance of different lasso models
+(standard X and/or Z, adaptive X and/or Z, paired X and Z);
+limits the number of covariates to \eqn{10};
+returns the number of selected covariates,
+and the number of correctly selected covariates.
 }
 \examples{
 \donttest{set.seed(1)

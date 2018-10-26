@@ -4,7 +4,7 @@
 #' @name plots
 #' 
 #' @title
-#' Plot functions
+#' Plot functions for manuscript
 #' 
 #' @description
 #' Functions for the \code{palasso} manuscript.
@@ -89,10 +89,6 @@ plot_score <- function(X,choice=NULL,ylab="count"){
     y$loss <- apply(X,2,function(x) sum(temp>x))
     y <- lapply(y,function(x) x[-choice])
     
-    #if(print){
-    #    print(round(y$gain/n,digits=3))
-    #}
-    
     # frame
     graphics::plot.new()
     graphics::plot.window(xlim=c(0.5,p-0.5),ylim=c(0,n))
@@ -148,15 +144,6 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1,cutoff=NA)
     .mtext(text=colnames(X),unit=TRUE,side=3,las=las,cex=cex)
     
     if(margin==-1){
-        #temp <- matrix(NA,nrow=nrow(X),ncol=ncol(X))
-        #temp[X < 0.80] <- 1
-        #temp[0.80 < X & X < 0.90] <- 2
-        #temp[0.80 < X & X < 0.95] <- 3
-        #temp[0.95 < X & X < 0.975] <- 4
-        #temp[0.975 < X & X < 0.99] <- 5
-        #temp[X > 0.99] <- 6
-        #probs <- seq(from=0,to=1,by=0.2)
-        #breaks <- stats::quantile(X,na.rm=TRUE,probs=probs)
         breaks <- c(0,0.9,0.95,0.96,0.97,0.98,0.99,1)
         temp <- apply(X=X,MARGIN=1,FUN=function(x) cut(x=x,breaks=breaks,labels=seq_len(length(breaks)-1)))
         temp <- apply(X=temp,MARGIN=1,FUN=function(x) as.numeric(x))
@@ -182,10 +169,6 @@ plot_table <- function(X,margin=2,labels=TRUE,colour=TRUE,las=1,cex=1,cutoff=NA)
         } else {
             col <- grDevices::colorRampPalette(colors=c("darkblue","red"))(n*p) 
         }
-        #col <- grDevices::colorRampPalette(colors=c("#081d58",
-        #        "#253494","#225ea8","#1d91c0","#41b6c4",
-        #        "#7fcdbb","#c7e9b4","#edf8b1","#ffffd9"))(n*p)
-        #col <- grDevices::colorRampPalette(colors=rev(RColorBrewer::brewer.pal(n=9,name="Blues")))(n*p)
         graphics::image(x=image,col=col,add=TRUE)
     }
     
@@ -297,10 +280,6 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE,invert=FALSE){
     if(is.null(choice)){choice <- p}
     if(is.character(choice)){choice <- which(colnames(X)==choice)}
     
-    # col <- rep(x="#CD0000",times=p) # original
-    # col <- rep(x="#0000CD",times=p)
-    # col[choice] <- "#0000CD"
-    
     graphics::plot.new()
     if(is.null(ylim)){ylim <- range(X)}
     graphics::plot.window(xlim=c(0.5,p+0.5),ylim=ylim)
@@ -323,7 +302,7 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE,invert=FALSE){
 
     for(i in seq_len(p)){
         #vioplot::vioplot(X[,i],at=i,add=TRUE,col="white")
-        # graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
+        #graphics::boxplot(x=X[,i],at=i,add=TRUE,col=col[i],boxwex=1)
         #graphics::points(y=mean(X[,i]),x=i,col="white",pch=16)
         .boxplot(x=X[,i],at=i,invert=invert)
     }
@@ -335,7 +314,6 @@ plot_box <- function(X,choice=NULL,ylab="",ylim=NULL,zero=FALSE,invert=FALSE){
     q <- stats::quantile(x,p=c(0.05,0.25,0.75,0.95))
     
     col <- c("#00007F","#FF3535")
-    # was col <- c("#0000CD","#CD0000")
     if(invert){col <- rev(col)}
 
 
@@ -385,7 +363,7 @@ plot_pairs <- function(x,y=NULL,...){
     if(is.null(y)){y <- 1-x}
     if(is.null(args$lwd)){args$lwd <- 50/length(x)}
     if(is.null(args$main)){args$main <- ""}
-    if(is.null(args$col)){args$col <- c("#00007F","#FF3535")} # was c("#0000CD","#CD0000")
+    if(is.null(args$col)){args$col <- c("#00007F","#FF3535")}
     
     # initialise
     graphics::plot.new()
@@ -455,15 +433,6 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
     # legend: outliers
     nblue <- sum(col=="blue",na.rm=TRUE)
     nred <- sum(col=="red",na.rm=TRUE)
-    # if(nred==nblue){
-    #     legend <- bquote(.(nred)==.(nblue))
-    # }
-    # if(nred<nblue){
-    #     legend <- bquote(.(nred)<.(nblue))
-    # }
-    # if(nred>nblue){
-    #     legend <- bquote(.(nred)>.(nblue))
-    # }
     graphics::legend(x="bottomleft",
                      legend=c(nred,":",nblue), #," =",nblue+nred),
                      text.col=c("red","black","blue"), # "black","black"),
@@ -501,7 +470,7 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
     centre <- 0.5*(temp[-1]+temp[-length(temp)])
     # checks
     cond <- logical()
-    cond[1] <- length(unique(groups))>=1 # trial! was >1 instead of >=1
+    cond[1] <- length(unique(groups))>=1
     cond[2] <- length(unique(groups))==length(border)+1
     cond[3] <- length(unique(groups))<p
     at <- function(x){
@@ -525,7 +494,7 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #--- Application ---------------------------------------------------------------
 
 #' @title
-#' Analysis functions
+#' Analysis functions for manuscript
 #' 
 #' @name other
 #' 
@@ -573,29 +542,32 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #' 
 #' @details
 #' 
-#' The function \code{.prepare} pre-processes sequencing data. It removes
-#' features with a low total abundance, adjusts for different library sizes,
-#' binarises the counts with cutoff zero or takes the Anscombe transform, and
+#' \code{.prepare}\strong{:}
+#' pre-processes sequencing data by
+#' removing features with a low total abundance,
+#' and adjusting for different library sizes;
+#' obtains two transformations of the same data
+#' by (1) binarising the counts with some cutoff
+#' and (2) taking the Anscombe transform;
 #' scales all covariates to mean zero and unit variance.
-#' (If the cutoff differed from zero, we would have to first normalise,
-#' then binarise, and finally filter the raw counts.)
 #' 
-#' The functions \code{.simulate} simulates a response. Exploiting an
-#' experimental covariate matrix, it allows for different numbers of non-zero
-#' coefficients for X and Z.
+#' \code{.simulate}\strong{:}
+#' simulates the response by
+#' exploiting two experimental covariate matrices;
+#' allows for different numbers of non-zero coefficients for X and Z.
 #' 
-#' The function \code{.predict} estimates the predictive performance of
-#' different lasso models (standard X and/or Z, adaptive X and/or Z, paired
-#' X and Z). Minimising the deviance, it returns the deviance and the area
-#' under the curve. Currently, only the binomial family is implemented.
+#' \code{.predict}\strong{:}
+#' estimates the predictive performance of different lasso models
+#' (standard X and/or Z, adaptive X and/or Z, paired X and Z);
+#' minimises the loss function "deviance", but also returns other loss functions;
+#' supports logistic and Cox regression.
 #' 
-#' The function \code{.select} estimates the selective performance of different
-#' lasso models (standard X and/or Z, adaptive X and/or Z, paired X and Z).
-#' Limiting the number of covariates to \eqn{10}, it returns the number of
-#' selected covariates, and the number of correctly selected covariates.
-#' 
-#' @return
-#' to do
+#' \code{.select}\strong{:}
+#' estimates the selective performance of different lasso models
+#' (standard X and/or Z, adaptive X and/or Z, paired X and Z);
+#' limits the number of covariates to \eqn{10};
+#' returns the number of selected covariates,
+#' and the number of correctly selected covariates.
 #' 
 #' @seealso
 #' Use \link[palasso]{palasso} to fit the paired lasso.
@@ -642,7 +614,7 @@ NULL
     # transform Z
     Z <- matrix(integer(),nrow=nrow(X),ncol=ncol(X))
     if(cutoff=="zero"){
-        Z[,] <- temp > 0 # or X > 2*sqrt(3/8)
+        Z[,] <- temp > 0 # equivalent to X > 2*sqrt(3/8)
     } else if(cutoff=="knee"){
         Z[,] <- .knee(X)
     } else if(cutoff=="half"){
@@ -673,32 +645,29 @@ NULL
     n <- nrow(X)
     p <- ncol(X)
     Z <- matrix(integer(),nrow=n,ncol=p)
-    #prop <- seq(from=0,to=1,length.out=n-1) # original
-    #weight <- log(prop)*log(1-prop) # original
-    prop <- seq(from=1,to=n-1,by=1)/n # alternative
-    weight <- -prop*log(prop,base=2)-(1-prop)*log(1-prop,base=2) # alternative
+    #prop <- seq(from=0,to=1,length.out=n-1) # old
+    #weight <- log(prop)*log(1-prop) # old
+    prop <- seq(from=1,to=n-1,by=1)/n
+    weight <- -prop*log(prop,base=2)-(1-prop)*log(1-prop,base=2)
     for(j in seq_len(p)){
         step <- sort(X[,j])
         index <- which.max(diff(step)*weight)
         Z[,j] <- X[,j] > step[index]
-        #plot(step)
-        #abline(v=index+0.5,col="blue",lty=2)
+        #plot(step); abline(v=index+0.5,col="blue",lty=2)
     }
     return(Z)
 }
-
 
 #' @rdname other
 #' @keywords internal
 #' 
 .simulate <- function(x,effects){
     
-    ### start trial ###
+    # constant covariates
     for(i in seq_along(x)){
         x[[i]] <- scale(x[[i]])
         x[[i]][is.na(x[[i]])] <- 0
     }
-    ### end trial ###
     
     # covariates
     if(length(x)!=length(effects)){stop("Invalid.",call.=FALSE)}
@@ -716,33 +685,33 @@ NULL
     
     # response
     eta <- rowSums(sapply(seq_len(k),function(i) x[[i]] %*% coef[[i]]))
-    y <- stats::rbinom(n=n,size=1,prob=1/(1+exp(-eta)))
-    # y <- stats::rnorm(n=n,mean=eta,sd=1)
-    # y <- stats::rpois(n=n,lambda=exp(eta))
+    y <- stats::rbinom(n=n,size=1,prob=1/(1+exp(-eta))) # binomial
+    # y <- stats::rnorm(n=n,mean=eta,sd=1) # gaussian
+    # y <- stats::rpois(n=n,lambda=exp(eta)) # poisson
     
     attributes(y) <- indices
     return(y)
 }
 
-# simulation without effects
-.simulate0 <- function(family,n=200,p=150){
-  X <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
-  Z <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
-  if(family=="gaussian"){
-    y <- stats::rnorm(n=n)
-  } else if(family=="binomial"){
-    y <- stats::rbinom(n=n,size=1,prob=0.2)
-  } else if(family=="poisson"){
-    y <- stats::rpois(n=n,lambda=4)
-  } else if(family=="cox"){
-    event <- stats::rbinom(n=n,size=1,prob=0.3)
-    time <- stats::rpois(n=n,lambda=4)+1
-    y <- survival::Surv(time=time,event=event)
-  } else {
-    stop("Invalid family.")
-  }
-  return(list(y=y,X=X,Z=Z))
-}
+# # simulation all families (without covariate effects)
+# simulation <- function(family,n=200,p=150){
+#   X <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
+#   Z <- matrix(data=stats::rnorm(n=n*p),nrow=n,ncol=p)
+#   if(family=="gaussian"){
+#     y <- stats::rnorm(n=n)
+#   } else if(family=="binomial"){
+#     y <- stats::rbinom(n=n,size=1,prob=0.2)
+#   } else if(family=="poisson"){
+#     y <- stats::rpois(n=n,lambda=4)
+#   } else if(family=="cox"){
+#     event <- stats::rbinom(n=n,size=1,prob=0.3)
+#     time <- stats::rpois(n=n,lambda=4)+1
+#     y <- survival::Surv(time=time,event=event)
+#   } else {
+#     stop("Invalid family.")
+#   }
+#   return(list(y=y,X=X,Z=Z))
+# }
 
 #' @rdname other
 #' @keywords internal
@@ -768,8 +737,6 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")),
                             "between_xz","paired.standard")}
     if(adaptive&standard){model <- c(model,"paired.combined")}
-    #model <- c(model,paste0("adaptive_",c("x","z","xz")),
-    #           "between_xz","within_xz","paired.adaptive","paired.standard","paired.combined")
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
@@ -797,13 +764,9 @@ NULL
         fold.int <- .folds(y=y0,nfolds=nfolds.int)
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-                                   standard=standard,...) # activate
-        #message("reactivate!")
+                                   standard=standard,...)
         
         ### start trial ###
-        #message(paste("start ",k))
-        #object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-        #                           standard=standard,lambda=lambda) # remove this
         max <- signif(sapply(object,function(x) max(x$lambda)),1)
         sel <- signif(sapply(object,function(x) x$lambda.min),1)
         min <- signif(sapply(object,function(x) min(x$lambda)),1)
@@ -814,7 +777,6 @@ NULL
         two <- paste0("[",min,",(",sel,"),",max,"]")
         three <- sapply(object,function(x) length(x$lambda))
         print(data.frame(lambda=one,nzero=two,length=three))
-        #message(paste("finish ",k))
         ### end trial ###
        
         for(i in seq_along(nzero)){

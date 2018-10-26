@@ -8,7 +8,7 @@
 \alias{plot_box}
 \alias{plot_pairs}
 \alias{plot_diff}
-\title{Plot functions}
+\title{Plot functions for manuscript}
 \usage{
 plot_score(X, choice = NULL, ylab = "count")
 

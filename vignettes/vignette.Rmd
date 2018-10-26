@@ -28,7 +28,7 @@ install_github("rauschenberger/palasso")
 
 ## Initialisation
 
-We use [glmnet](https://CRAN.R-project.org/package=glmnet) for the standard lasso, and [palasso](https://CRAN.R-project.org/package=palasso) for the paired lasso.
+We use [glmnet](https://CRAN.R-project.org/package=glmnet) for the *standard lasso*, and [palasso](https://CRAN.R-project.org/package=palasso) for the *paired lasso*.
 
 Loading and attaching the packages:
 
@@ -51,7 +51,7 @@ for(i in 1:length(names)){
 rm(names)
 ```
 
-Data are available for $n=30$ samples and $p=50$ covariate pairs. The object `y` contains the response (numeric vector of length $n$). The object `X` contains the covariates (list of two numeric matrices with $n$ rows and $p$ columns).
+Data are available for $n=30$ samples and $p=50$ covariate pairs. The object `y` contains the response (numeric vector of length $n$). The object `X` contains the covariates (list of two numeric matrices, both with $n$ rows and $p$ columns).
 
 ## Standard lasso
 
