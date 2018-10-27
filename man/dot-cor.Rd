@@ -9,7 +9,7 @@
 \arguments{
 \item{y}{vector of length \eqn{n}}
 
-\item{x}{marix with \eqn{n} rows and \eqn{p} columns}
+\item{x}{matrix with \eqn{n} rows and \eqn{p} columns}
 
 \item{args}{options for paired lasso\strong{:}
 list of arguments

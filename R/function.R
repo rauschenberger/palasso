@@ -382,7 +382,7 @@ NULL
 #' vector of length \eqn{n}
 #' 
 #' @param x
-#' marix with \eqn{n} rows and \eqn{p} columns
+#' matrix with \eqn{n} rows and \eqn{p} columns
 #' 
 #' @return list of vectors
 #' 
