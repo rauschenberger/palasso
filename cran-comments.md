@@ -1,8 +1,10 @@
 ## Test environments
 
+* windows (local)
 * windows (appveyor)
-* linux (travis)
 
 ## R CMD check results
 
-* no errors, warnings, or notes
+* no errors
+* no warnings
+* note: package CorShrink currently archived
