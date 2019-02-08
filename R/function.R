@@ -215,6 +215,13 @@ NULL
     
     # weighting schemes
     if(is.null(args$shrink)){args$shrink <- TRUE}
+    
+    # conditional usage of CorShrink
+    if(args$shrink & (!"CorShrink" %in% .packages(all.available=TRUE))){
+      warning("Install \"CorShrink\" from CRAN archive, or shrink=FALSE.",call.=FALSE)
+      args$shrink <- FALSE
+    }
+    
     if(is.null(args$standard)){args$standard <- FALSE}
     if(is.null(args$adaptive)){args$adaptive <- TRUE}
     
@@ -392,6 +399,7 @@ NULL
 .cor <- function(y,x,args){
     if(args$family=="cox"){
         cor <- apply(X=x,MARGIN=2,FUN=function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
+        # replace survival::survConcordance by survival::concordance (due to depreciation)
     } else {
         cor <- suppressWarnings(as.vector(abs(stats::cor(x,y))))
     }
