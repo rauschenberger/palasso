@@ -5,6 +5,4 @@
 
 ## R CMD check results
 
-* no errors
-* no warnings
-* note: package CorShrink currently archived
+* Suggests (archived) CorShrink, but uses it conditionally.
