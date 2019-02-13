@@ -1,12 +1,8 @@
-Thanks for your comments.
+Thanks, next try ...
 
 ## Corrections
 
-* Reference will be added later (under revision).
-
-* Removed field "_R_CHECK_FORCE_SUGGESTS_".
-
-* Added links to ashr and CorShrink on GitHub.
+* Explained installation of ashr and CorShrink in DESCRIPTION and README.
 
 ## Test environments
 
