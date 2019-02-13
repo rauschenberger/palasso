@@ -34,7 +34,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
         stop("Invalid family!")
     }
     
-    fit <- palasso::palasso(y=y,X=X,standard=TRUE,family=family,max=max,nfolds=3)
+    fit <- palasso::palasso(y=y,X=X,standard=TRUE,family=family,max=max,nfolds=3,shrink=FALSE)
     
     names <- c(names(fit),"paired")
     weights <- lapply(X=names,FUN=function(x) weights(object=fit,model=x))
@@ -111,7 +111,7 @@ for(family in c("gaussian","binomial","poisson","cox")){
     Xs <- lapply(X,function(x) x[,sample(seq_len(p),size=5)]) # seq_len(n/(10*k))
     fit <- palasso::palasso(y=y,X=Xs,standard=TRUE,
                             lambda=c(99e99,0),
-                            family=family,nfolds=3,max=Inf)
+                            family=family,nfolds=3,max=Inf,shrink=FALSE)
     Xs <- do.call(what="cbind",args=Xs)
     
     if(family=="cox"){
