@@ -1,6 +1,8 @@
 
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- Modify xxx.Rmd, not xxx.md! -->
@@ -33,6 +35,13 @@ install.packages("palasso")
 ```{r,eval=FALSE}
 #install.packages("devtools")
 devtools::install_github("rauschenberger/palasso")
+```
+
+Manually install [ashr](https://github.com/stephens999/ashr) and [CorShrink](https://github.com/kkdey/CorShrink) for the (optional) correlation shrinkage:
+
+```{r}
+devtools::install_github("stephens999/ashr")
+devtools::install_github("kkdey/CorShrink")
 ```
 
 ## Reference
