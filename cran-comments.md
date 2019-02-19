@@ -1,9 +1,9 @@
-Thanks, next try ...
+## Comments
 
-## Corrections
+* Refered to extensions in description field.
 
-* Explained installation of ashr and CorShrink in DESCRIPTION and README.
+* Reference will be added after publication.
 
-## Test environments
+## Test environment
 
 * windows (local + appveyor)
