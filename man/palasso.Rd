@@ -57,6 +57,9 @@ n <- 50; p <- 20
 y <- rbinom(n=n,size=1,prob=0.5)
 X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
 object <- palasso(y=y,X=X,family="binomial")
+#.folds <- palasso:::.folds
+#predict.palasso <- palasso:::predict.palasso
+#test <- .predict(y=y,X=X,elastic=TRUE)
 
 }
 \references{

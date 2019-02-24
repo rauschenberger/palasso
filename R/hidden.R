@@ -716,8 +716,8 @@ NULL
 #' @rdname other
 #' @keywords internal
 #' 
-.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,standard=TRUE,
-                     family="binomial",...){
+.predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,
+                     standard=TRUE,elastic=TRUE,family="binomial",...){
     
     if(survival::is.Surv(y)!=(family=="cox")){stop("Survival?")}
     
@@ -737,6 +737,8 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")),
                             "between_xz","paired.standard")}
     if(adaptive&standard){model <- c(model,"paired.combined")}
+    if(elastic){model <- c(model,"elastic50","elastic95")}
+    
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
     # predictions
@@ -763,6 +765,13 @@ NULL
         # internal folds
         fold.int <- .folds(y=y0,nfolds=nfolds.int)
         
+        if(elastic){
+          x0 <- do.call(what="cbind",args=X0)
+          x1 <- do.call(what="cbind",args=X1)
+          elastic50 <- glmnet::cv.glmnet(alpha=0.50,y=y0,x=x0,foldid=fold.int,family=family,...)
+          elastic95 <- glmnet::cv.glmnet(alpha=0.95,y=y0,x=x0,foldid=fold.int,family=family,...)
+        }
+        
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
                                    standard=standard,...)
         
@@ -782,13 +791,23 @@ NULL
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
                 if(family=="binomial"){
-                    temp <- predict.palasso(object=object,
+                    if(model[j]=="elastic50"){
+                      temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
+                    } else if(model[j]=="elastic95"){
+                      temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
+                    } else {
+                      temp <- predict.palasso(object=object,
                         newdata=X1,model=model[j],type="response",max=nzero[i])
+                    }
                     pred[i,j][[1]][fold.ext==k] <- temp
                 }
                 if(family=="cox"){
-                    beta <- predict.palasso(object=object,newdata=X1,
-                                model=model[j],type="coeff",max=nzero[i])
+                    if(model[j] %in% c("elastic50","elastic95")){
+                      stop("Elastic net not implemented for Cox model!")
+                    } else {
+                        beta <- predict.palasso(object=object,newdata=X1,
+                          model=model[j],type="coeff",max=nzero[i])
+                    }
                     newX <- do.call(what="cbind",args=X)
                     plfull <- glmnet::coxnet.deviance(x=newX,y=y,beta=beta)
                     newX0 <- do.call(what="cbind",args=X0)

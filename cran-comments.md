@@ -1,9 +1,4 @@
-## Comments
 
-* Refered to extensions in description field.
+* I added angle brackets around the URLs in the description field.
 
-* Reference will be added after publication.
-
-## Test environment
-
-* windows (local + appveyor)
+* Our manuscript is under revision, and we will add the DOI after publication.
