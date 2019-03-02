@@ -47,10 +47,10 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial")
+#' object <- palasso(y=y,X=X,family="binomial",elastic=TRUE)
 #' #.folds <- palasso:::.folds
 #' #predict.palasso <- palasso:::predict.palasso
-#' #test <- .predict(y=y,X=X,elastic=TRUE)
+#' #test <- .predict(y=y,X=X)
 #' 
 palasso <- function(y=y,X=X,max=10,...){
     
@@ -192,7 +192,7 @@ NULL
     # check arguments (trial)
     names0 <- names(formals(glmnet::cv.glmnet))
     names1 <- names(formals(glmnet::glmnet))
-    if(any(!names(args) %in% c(names0,names1,"adaptive","standard","shrink"))){
+    if(any(!names(args) %in% c(names0,names1,"adaptive","standard","shrink","elastic"))){
       stop("Unexpected argument.",call.=FALSE)
     }
     
@@ -227,6 +227,7 @@ NULL
     
     if(is.null(args$standard)){args$standard <- FALSE}
     if(is.null(args$adaptive)){args$adaptive <- TRUE}
+    if(is.null(args$elastic)){args$elastic <- FALSE}
     
     # check consistency
     if(!args$family %in% c("gaussian","binomial","poisson","cox")){
@@ -299,7 +300,8 @@ NULL
   # number of models
   adaptive <- is.null(args$adaptive)||args$adaptive
   standard <- !(is.null(args$standard)||!args$standard)
-  num <- (standard+adaptive)*(k+2)
+  elastic <- !(is.null(args$elastic)||!args$elastic)
+  num <- (standard+adaptive)*(k+2) + 2*elastic
   
   list <- list(n=n,p=p,k=k,num=num,names=names)
 }
@@ -347,38 +349,82 @@ NULL
     
     net <- list()
     for(j in seq_along(weight)){
-        args <- args[c("alpha","family","nlambda")]
-        args$y <- y
-        args$x <- x
-        args$lambda <- NULL # important!
-        args$penalty.factor <- 1/weight[[j]]
-        net[[j]] <- do.call(what=glmnet::glmnet,args=args)
-        
-        iter <- 0
-        while((min(net[[j]]$df)>3)|(length(net[[j]]$lambda)==1)){
-            warning("Modifying lambda sequence.",call.=FALSE)
-            iter <- iter + 1
-            if(iter>10){
-                #browser()
-                stop("Modifying lambda sequence failed.",call.=FALSE)
-            }
-            args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
-            initial <- do.call(what=glmnet::glmnet,args=args)
-            lambda.max <- min(initial$lambda[initial$df==0])
-            args$lambda <- exp(seq(
-                from=log(lambda.max),
-                to=log(0.01*lambda.max),
-                length.out=pmax(args$nlambda,100)))
-            net[[j]] <- do.call(what=glmnet::glmnet,args=args)
-            
-        }
+        net[[j]] <- .fit.int(y=y,x=x,weight=weight[[j]],args=args)
+        # ### start original ###
+        # args <- args[c("alpha","family","nlambda")]
+        # args$y <- y
+        # args$x <- x
+        # args$lambda <- NULL # important!
+        # args$penalty.factor <- 1/weight[[j]]
+        # net[[j]] <- do.call(what=glmnet::glmnet,args=args)
+        # 
+        # iter <- 0
+        # while((min(net[[j]]$df)>3)|(length(net[[j]]$lambda)==1)){
+        #     warning("Modifying lambda sequence.",call.=FALSE)
+        #     iter <- iter + 1
+        #     if(iter>10){
+        #         #browser()
+        #         stop("Modifying lambda sequence failed.",call.=FALSE)
+        #     }
+        #     args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
+        #     initial <- do.call(what=glmnet::glmnet,args=args)
+        #     lambda.max <- min(initial$lambda[initial$df==0])
+        #     args$lambda <- exp(seq(
+        #         from=log(lambda.max),
+        #         to=log(0.01*lambda.max),
+        #         length.out=pmax(args$nlambda,100)))
+        #     net[[j]] <- do.call(what=glmnet::glmnet,args=args)
+        # }
+        ### end original ###
         if(j > 1){ # free memory
             net[[j]]$call$x <- NULL 
         }
     }
     names(net) <- names(weight)
+    
+    ### start extra ###
+    if(args$elastic){
+      args$alpha <- 0.95
+      net[[j+1]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
+      args$alpha <- 0.50 
+      net[[j+2]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
+      names(net)[c(j+1,j+2)] <- c("elastic95","elastic50")
+    }
+    ### end extra ###
+    
     return(net)
 }
+
+### start trial ###
+.fit.int <- function(y,x,weight,args){
+  args <- args[c("alpha","family","nlambda")]
+  args$y <- y
+  args$x <- x
+  args$lambda <- NULL # important!
+  args$penalty.factor <- 1/weight
+  net <- do.call(what=glmnet::glmnet,args=args)
+
+  iter <- 0
+  while((min(net$df)>3)|(length(net$lambda)==1)){
+    warning("Modifying lambda sequence.",call.=FALSE)
+    iter <- iter + 1
+    if(iter>10){
+      #browser()
+      stop("Modifying lambda sequence failed.",call.=FALSE)
+    }
+    args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
+    initial <- do.call(what=glmnet::glmnet,args=args)
+    lambda.max <- min(initial$lambda[initial$df==0])
+    args$lambda <- exp(seq(
+      from=log(lambda.max),
+      to=log(0.01*lambda.max),
+      length.out=pmax(args$nlambda,100)))
+    net <- do.call(what=glmnet::glmnet,args=args)
+  }
+  return(net)
+}
+### end trial ###
+
 
 #' @title Correlation
 #' 

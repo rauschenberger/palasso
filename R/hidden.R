@@ -765,15 +765,15 @@ NULL
         # internal folds
         fold.int <- .folds(y=y0,nfolds=nfolds.int)
         
-        if(elastic){
-          x0 <- do.call(what="cbind",args=X0)
-          x1 <- do.call(what="cbind",args=X1)
-          elastic50 <- glmnet::cv.glmnet(alpha=0.50,y=y0,x=x0,foldid=fold.int,family=family,...)
-          elastic95 <- glmnet::cv.glmnet(alpha=0.95,y=y0,x=x0,foldid=fold.int,family=family,...)
-        }
+        #if(elastic){
+        #  x0 <- do.call(what="cbind",args=X0)
+        #  x1 <- do.call(what="cbind",args=X1)
+        #  elastic50 <- glmnet::cv.glmnet(alpha=0.50,y=y0,x=x0,foldid=fold.int,family=family,...)
+        #  elastic95 <- glmnet::cv.glmnet(alpha=0.95,y=y0,x=x0,foldid=fold.int,family=family,...)
+        #}
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-                                   standard=standard,...)
+                                   standard=standard,elastic=elastic,...)
         
         ### start trial ###
         max <- signif(sapply(object,function(x) max(x$lambda)),1)
@@ -791,23 +791,25 @@ NULL
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
                 if(family=="binomial"){
-                    if(model[j]=="elastic50"){
-                      temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
-                    } else if(model[j]=="elastic95"){
-                      temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
-                    } else {
+                    #if(model[j]=="elastic50"){
+                    #  temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
+                    #  # BUG: max is not taken into account!
+                    #} else if(model[j]=="elastic95"){
+                    #  temp <- glmnet:::predict.cv.glmnet(object=elastic95,newx=x1,type="response",max=nzero[i])
+                    #  # BUG: max is not taken into account!
+                    #} else {
                       temp <- predict.palasso(object=object,
                         newdata=X1,model=model[j],type="response",max=nzero[i])
-                    }
+                    #}
                     pred[i,j][[1]][fold.ext==k] <- temp
                 }
                 if(family=="cox"){
-                    if(model[j] %in% c("elastic50","elastic95")){
-                      stop("Elastic net not implemented for Cox model!")
-                    } else {
+                    #if(model[j] %in% c("elastic50","elastic95")){
+                    #  stop("Elastic net not implemented for Cox model!")
+                    #} else {
                         beta <- predict.palasso(object=object,newdata=X1,
                           model=model[j],type="coeff",max=nzero[i])
-                    }
+                    #}
                     newX <- do.call(what="cbind",args=X)
                     plfull <- glmnet::coxnet.deviance(x=newX,y=y,beta=beta)
                     newX0 <- do.call(what="cbind",args=X0)
