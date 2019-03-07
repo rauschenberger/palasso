@@ -16,8 +16,10 @@ cache:
 # Adapt as necessary starting from here
 
 environment:
+  NOT_CRAN: true
   global:
-    WARNINGS_ARE_ERRORS:
+    R_REMOTES_NO_ERRORS_FROM_WARNINGS: true
+    WARNINGS_ARE_ERRORS: 1
 
   matrix:
   - R_VERSION: devel
