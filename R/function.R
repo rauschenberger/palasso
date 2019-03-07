@@ -602,12 +602,15 @@ NULL
                 loss[[i]] <- apply(X=fit[[i]],MARGIN=2,FUN=function(x) mean(abs(round(x)-y)))
             } else if(type.measure=="auc"){
                 weights <- table(foldid)
-                cvraw <- matrix(data=NA,nrow=length(weights),ncol=ncol(fit))
+                cvraw <- matrix(data=NA,nrow=length(weights),
+                                ncol=ncol(fit[[i]])) # new
+                                # ncol=ncol(fit)) # old
                 for(k in seq_along(weights)){
                     cvraw[k,] <- apply(X=fit[[i]],MARGIN=2,FUN=function(x) glmnet::auc(y=y[foldid==k],prob=x[foldid==k]))
                 }
                 loss[[i]] <- apply(X=cvraw,MARGIN=2,FUN=function(x) stats::weighted.mean(x=x,w=weights,na.rm=TRUE))
-            } else {
+                names(loss[[i]]) <- colnames(fit[[i]]) # new
+              } else {
                 stop("Invalid type measure.",call.=FALSE)
             }
         } else if(family=="poisson"){
