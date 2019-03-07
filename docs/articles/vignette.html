@@ -118,9 +118,6 @@ object &lt;-<span class="st"> </span><span class="kw">glmnet</span>(<span class=
 <a href="#paired-lasso" class="anchor"></a>Paired lasso</h2>
 <p>But the paired lasso might be a better choice for exploiting both covariates groups at once:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X)</code></pre></div>
-<pre><code>## Registered S3 method overwritten by 'R.oo':
-##   method        from       
-##   throw.default R.methodsS3</code></pre>
 <p>In contrast to the standard lasso, the paired lasso accounts for the structure between the covariate groups.</p>
 <p>Given a limited number of non-zero coefficients, we expect the paired lasso to outperform the standard lasso:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">object &lt;-<span class="st"> </span><span class="kw"><a href="../reference/palasso.html">palasso</a></span>(<span class="dt">y=</span>y,<span class="dt">X=</span>X,<span class="dt">max=</span><span class="dv">10</span>)</code></pre></div>
