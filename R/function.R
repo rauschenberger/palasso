@@ -217,7 +217,7 @@ NULL
     }
     
     # weighting schemes
-    if(is.null(args$shrink)){args$shrink <- TRUE}
+    if(is.null(args$shrink)){args$shrink <- FALSE} # was TRUE
     
     # conditional usage of CorShrink
     if(args$shrink & (!"CorShrink" %in% .packages(all.available=TRUE))){

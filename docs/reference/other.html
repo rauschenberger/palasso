@@ -222,63 +222,61 @@ and the number of correctly selected covariates.</p>
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/matrix'>matrix</a></span>(<span class='fu'><a href='https://www.rdocumentation.org/packages/stats/topics/Poisson'>rpois</a></span>(<span class='no'>n</span>*<span class='no'>p</span>,<span class='kw'>lambda</span><span class='kw'>=</span><span class='fl'>3</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>)
 <span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/palasso/topics/other'>.prepare</a></span>(<span class='no'>X</span>)
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/palasso/topics/other'>.simulate</a></span>(<span class='no'>x</span>,<span class='kw'>effects</span><span class='kw'>=</span><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>1</span>,<span class='fl'>2</span>))
-<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt; <span class='message'>Registered S3 method overwritten by 'R.oo':</span>
-#&gt; <span class='message'>  method        from       </span>
-#&gt; <span class='message'>  throw.default R.methodsS3</span></div><div class='output co'>#&gt;                          lambda       nzero length
+<span class='no'>predict</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>palasso</span><span class='kw ns'>:::</span><span class='fu'><a href='https://www.rdocumentation.org/packages/palasso/topics/other'>.predict</a></span>(<span class='no'>y</span>,<span class='no'>x</span>)</div><div class='output co'>#&gt;                          lambda       nzero length
 #&gt; standard_x   [0.3,(0.08),0.003]  [0,(8),15]    100
 #&gt; standard_z    [0.2,(0.2),0.002]  [0,(0),20]    100
 #&gt; standard_xz  [0.3,(0.06),0.003]  [0,(9),15]    100
-#&gt; adaptive_x        [30,(30),0.3]   [0,(0),5]    100
-#&gt; adaptive_z  [0.08,(0.08),8e-04]  [0,(0),20]    100
-#&gt; adaptive_xz       [100,(100),1]   [0,(0),5]    100
-#&gt; between_xz      [6,(0.06),0.06] [0,(10),10]    100
-#&gt; within_xz      [2000,(2000),20]   [0,(0),5]    100
+#&gt; adaptive_x       [1,(0.2),0.01]  [0,(8),11]    100
+#&gt; adaptive_z    [0.1,(0.1),0.001]  [0,(0),18]    100
+#&gt; adaptive_xz      [2,(0.6),0.02]   [0,(3),9]    100
+#&gt; between_xz    [0.6,(0.3),0.006]  [0,(4),18]    100
+#&gt; within_xz         [10,(10),0.1]  [0,(0),11]    100
 #&gt; elastic95    [0.3,(0.04),0.003] [0,(12),19]    100
 #&gt; elastic50   [0.6,(0.008),0.006] [0,(35),37]    100
-#&gt;                          lambda      nzero length
-#&gt; standard_x    [0.3,(0.1),0.003] [0,(4),14]    100
-#&gt; standard_z   [0.2,(0.08),0.002] [0,(6),16]    100
-#&gt; standard_xz   [0.3,(0.2),0.003] [0,(3),15]    100
-#&gt; adaptive_x        [40,(20),0.4]  [0,(1),5]    100
-#&gt; adaptive_z  [0.09,(0.04),9e-04] [0,(6),16]    100
-#&gt; adaptive_xz        [100,(40),1]  [0,(1),5]    100
-#&gt; between_xz         [5,(1),0.05] [0,(7),15]    100
-#&gt; within_xz       [3000,(500),30]  [0,(3),5]    100
-#&gt; elastic95     [0.3,(0.2),0.003] [0,(4),19]    100
-#&gt; elastic50     [0.6,(0.3),0.006] [0,(6),27]    100
-#&gt;                          lambda      nzero length
-#&gt; standard_x    [0.3,(0.2),0.003] [0,(1),19]    100
-#&gt; standard_z    [0.2,(0.2),0.002] [0,(0),18]    100
-#&gt; standard_xz   [0.3,(0.2),0.003] [0,(1),19]    100
-#&gt; adaptive_x        [80,(50),0.8]  [0,(1),7]    100
-#&gt; adaptive_z  [0.09,(0.09),9e-04] [0,(0),18]    100
-#&gt; adaptive_xz        [100,(60),1]  [0,(1),7]    100
-#&gt; between_xz         [4,(4),0.04] [0,(0),17]    100
-#&gt; within_xz      [3000,(3000),30]  [0,(0),7]    100
-#&gt; elastic95     [0.3,(0.2),0.003] [0,(1),21]    100
-#&gt; elastic50     [0.6,(0.4),0.006] [0,(2),39]    100
-#&gt;                          lambda      nzero length
-#&gt; standard_x    [0.3,(0.1),0.003] [0,(4),16]    100
-#&gt; standard_z    [0.2,(0.2),0.002] [0,(0),19]    100
-#&gt; standard_xz   [0.3,(0.1),0.003] [0,(4),18]    100
-#&gt; adaptive_x         [200,(70),2]  [0,(1),4]    100
-#&gt; adaptive_z  [0.08,(0.08),8e-04] [0,(0),19]    100
-#&gt; adaptive_xz       [200,(100),2]  [0,(1),4]    100
-#&gt; between_xz         [3,(2),0.03] [0,(1),12]    100
-#&gt; within_xz      [6000,(6000),60]  [0,(0),4]    100
-#&gt; elastic95     [0.3,(0.1),0.003] [0,(4),24]    100
-#&gt; elastic50     [0.6,(0.3),0.006] [0,(4),36]    100
 #&gt;                          lambda       nzero length
-#&gt; standard_x   [0.3,(0.03),0.003]  [0,(8),13]    100
-#&gt; standard_z    [0.2,(0.1),0.002]  [0,(5),22]    100
-#&gt; standard_xz  [0.3,(0.04),0.003] [0,(13),17]    100
-#&gt; adaptive_x        [80,(40),0.8]   [0,(1),5]    100
-#&gt; adaptive_z  [0.09,(0.05),9e-04]  [0,(5),22]    100
-#&gt; adaptive_xz        [200,(50),2]   [0,(1),5]    100
-#&gt; between_xz         [4,(2),0.04]  [0,(4),12]    100
-#&gt; within_xz       [3000,(700),30]   [0,(1),5]    100
-#&gt; elastic95    [0.3,(0.04),0.003] [0,(14),19]    100
-#&gt; elastic50    [0.6,(0.06),0.006] [0,(23),30]    100</div><div class='output co'>#&gt; <span class='message'>Registered S3 methods overwritten by 'ggplot2':</span>
+#&gt; standard_x    [0.3,(0.1),0.003]  [0,(4),14]    100
+#&gt; standard_z   [0.2,(0.08),0.002]  [0,(6),16]    100
+#&gt; standard_xz   [0.3,(0.2),0.003]  [0,(3),15]    100
+#&gt; adaptive_x       [2,(0.5),0.02]   [0,(4),8]    100
+#&gt; adaptive_z  [0.2,(0.002),0.002] [0,(14),14]    100
+#&gt; adaptive_xz      [2,(0.5),0.02]  [0,(4),12]    100
+#&gt; between_xz    [0.7,(0.2),0.007]  [0,(6),16]    100
+#&gt; within_xz          [30,(4),0.3]   [0,(7),9]    100
+#&gt; elastic95     [0.3,(0.2),0.003]  [0,(4),19]    100
+#&gt; elastic50     [0.6,(0.3),0.006]  [0,(6),27]    100
+#&gt;                        lambda      nzero length
+#&gt; standard_x  [0.3,(0.2),0.003] [0,(1),19]    100
+#&gt; standard_z  [0.2,(0.2),0.002] [0,(0),18]    100
+#&gt; standard_xz [0.3,(0.2),0.003] [0,(1),19]    100
+#&gt; adaptive_x       [2,(1),0.02] [0,(1),13]    100
+#&gt; adaptive_z  [0.2,(0.2),0.002] [0,(0),16]    100
+#&gt; adaptive_xz      [2,(2),0.02] [0,(0),16]    100
+#&gt; between_xz  [0.7,(0.7),0.007] [0,(0),18]    100
+#&gt; within_xz       [80,(80),0.8] [0,(0),16]    100
+#&gt; elastic95   [0.3,(0.2),0.003] [0,(1),21]    100
+#&gt; elastic50   [0.6,(0.4),0.006] [0,(2),39]    100
+#&gt;                        lambda      nzero length
+#&gt; standard_x  [0.3,(0.1),0.003] [0,(4),16]    100
+#&gt; standard_z  [0.2,(0.2),0.002] [0,(0),19]    100
+#&gt; standard_xz [0.3,(0.1),0.003] [0,(4),18]    100
+#&gt; adaptive_x     [3,(0.3),0.03]  [0,(4),6]    100
+#&gt; adaptive_z  [0.1,(0.1),0.001] [0,(0),18]    100
+#&gt; adaptive_xz    [3,(0.8),0.03] [0,(3),10]    100
+#&gt; between_xz  [0.4,(0.4),0.004] [0,(0),16]    100
+#&gt; within_xz        [4,(4),0.04] [0,(0),10]    100
+#&gt; elastic95   [0.3,(0.1),0.003] [0,(4),24]    100
+#&gt; elastic50   [0.6,(0.3),0.006] [0,(4),36]    100
+#&gt;                         lambda       nzero length
+#&gt; standard_x  [0.3,(0.03),0.003]  [0,(8),13]    100
+#&gt; standard_z   [0.2,(0.1),0.002]  [0,(5),22]    100
+#&gt; standard_xz [0.3,(0.04),0.003] [0,(13),17]    100
+#&gt; adaptive_x      [2,(0.5),0.02]   [0,(4),9]    100
+#&gt; adaptive_z  [0.2,(0.04),0.002] [0,(15),19]    100
+#&gt; adaptive_xz     [2,(0.2),0.02]   [0,(8),9]    100
+#&gt; between_xz   [0.6,(0.2),0.006]  [0,(8),14]    100
+#&gt; within_xz         [20,(2),0.2]  [0,(9),11]    100
+#&gt; elastic95   [0.3,(0.04),0.003] [0,(14),19]    100
+#&gt; elastic50   [0.6,(0.06),0.006] [0,(23),30]    100</div><div class='output co'>#&gt; <span class='message'>Registered S3 methods overwritten by 'ggplot2':</span>
 #&gt; <span class='message'>  method         from </span>
 #&gt; <span class='message'>  [.quosures     rlang</span>
 #&gt; <span class='message'>  c.quosures     rlang</span>
