@@ -15,7 +15,8 @@ cache:
 
 # Adapt as necessary starting from here
 
-R_VERSION: devel
+environment:
+  - R_VERSION: devel
 
 build_script:
   - travis-tool.sh install_bioc_deps
