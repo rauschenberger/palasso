@@ -1,7 +1,7 @@
-## Changes
+## Reason for Submission
 
-- Adapted unit testing (testthat) to the new "rejection" sampler (R 3.6.0).
+- Adapted unit testing (testthat) to new rejection sampler (R 3.6.0).
 
-## Notes
+## Note on Reference
 
-- Reference will be added after publication of the manuscript.
+- DOI will be added after publication.
