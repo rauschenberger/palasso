@@ -1,4 +1,7 @@
+## Changes
 
-* I added angle brackets around the URLs in the description field.
+- Adapted unit testing (testthat) to the new "rejection" sampler (R 3.6.0).
 
-* Our manuscript is under revision, and we will add the DOI after publication.
+## Notes
+
+- Reference will be added after publication of the manuscript.

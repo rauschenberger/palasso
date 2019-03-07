@@ -223,10 +223,10 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
             }
             if(name=="AUC"){
                 x[[i]]$lambda.min <- x[[i]]$lambda[which.max(x[[i]]$cvm)]
-                x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm>=max(x[[i]]$cvlo[which.max(x[[i]]$cvm)])])
+                #x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm>=max(x[[i]]$cvlo[which.max(x[[i]]$cvm)])])
             } else {
                 x[[i]]$lambda.min <- x[[i]]$lambda[which.min(x[[i]]$cvm)]
-                x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm<=min(x[[i]]$cvup[which.min(x[[i]]$cvm)])])
+                #x[[i]]$lambda.1se <- max(x[[i]]$lambda[x[[i]]$cvm<=min(x[[i]]$cvup[which.min(x[[i]]$cvm)])])
             }
             cond <- x[[i]]$glmnet.fit$df<=max
             for(j in c("a0","df","lambda","dev.ratio")){
@@ -245,7 +245,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
             model <- "paired.standard"
         } else if(adaptive & standard){
             model <- "paired.combined" # original
-            warning("Consider model=\"paired.adaptive\" or model=\"paired.standard\".")
+            warning("Consider model=\"paired.adaptive\" or model=\"paired.standard\".",call.=FALSE)
         }
     }
     

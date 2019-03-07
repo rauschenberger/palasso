@@ -447,8 +447,8 @@ NULL
 #' 
 .cor <- function(y,x,args){
     if(args$family=="cox"){
-        cor <- apply(X=x,MARGIN=2,FUN=function(x) abs(2*survival::survConcordance(y~x)$concordance-1))
-        # replace survival::survConcordance by survival::concordance (due to depreciation)
+        # cor <- apply(X=x,MARGIN=2,FUN=function(x) abs(2*survival::survConcordance(y~x)$concordance-1)) # will depreciate
+        cor <- apply(X=x,MARGIN=2,FUN=function(x) abs(2*survival::concordance(y~x)$concordance-1))
     } else {
         cor <- suppressWarnings(as.vector(abs(stats::cor(x,y))))
     }
