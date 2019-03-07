@@ -10,6 +10,7 @@ sudo: false
 cache: packages
 use_bioc: true
 bioc_required: true
+warnings_are_errors: false
 
 r:
   - devel
