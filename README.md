@@ -33,8 +33,13 @@ Reference
 
 A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2019). "Sparse regression with paired covariates". Manuscript in preparation.
 
-[![CRAN version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso) [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/palasso)](https://CRAN.R-project.org/package=palasso) [![Total CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://CRAN.R-project.org/package=palasso)
+<!--
 
+[![CRAN version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso)
+[![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/palasso)](https://CRAN.R-project.org/package=palasso)
+[![Total CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://CRAN.R-project.org/package=palasso)
+
+-->
 <!--
 (www.r-pkg.org/pkg/palasso)
 -->

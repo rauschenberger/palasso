@@ -4,8 +4,10 @@ title: Sparse regression with paired covariates
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{vignette}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 The R package `palasso` implements the paired lasso.
@@ -74,7 +76,7 @@ In contrast to the standard lasso, the paired lasso accounts for the structure b
 
 Given a limited number of non-zero coefficients, we expect the paired lasso to outperform the standard lasso: 
 
-```{r}
+```{r,results='hide'}
 object <- palasso(y=y,X=X,max=10)
 ```
 

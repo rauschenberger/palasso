@@ -47,10 +47,7 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial",elastic=TRUE)
-#' #.folds <- palasso:::.folds
-#' #predict.palasso <- palasso:::predict.palasso
-#' #test <- .predict(y=y,X=X)
+#' object <- palasso(y=y,X=X,family="binomial")
 #' 
 palasso <- function(y=y,X=X,max=10,...){
     
@@ -414,6 +411,7 @@ NULL
     }
     args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
     initial <- do.call(what=glmnet::glmnet,args=args)
+    if(all(is.na(initial$lambda[initial$df==0]))){next} # trial
     lambda.max <- min(initial$lambda[initial$df==0])
     args$lambda <- exp(seq(
       from=log(lambda.max),
