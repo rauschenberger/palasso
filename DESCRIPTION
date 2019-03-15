@@ -2,7 +2,7 @@ Package: palasso
 Version: 0.0.4
 Title: Paired Lasso Regression
 Description: Implements sparse regression with paired covariates (Rauschenberger et al. 2019). For the optional shrinkage, install ashr (<https://github.com/stephens999/ashr>) and CorShrink (<https://github.com/kkdey/CorShrink>) from GitHub (see README).
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.0.0)
 Imports: glmnet, Matrix, survival
 Suggests: knitr, testthat
 Enhances: ashr, CorShrink, pROC, edgeR
