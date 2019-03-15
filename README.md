@@ -1,3 +1,5 @@
+palasso
+================
 
 <!-- Modify xxx.Rmd, not xxx.md! -->
 [![Travis-CI Build Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org/rauschenberger/palasso) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/rauschenberger/palasso?svg=true)](https://ci.appveyor.com/project/rauschenberger/palasso) [![Coverage Status](https://codecov.io/github/rauschenberger/palasso/coverage.svg?branch=master)](https://codecov.io/github/rauschenberger/palasso)
@@ -33,13 +35,6 @@ Reference
 
 A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2019). "Sparse regression with paired covariates". Manuscript in preparation.
 
-<!--
-
 [![CRAN version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso)
 [![CRAN RStudio mirror downloads](https://cranlogs.r-pkg.org/badges/palasso)](https://CRAN.R-project.org/package=palasso)
 [![Total CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://CRAN.R-project.org/package=palasso)
-
--->
-<!--
-(www.r-pkg.org/pkg/palasso)
--->
