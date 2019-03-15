@@ -10,6 +10,11 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r,include=FALSE}
+knitr::opts_chunk$set(echo=TRUE,eval=FALSE)
+```
+
+
 The R package `palasso` implements the paired lasso.
 
 ## Installation
