@@ -1,4 +1,5 @@
 
+if(FALSE){
 
 enet <- function(y,x,alpha=NULL,nalpha=21,foldid=NULL,nfolds=10,...){
   if(is.null(alpha)){
@@ -54,50 +55,82 @@ predict.enet <- function(object,newdata,model="elastic",nalpha=NULL,alpha=NULL){
 }
 
 
+}
+
+##simulate data
+if(FALSE){
+  n <- 100; p<- 500;
+  x <- matrix(rnorm(n*p),n,p)
+  x <- t((t(x) - apply(t(x),1,mean))/apply(t(x),1,sd))
+  Beta <- c(rep(1,10),rep(-1,10), rep(0,p-20))
+  y <- x%*%Beta
+  y <- y>median(y)
+  net <- enet(y=y,x=x,family="binomial")
+  max(net$df[net$lambda>=net$lambda.sel])
+
+  #sum(stats::predict(object=net,newx=x,type="coef",s=net$lambda.sel)!=0)
+  
+  #sum(predict(net,newdata=x,type="coef")!=0)
+  #cbind(net$lambda,net$df)
+}
 
 
+#setwd("C:/Users/arra/Desktop/MATHS/palasso_desktop")
 
+enet <- function(y,x,alpha=0.5,dfmax=10,family="gaussian"){
+  if(is.list(x)){x <- cbind(x[[1]],x[[2]])}
 
+  net <- glmnet::glmnet(x=x,y=y,alpha=alpha,family=family)
+  #nsel <- length(which(net$df<=dfmax))
+  #if(nsel==dfmax){
+  #  lambda <- net$lambda[nsel]
+  #} else {
+  
+  nzero <- Matrix::colSums(net$beta!=0)
+  if(any(nzero!=net$df)){warning("Invalid.")}
+   
+  lower <- min(net$lambda[net$df<dfmax])
+  upper <- max(net$lambda[net$df>dfmax])
+    
+  lambda <- seq(from=upper,to=lower,length.out=100)
+  net <- glmnet::glmnet(x=x,y=y,alpha=alpha,family=family,lambda=lambda)
+    
+    #fsel <- function(lambda,dfmax=10,alpha=0.5){
+    #  if(lambda==0){
+    #    Inf
+    #  } else {
+    #    net <- glmnet::glmnet(x=x,y=y,nlambda=1,lambda=lambda,alpha=alpha,family=family)
+    #    return(net$df-dfmax)
+    #  }
+    #}
+    #lambda <- suppressMessages(stats::uniroot(fsel,interval=c(lower,upper),maxiter=50,
+    #                  alpha=alpha,dfmax=dfmax)$root)
+  #}
 
+  #verify; few cases it selects a model with e.g. 1 covariate less
+  #net <- glmnet::glmnet(x=x,y=y,nlambda=1,lambda=lambda,alpha=alpha,family=family)
+  
+  nzero <- Matrix::colSums(net$beta!=0)
+  if(any(nzero!=net$df)){warning("Unequal.")}
+  
+  net$lambda.sel <- net$lambda[net$df<=dfmax]
+  
+  if(any(net$df[net$lambda %in% net$lambda.sel]>dfmax)){warning("Too many.")}
+  #cond1 <- 
+  #cond2 <- nzero[net$lambda %in% net$lambda.sel]
+  
+  net$lambda.sel <- stats::median(net$lambda[net$df==dfmax]) # == and median?
+  if(is.na(net$lambda.sel)){
+    net$lambda.sel <- min(net$lambda[net$df<=dfmax])
+  }
+  
+  #class(net) <- "enetsel"
+  
+  return(net)
+}
 
-# #simulate data
-# n<- 100; p<- 500;
-# X <- matrix(rnorm(n*p),n,p)
-# X <- t((t(X) - apply(t(X),1,mean))/apply(t(X),1,sd))
-# Beta <- c(rep(1,10),rep(-1,10), rep(0,p-20))
-# Y <- X%*%Beta
-# 
-# net <- enet(Y,X)
-# 
-# setwd("C:/Users/arra/Desktop/MATHS/palasso_desktop")
-# 
-# enet <- function(Y,X,alpha0=0.5,maxsel0=10,fam="gaussian"){
-#   if(is.list(X)){X <- cbind(x[[1]],x[[2]])}
-#   
-#   #code
-#   library(glmnet)
-#   nfeat <- ncol(X)
-#   penselEN0 <- glmnet(X,Y,alpha=alpha0,family=fam,standardize=FALSE)
-#   nsel = length(which(penselEN0$df<=maxsel0))
-#   if(nsel==maxsel0){
-#     lam <- penselEN0$lambda[nsel]
-#   } else {
-#     whlamlow <- penselEN0$lambda[length(which(penselEN0$df <= maxsel0))+1]
-#     whlamup <- penselEN0$lambda[1]
-#     
-#     fsel <- function(lam,maxsel=10,alpha=0.5){
-#       if(lam==0) return(nfeat) else {
-#         penselEN <- glmnet(X,Y,nlambda=1,lambda=lam,alpha=alpha,family=fam,standardize=FALSE)
-#         coef <- penselEN$beta
-#         return(length(coef[coef!=0])-maxsel)
-#       }
-#     }
-#     lam <- uniroot(fsel,interval=c(whlamlow,whlamup),maxiter=50,alpha=alpha0,maxsel=maxsel0)$root
-#   }
-#   
-#   #verify; few cases it selects a model with e.g. 1 covariate less
-#   penselEN2 <- glmnet(X,Y,nlambda=1,lambda=lam,alpha=alpha0,family=fam,standardize=FALSE)
-#   return(penselEN2)
-# }
-# 
-# penselEN2$df
+predict_enet <- function(object,newdata,type="response"){
+  #glmnet::predict.glmnet(object=object,newx=newdata,type=type,s=object$lambda.sel)
+  stats::predict(object=object,newx=newdata,type=type,s=object$lambda.sel)
+}
+
