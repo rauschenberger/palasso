@@ -77,8 +77,8 @@ if(FALSE){
 
 #setwd("C:/Users/arra/Desktop/MATHS/palasso_desktop")
 
-enet <- function(y,x,alpha=0.5,dfmax=10,family="gaussian"){
-  if(is.list(x)){x <- cbind(x[[1]],x[[2]])}
+enet <- function(y,x,alpha=0.95,dfmax=10,family="gaussian"){ # change to alpha=0.5
+  #if(is.list(x)){x <- cbind(x[[1]],x[[2]])}
 
   net <- glmnet::glmnet(x=x,y=y,alpha=alpha,family=family)
   #nsel <- length(which(net$df<=dfmax))
