@@ -737,7 +737,8 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")),
                             "between_xz","paired.standard")}
     if(adaptive&standard){model <- c(model,"paired.combined")}
-    if(elastic){model <- c(model,"elastic50","elastic95")}
+    #if(elastic){model <- c(model,"elastic50","elastic95")}
+    if(elastic){model <- c(model,"elastic")}
     
     nzero <- c(3,4,5,10,15,20,25,50,Inf)
     
@@ -772,8 +773,14 @@ NULL
         #  elastic95 <- glmnet::cv.glmnet(alpha=0.95,y=y0,x=x0,foldid=fold.int,family=family,...)
         #}
         
+        if(elastic){
+          x0 <- do.call(what="cbind",args=X0)
+          x1 <- do.call(what="cbind",args=X1)
+          enet <- palasso:::enet(y=y0,x=x0,alpha=c(0.25,0.5,0.75,1),foldid=fold.int,family=family,dfmax=10,...)
+        }
+        
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-                                   standard=standard,elastic=elastic,...)
+                                   standard=standard,...)
         
         ### start trial ###
         max <- signif(sapply(object,function(x) max(x$lambda)),1)
@@ -790,6 +797,7 @@ NULL
        
         for(i in seq_along(nzero)){
             for(j in seq_along(model)){
+                if(model[j]=="elastic" & nzero[i]!=10){next} # trial
                 if(family=="binomial"){
                     #if(model[j]=="elastic50"){
                     #  temp <- glmnet:::predict.cv.glmnet(object=elastic50,newx=x1,type="response",max=nzero[i])
@@ -797,10 +805,12 @@ NULL
                     #} else if(model[j]=="elastic95"){
                     #  temp <- glmnet:::predict.cv.glmnet(object=elastic95,newx=x1,type="response",max=nzero[i])
                     #  # BUG: max is not taken into account!
-                    #} else {
+                    if(model[j]=="elastic"){
+                      temp <- palasso:::predict.enet(object=enet,newdata=x1)
+                    } else {
                       temp <- predict.palasso(object=object,
                         newdata=X1,model=model[j],type="response",max=nzero[i])
-                    #}
+                    }
                     pred[i,j][[1]][fold.ext==k] <- temp
                 }
                 if(family=="cox"){
@@ -818,10 +828,19 @@ NULL
                 }
             }
         }
+        
+        #if(elastic){
+        #  if(family=="binomial"){
+        #          temp <- palasso:::predict.enet(object=enet,newdata=x1)
+        #          pred["10","elastic"][[1]][fold.ext==k] <- temp
+        #  }
+        # }
+        
     }
     
     for(i in seq_along(nzero)){
         for(j in seq_along(model)){
+            if(model[j]=="elastic" & nzero[i]!=10){next} # trial
             if(family=="binomial"){
                 y_hat <- pred[i,j][[1]]
                 mse[i,j] <- mean((y_hat-y)^2)
