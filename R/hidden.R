@@ -776,7 +776,8 @@ NULL
         if(elastic){
           x0 <- do.call(what="cbind",args=X0)
           x1 <- do.call(what="cbind",args=X1)
-          enet <- palasso:::enet(y=y0,x=x0,alpha=c(0.25,0.5,0.75,1),foldid=fold.int,family=family,dfmax=10,...)
+          enet <- palasso:::enet(y=y0,x=x0,alpha=c(0.25,0.5,0.75,1),foldid=fold.int,family=family,
+                                 dfmax=10,lambda.min.ratio=0.1,...)
         }
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
