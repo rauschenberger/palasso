@@ -10,6 +10,7 @@ enet <- function(y,x,alpha=NULL,nalpha=21,foldid=NULL,nfolds=10,...){
   }
   model <- list()
   for(i in seq_along(alpha)){
+    #temp <- glmnet::cv.glmnet(y=y,x=x,foldid=foldid,alpha=alpha[i])
     model[[i]] <- glmnet::cv.glmnet(y=y,x=x,foldid=foldid,alpha=alpha[i],...)
     model[[i]]$alpha <- alpha[i]
   }
@@ -91,6 +92,8 @@ enet <- function(y,x,alpha=0.95,dfmax=10,family="gaussian"){ # change to alpha=0
    
   lower <- min(net$lambda[net$df<dfmax])
   upper <- max(net$lambda[net$df>dfmax])
+  if(is.na(lower)){lower <- min(net$lambda); warning("sTrange")}
+  if(is.na(upper)){upper <- max(net$lambda); warning("sTrange")}
     
   lambda <- seq(from=upper,to=lower,length.out=100)
   net <- glmnet::glmnet(x=x,y=y,alpha=alpha,family=family,lambda=lambda)
