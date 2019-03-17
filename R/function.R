@@ -382,7 +382,7 @@ NULL
     ### start extra ###
     if(args$elastic){
       alpha <- c(0.25,0.50,0.75,1.00)
-      args$lambda.min.ratio <- 0.1 # trial 
+      #args$lambda.min.ratio <- 0.1 # trial 
       for(k in seq_along(alpha)){
         args$alpha <- alpha[k]
         net[[j+k]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
