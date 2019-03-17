@@ -201,7 +201,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         warning("Fake palasso object?",call.=FALSE)
     }
     
-    if(!model %in% c(names(x),paste0("paired",c("",".adaptive",".standard",".combined",".adaptive1",".standard1")))){
+    if(!model %in% c(names(x),"elastic",paste0("paired",c("",".adaptive",".standard",".combined",".adaptive1",".standard1")))){
         stop("Invalid argument \"model\".",call.=FALSE)
     }
     
@@ -261,6 +261,10 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
         pattern <- "standard|adaptive|between|within"
         cond <- grepl(pattern=pattern,x=names(x))
         if(sum(cond)!=2*attributes(x)$info$k+4){stop("Mismatch.")}
+    } else if(model=="elastic"){
+        pattern <- "elastic"
+        cond <- grepl(pattern=pattern,x=names(x))
+        if(sum(cond)!=4){stop("Mismatch.")}
     } else {
         cond <- names(x)==model # important
     }

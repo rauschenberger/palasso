@@ -298,7 +298,7 @@ NULL
   adaptive <- is.null(args$adaptive)||args$adaptive
   standard <- !(is.null(args$standard)||!args$standard)
   elastic <- !(is.null(args$elastic)||!args$elastic)
-  num <- (standard+adaptive)*(k+2) + 2*elastic
+  num <- (standard+adaptive)*(k+2) + 4*elastic
   
   list <- list(n=n,p=p,k=k,num=num,names=names)
 }
@@ -381,11 +381,18 @@ NULL
     
     ### start extra ###
     if(args$elastic){
-      args$alpha <- 0.95
-      net[[j+1]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
-      args$alpha <- 0.50 
-      net[[j+2]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
-      names(net)[c(j+1,j+2)] <- c("elastic95","elastic50")
+      alpha <- c(0.25,0.50,0.75,1.00)
+      args$lambda.min.ratio <- 0.1 # trial 
+      for(k in seq_along(alpha)){
+        args$alpha <- alpha[k]
+        net[[j+k]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
+        names(net)[j+k] <- paste0("elastic",100*args$alpha)
+      }
+      #args$alpha <- 1.00
+      #net[[j+1]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
+      #args$alpha <- 0.95 
+      #net[[j+2]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
+      #names(net)[c(j+1,j+2)] <- c("elastic100","elastic95")
     }
     ### end extra ###
     
