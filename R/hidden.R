@@ -913,3 +913,55 @@ cat("
     ")
 }
 
+
+.design <- function(x){
+  
+  if(length(x)==1){
+    n <- x
+    names <- seq_len(x)
+  } else {
+    n <- length(x)
+    names <- x
+  }
+  
+  # check input
+  if(n!=round(n)){stop("Provide integer n.")}
+  if(n<2){stop("Provide greater n.")}
+  if(length(n)!=1){stop("Provide single n.")}
+  
+  # compute
+  if(n%%2==1){
+    data <- c(0,rep(seq_len(n),times=n),seq_len(n-1))
+    X <- matrix(data=data,nrow=n+1,ncol=n)[-(n+1),]
+  }
+  if(n%%2==0){
+    data <- c(0,rep(1:(n-1),times=n+1))
+    X <- matrix(data=data,nrow=n,ncol=n)
+    temp <- 2*seq_len(n-1)
+    X[-1,n] <- ifelse(temp<n,temp,temp-n+1)
+  }
+  X[row(X)>=col(X)] <- 0
+  rownames(X) <- names
+  colnames(X) <- names
+  
+  # check output
+  con <- list()
+  con[[1]] <- dim(X)==c(n,n)
+  table <- table(X)
+  if(n%%2==1){
+    con[[2]] <- names(table)==c(0,seq_len(n))
+    con[[3]] <- table[-1]==choose(n,2)/n 
+  }
+  if(n%%2==0){
+    con[[2]] <- names(table)==c(0,seq_len(n-1))
+    con[[3]] <- table[-1]==choose(n,2)/(n-1)
+  }
+  con[[4]] <- table(X)[1]==choose(n,2)+n
+  con[[5]] <- sapply(seq_len(n),function(x) rowSums(X==x)+colSums(X==x))<=1
+  if(any(!unlist(con))){stop("Invalid output!")}
+  
+  # image(t(X)[,n:1])
+  return(X)
+}
+
+
