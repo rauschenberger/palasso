@@ -24,7 +24,7 @@ This function combines local \eqn{p}-values to a global \eqn{p}-value.
 \examples{
 # independence
 p <- runif(10)
-combine(p)
+palasso:::.combine(p)
 
 ## dependence 
 #runif <- function(n,cor=0){
