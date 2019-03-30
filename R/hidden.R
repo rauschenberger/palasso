@@ -964,4 +964,62 @@ cat("
   return(X)
 }
 
+#' @title
+#' Combining p-values
+#'
+#' @description
+#' This function combines local \eqn{p}-values to a global \eqn{p}-value.
+#' 
+#' @export
+#' @keywords methods
+#' 
+#' @param x local \eqn{p}-values\strong{:}
+#' numeric vector of length \eqn{k}
+#' 
+#' @param method
+#' character \eqn{"fisher"}, \eqn{"tippet"}, \eqn{"sidak"}, or \eqn{"simes"}
+#' 
+#' @return
+#' These functions return a numeric vector of length \eqn{p}
+#' (main effects),
+#' or a numeric matrix with \eqn{p} rows and \eqn{p} columns
+#' (interaction effects).
+#' 
+#' @references
+#' Westfall, P. H. (2005). "Combining p-values".
+#' Encyclopedia of Biostatistics
+#' https://doi.org/10.1002/0470011815.b2a15181
+#'
+#' @examples
+#' # independence
+#' p <- runif(10)
+#' combine(p)
+#' 
+#' # dependence 
+#' runif <- function(n,cor=0){
+#'     Sigma <- matrix(cor,nrow=n,ncol=n)
+#'     diag(Sigma) <- 1
+#'     mu <- rep(0,times=n)
+#'     q <- MASS::mvrnorm(n=1,mu=mu,Sigma=Sigma)
+#'     stats::pnorm(q=q)
+#' }
+#' p <- runif(n=10,cor=0.8)
+#' combine(p)
+#' 
+.combine <- function(x,method="simes"){
+  x <- as.numeric(x)
+  x <- x[!is.na(x)]
+  if(any(x>1)){stop("Invalid p-value.")}
+  k <- length(x)
+  if(method=="fisher"){
+    1 - stats::pchisq(q=sum(-2*log(x)),df=2*k)
+  } else if(method=="tippet"){
+    min(1,min(x)*k)
+  } else if(method=="sidak"){
+    1 - (1-min(x))^k
+  } else if(method=="simes"){
+    min(k*sort(x)/(1:k))
+  }
+}
+
 
