@@ -993,18 +993,18 @@ cat("
 #' @examples
 #' # independence
 #' p <- runif(10)
-#' combine(p)
+#' palasso:::.combine(p)
 #' 
-#' # dependence 
-#' runif <- function(n,cor=0){
-#'     Sigma <- matrix(cor,nrow=n,ncol=n)
-#'     diag(Sigma) <- 1
-#'     mu <- rep(0,times=n)
-#'     q <- MASS::mvrnorm(n=1,mu=mu,Sigma=Sigma)
-#'     stats::pnorm(q=q)
-#' }
-#' p <- runif(n=10,cor=0.8)
-#' combine(p)
+#' ## dependence 
+#' #runif <- function(n,cor=0){
+#' #    Sigma <- matrix(cor,nrow=n,ncol=n)
+#' #     diag(Sigma) <- 1
+#' #     mu <- rep(0,times=n)
+#' #     q <- MASS::mvrnorm(n=1,mu=mu,Sigma=Sigma)
+#' #     stats::pnorm(q=q)
+#' #}
+#' #p <- runif(n=10,cor=0.8)
+#' #combine(p)
 #' 
 .combine <- function(x,method="simes"){
   x <- as.numeric(x)
