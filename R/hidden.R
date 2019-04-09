@@ -717,7 +717,7 @@ NULL
 #' @keywords internal
 #' 
 .predict <- function(y,X,nfolds.ext=5,nfolds.int=5,adaptive=TRUE,
-                     standard=TRUE,elastic=TRUE,family="binomial",...){
+                     standard=TRUE,elastic=TRUE,shrink=TRUE,family="binomial",...){
     
     if(survival::is.Surv(y)!=(family=="cox")){stop("Survival?")}
     
@@ -783,7 +783,7 @@ NULL
         #}
         
         object <- palasso::palasso(y=y0,X=X0,foldid=fold.int,family=family,
-                                   standard=standard,elastic=elastic,...)
+                                   standard=standard,elastic=elastic,shrink=shrink,...)
         
         ### start trial ###
         max <- signif(sapply(object,function(x) max(x$lambda)),1)

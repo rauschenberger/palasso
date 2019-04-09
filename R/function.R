@@ -674,15 +674,15 @@ NULL
     return(model)
 }
 
-#' Toydata
-#' 
-#' Dataset for reproducing the vignette.
-#' 
-#' @docType data
-#' @keywords internal
-#' @name toydata
-#' @usage data(toydata)
-#' @return All entries are numeric.
-#' @format A list of numeric vectors and numeric matrices.
-NULL
+##' Toydata
+##' 
+##' Dataset for reproducing the vignette.
+##' 
+##' @docType data
+##' @keywords internal
+##' @name toydata
+##' @usage data(toydata)
+##' @return All entries are numeric.
+##' @format A list of numeric vectors and numeric matrices.
+#NULL
 
