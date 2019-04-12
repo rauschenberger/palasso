@@ -47,7 +47,7 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial")
+#' object <- palasso(y=y,X=X,family="binomial",standard=TRUE)
 #' 
 palasso <- function(y=y,X=X,max=10,...){
     
@@ -298,7 +298,7 @@ NULL
   adaptive <- is.null(args$adaptive)||args$adaptive
   standard <- !(is.null(args$standard)||!args$standard)
   elastic <- !(is.null(args$elastic)||!args$elastic)
-  num <- (standard+adaptive)*(k+2) + 4*elastic
+  num <- (standard+adaptive)*(k+2) + 1*elastic # was 4*elastic
   
   list <- list(n=n,p=p,k=k,num=num,names=names)
 }
@@ -347,59 +347,27 @@ NULL
     net <- list()
     for(j in seq_along(weight)){
         net[[j]] <- .fit.int(y=y,x=x,weight=weight[[j]],args=args)
-        # ### start original ###
-        # args <- args[c("alpha","family","nlambda")]
-        # args$y <- y
-        # args$x <- x
-        # args$lambda <- NULL # important!
-        # args$penalty.factor <- 1/weight[[j]]
-        # net[[j]] <- do.call(what=glmnet::glmnet,args=args)
-        # 
-        # iter <- 0
-        # while((min(net[[j]]$df)>3)|(length(net[[j]]$lambda)==1)){
-        #     warning("Modifying lambda sequence.",call.=FALSE)
-        #     iter <- iter + 1
-        #     if(iter>10){
-        #         #browser()
-        #         stop("Modifying lambda sequence failed.",call.=FALSE)
-        #     }
-        #     args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
-        #     initial <- do.call(what=glmnet::glmnet,args=args)
-        #     lambda.max <- min(initial$lambda[initial$df==0])
-        #     args$lambda <- exp(seq(
-        #         from=log(lambda.max),
-        #         to=log(0.01*lambda.max),
-        #         length.out=pmax(args$nlambda,100)))
-        #     net[[j]] <- do.call(what=glmnet::glmnet,args=args)
-        # }
-        ### end original ###
         if(j > 1){ # free memory
             net[[j]]$call$x <- NULL 
         }
     }
     names(net) <- names(weight)
-    
-    ### start extra ###
+  
     if(args$elastic){
-      alpha <- c(0.25,0.50,0.75,1.00)
-      #args$lambda.min.ratio <- 0.1 # trial 
+      alpha <- 0.95 # was c(0.25,0.50,0.75,1.00)
+      #args$lambda.min.ratio <- 0.1 # not good for unconstrained version
+      args$nlambda <- 2*args$nlambda # higher resolution
       for(k in seq_along(alpha)){
         args$alpha <- alpha[k]
         net[[j+k]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
         names(net)[j+k] <- paste0("elastic",100*args$alpha)
       }
-      #args$alpha <- 1.00
-      #net[[j+1]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
-      #args$alpha <- 0.95 
-      #net[[j+2]] <- .fit.int(y=y,x=x,weight=weight$standard_xz,args=args)
-      #names(net)[c(j+1,j+2)] <- c("elastic100","elastic95")
+      rm(args)
     }
-    ### end extra ###
     
     return(net)
 }
 
-### start trial ###
 .fit.int <- function(y,x,weight,args){
   args <- args[c("alpha","family","nlambda")]
   args$y <- y
@@ -408,27 +376,112 @@ NULL
   args$penalty.factor <- 1/weight
   net <- do.call(what=glmnet::glmnet,args=args)
 
+  ### start original ###
   iter <- 0
   while((min(net$df)>3)|(length(net$lambda)==1)){
-    warning("Modifying lambda sequence.",call.=FALSE)
-    iter <- iter + 1
-    if(iter>10){
-      #browser()
-      stop("Modifying lambda sequence failed.",call.=FALSE)
-    }
-    args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
-    initial <- do.call(what=glmnet::glmnet,args=args)
-    if(all(is.na(initial$lambda[initial$df==0]))){next} # trial
-    lambda.max <- min(initial$lambda[initial$df==0])
-    args$lambda <- exp(seq(
-      from=log(lambda.max),
-      to=log(0.01*lambda.max),
-      length.out=pmax(args$nlambda,100)))
-    net <- do.call(what=glmnet::glmnet,args=args)
+   warning("Modifying lambda sequence.",call.=FALSE)
+   iter <- iter + 1
+   if(iter>10){
+     stop("Modifying lambda sequence failed.",call.=FALSE)
+   }
+   args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
+   initial <- do.call(what=glmnet::glmnet,args=args)
+   if(all(is.na(initial$lambda[initial$df==0]))){next}
+   lambda.max <- min(initial$lambda[initial$df==0])
+   args$lambda <- exp(seq(
+     from=log(lambda.max),
+     to=log(0.01*lambda.max),
+     length.out=pmax(args$nlambda,100)))
+   net <- do.call(what=glmnet::glmnet,args=args)
   }
+  ### end original ###
+  
+  # # ### start trial (12 April 2019) ###
+  # warning("TRIAL FUNCTION ACTIVE!",call.=FALSE)
+  # max <- 10 # provide this as an argument!
+  # iter <- 0
+  # while((min(net$df)>3)|(length(net$lambda)==1)|(max(net$df)<=max)|(!max %in% net$df)){
+  #   #warning("Modifying lambda sequence.",call.=FALSE)
+  #   iter <- iter + 1
+  #   if(iter>10){
+  #     browser()
+  #     stop("Modifying lambda sequence failed.",call.=FALSE)
+  #   }
+  #   # largest lambda not sparse
+  #   if((min(net$df)>3)|(length(net$lambda)==1)){
+  #     warning("largest lambda",call.=FALSE)
+  #     args$lambda <- exp(seq(from=log(99e99),to=log(0.01),length.out=100))
+  #     initial <- do.call(what=glmnet::glmnet,args=args)
+  #     if(all(is.na(initial$lambda[initial$df==0]))){next}
+  #     lambda.max <- 2*min(initial$lambda[initial$df==0]) # trial (2*)
+  #     args$lambda <- exp(seq(
+  #       from=log(lambda.max),
+  #       to=log(0.01*lambda.max),
+  #       length.out=pmax(args$nlambda,100)))
+  #     net <- do.call(what=glmnet::glmnet,args=args)
+  #     next
+  #   }
+  #   # smallest lambda too sparse
+  #   #if(max(net$df)<=max){
+  #   #  warning("smallest lambda",call.=FALSE)
+  #   #  lambda.max <- max(net$lambda)
+  #   #  lambda.min <- 0.0001*max(net$lambda)
+  #   #  args$lambda <- exp(seq(from=log(lambda.max),
+  #   #                         to=log(lambda.min),
+  #   #                         length.out=pmax(args$nlambda,100)))
+  #   #  net <- do.call(what=glmnet::glmnet,args=args)
+  #   #  next
+  #   #}
+  #   # constraint excluded
+  #   if(!max %in% net$df){
+  #     warning("center",call.=FALSE)
+  #     above <- net$lambda[net$df<(max)] # trial -2
+  #     below <- net$lambda[net$df>(max)] # trial +2
+  #     from <- log(min(above)); to <- log(max(below))
+  #     if(is.na(to)){
+  #       lambda.min <- min(net$lambda)
+  #       extra <- exp(seq(from=log(lambda.min),
+  #                        to=log(0.01*lambda.min),
+  #                        length.out=pmax(args$nlambda,100)))
+  #       args$lambda <- sort(c(above,extra),decreasing=TRUE)
+  #     } else {
+  #       focus <- exp(seq(from=from,to=to,length.out=50))
+  #       args$lambda <- sort(c(above,focus,below),decreasing=TRUE)
+  #     }
+  #     net <- do.call(what=glmnet::glmnet,args=args)
+  #   }
+  #   break
+  # }
+  # # ### end trial (12 April 2019) ###
+  
+  ### start trial (on 11 April 2019) ###
+  # max <- 10
+  # if(!max %in% net$df){ # !max %in% net$df ### REACTIVATE THIS!
+  #     warning("Refining lambda sequence!",call.=FALSE)
+  #     above <- net$lambda[net$df<(max)] # trial -2
+  #     below <- net$lambda[net$df>(max)] # trial +2
+  #     from <- log(min(above))
+  #     to <- log(max(below))
+  #     if(is.na(to)){
+  #       lambda.max <- max(net$lambda)
+  #       args$lambda <- exp(seq(from=log(lambda.max),
+  #                              to=log(0.0001*lambda.max),
+  #                              length.out=pmax(args$nlambda,100)))
+  #     } else {
+  #       focus <- exp(seq(from=from,to=to,length.out=50))
+  #       args$lambda <- sort(c(above,focus,below),decreasing=TRUE)
+  #     }
+  #     net <- do.call(what=glmnet::glmnet,args=args)
+  # }
+  # later: Replace "max <- 10" by argument "max"!
+  # later: Split nlambda in two parts, e.g. 50 + 50? (No good idea!)
+  # now: Put this inside security loop (above)!
+  # now: Execute this conditionally (if max not in net$df)! (Done.)
+  # Think about lambda.min.ratio! (Rather not!)
+  ### end trial (on 11 April 2019) ###
+  
   return(net)
 }
-### end trial ###
 
 
 #' @title Correlation

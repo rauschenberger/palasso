@@ -737,7 +737,7 @@ NULL
     if(standard){model <- c(model,paste0("standard_",c("x","z","xz")),
                             "between_xz","paired.standard")}
     if(adaptive&standard){model <- c(model,"paired.combined")}
-    if(elastic){model <- c(model,"elastic","elastic100","elastic75","elastic50","elastic25")}
+    if(elastic){model <- c(model,"elastic","elastic95")}
     #if(elastic){model <- c(model,"elastic")}
     
     nzero <- c(3,4,5,10,15,20,25,50,Inf)

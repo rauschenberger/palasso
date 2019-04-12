@@ -264,7 +264,7 @@ subset.palasso <- function(x,model="paired",max=NULL,...){
     } else if(model=="elastic"){
         pattern <- "elastic"
         cond <- grepl(pattern=pattern,x=names(x))
-        if(sum(cond)!=4){stop("Mismatch.")}
+        if(sum(cond)!=1){stop("Mismatch.")} # was 4
     } else {
         cond <- names(x)==model # important
     }
