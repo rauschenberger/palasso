@@ -1,6 +1,6 @@
 ## Reason for Submission
 
-- Adapted unit testing (testthat) to new rejection sampler (R 3.6.0).
+- Improved documentation.
 
 ## Note on Reference
 

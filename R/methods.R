@@ -54,7 +54,8 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NUL
     x <- subset.palasso(x=object,model=model,max=max)
     newx <- do.call(what="cbind",args=newdata)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
-    glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,...)
+    if(s=="lambda.min"){s <- x$lambda.min}
+    stats::predict(object=x$glmnet.fit,newx=newx,s=s,...)
 }
 
 #' @rdname methods
@@ -63,7 +64,8 @@ predict.palasso <- function(object,newdata,model="paired",s="lambda.min",max=NUL
 coef.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
     x <- subset.palasso(x=object,model=model,max=max)
     if(is.null(s)){s <- x$glmnet.fit$lambda}
-    coef <- glmnet::coef.cv.glmnet(object=x,s=s,...)
+    if(s=="lambda.min"){s <- x$lambda.min}
+    coef <- stats::coef(object=x$glmnet.fit,s=s,...)
     if(rownames(coef)[1]=="(Intercept)"){
         # intercept <- coef[1,]
         coef <- coef[-1,,drop=FALSE]
@@ -90,7 +92,8 @@ fitted.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...){
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
-    glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
+    if(s=="lambda.min"){s <- x$lambda.min}
+    stats::predict(object=x$glmnet.fit,newx=newx,s=s,type="response",...)
 }
 
 #' @rdname methods
@@ -101,8 +104,9 @@ residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...)
     if(x$glmnet.fit$call$family=="cox"){stop("Use \"predict\" for Cox regression.",call.=FALSE)}
     newx <- x$glmnet.fit$call$x
     if(is.null(s)){s <- x$glmnet.fit$lambda}
+    if(s=="lambda.min"){s <- x$lambda.min}
     y <- x$glmnet.fit$call$y
-    y_hat <- glmnet::predict.cv.glmnet(object=x,newx=newx,s=s,type="response",...)
+    y_hat <- stats::predict(object=x$glmnet.fit,newx=newx,s=s,type="response",...)
     y - y_hat
 }
 
@@ -111,7 +115,7 @@ residuals.palasso <- function(object,model="paired",s="lambda.min",max=NULL,...)
 #' 
 deviance.palasso <- function(object,model="paired",max=NULL,...){
     x <- subset.palasso(x=object,model=model,max=max)
-    glmnet::deviance.glmnet(x$glmnet.fit,...)
+    stats::deviance(x$glmnet.fit,...)
 }
 
 #' @rdname methods
@@ -127,7 +131,7 @@ logLik.palasso <- function(object,model="paired",max=NULL,...){
         glm <- stats::glm(x$call$y~1,weights=x$call$weights,family=x$call$family)
         ll0 <- stats::logLik(glm)
     }
-    ll1 <- x$nulldev/2 + ll0 - glmnet::deviance.glmnet(x)/2
+    ll1 <- x$nulldev/2 + ll0 - stats::deviance(x)/2
     attributes(ll1)$df <- df.residual.glmnet(x)
     attributes(ll1)$nobs <- x$nobs
     class(ll1) <- c("logLik.palasso","logLik")
@@ -292,7 +296,7 @@ df.residual.glmnet <- function(object,...){
     if(length(list(...))!=0){warning("Ignoring argument.",call.=FALSE)}
     if(object$call$alpha==1){
         # df <- Matrix::colSums(object$beta!=0)
-        df <- Matrix::colSums(glmnet::coef.glmnet(object=object)!=0)
+        df <- Matrix::colSums(stats::coef(object=object)!=0)
     } else {
         d <- svd(object$call$x)$d^2
         df <- sum(d^2/(d^2+object$lambda))

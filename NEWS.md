@@ -1,3 +1,11 @@
+## palasso 0.0.6 (2019-11-12)
+
+* changed dependency (glmnet)
+
+## palasso 0.0.5 (2019-04-19)
+
+* improved documentation
+
 ## palasso 0.0.4 (2019-03-07)
 
 * minor changes (survival, R devel)

@@ -1,4 +1,6 @@
 
+glmnet.auc <- get("auc",envir=asNamespace("glmnet"))
+
 #--- Visualisation -------------------------------------------------------------
 
 #' @name plots

@@ -593,7 +593,7 @@ NULL
         fit.sub <- .fit(y=y0,x=X0,args=args)
         for(j in seq_len(args$num)){
             if(args$family=="cox"){
-                beta <- glmnet::predict.coxnet(object=fit.sub[[j]],newx=X1,type="coeff",s=lambda[[j]])
+                beta <- stats::predict(object=fit.sub[[j]],newx=X1,type="coeff",s=lambda[[j]])
                 # check whether these are the betas!
                 if(args$grouped){
                     plfull <- glmnet::coxnet.deviance(x=x,y=y,beta=beta)
@@ -664,7 +664,7 @@ NULL
                                 ncol=ncol(fit[[i]])) # new
                                 # ncol=ncol(fit)) # old
                 for(k in seq_along(weights)){
-                    cvraw[k,] <- apply(X=fit[[i]],MARGIN=2,FUN=function(x) glmnet::auc(y=y[foldid==k],prob=x[foldid==k]))
+                    cvraw[k,] <- apply(X=fit[[i]],MARGIN=2,FUN=function(x) glmnet.auc(y=y[foldid==k],prob=x[foldid==k]))
                 }
                 loss[[i]] <- apply(X=cvraw,MARGIN=2,FUN=function(x) stats::weighted.mean(x=x,w=weights,na.rm=TRUE))
                 names(loss[[i]]) <- colnames(fit[[i]]) # new
