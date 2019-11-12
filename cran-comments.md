@@ -1,7 +1,2 @@
-## Reason for Submission
 
-- Improved documentation.
-
-## Note on Reference
-
-- DOI will be added after publication.
+Thanks. I removed the invalid URL.

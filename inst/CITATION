@@ -10,8 +10,7 @@ citEntry(entry="Article",
     journal = "In preparation",
     volume= "0:0",
     year = 2018,
-    url = "...",
     textVersion = paste("Armin Rauschenberger, Iuliana Ciocanea-Teodorescu, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2018).",
-		"\"Sparse regression with paired covariates\",",
+		"\"Sparse classification with paired covariates\",",
 		"In preparation.")
 )
