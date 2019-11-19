@@ -12,12 +12,20 @@
 
 .simulate(x, effects)
 
-.predict(y, X, nfolds.ext = 5, nfolds.int = 5, adaptive = TRUE,
-  standard = TRUE, elastic = TRUE, shrink = TRUE,
-  family = "binomial", ...)
+.predict(
+  y,
+  X,
+  nfolds.ext = 5,
+  nfolds.int = 5,
+  adaptive = TRUE,
+  standard = TRUE,
+  elastic = TRUE,
+  shrink = TRUE,
+  family = "binomial",
+  ...
+)
 
-.select(y, X, index, nfolds = 5, standard = TRUE, adaptive = TRUE,
-  ...)
+.select(y, X, index, nfolds = 5, standard = TRUE, adaptive = TRUE, ...)
 }
 \arguments{
 \item{X}{covariates\strong{:}

@@ -12,19 +12,15 @@
 \alias{summary.palasso}
 \title{Methods for class "palasso"}
 \usage{
-\method{predict}{palasso}(object, newdata, model = "paired",
-  s = "lambda.min", max = NULL, ...)
+\method{predict}{palasso}(object, newdata, model = "paired", s = "lambda.min", max = NULL, ...)
 
-\method{coef}{palasso}(object, model = "paired", s = "lambda.min",
-  max = NULL, ...)
+\method{coef}{palasso}(object, model = "paired", s = "lambda.min", max = NULL, ...)
 
 \method{weights}{palasso}(object, model = "paired", max = NULL, ...)
 
-\method{fitted}{palasso}(object, model = "paired", s = "lambda.min",
-  max = NULL, ...)
+\method{fitted}{palasso}(object, model = "paired", s = "lambda.min", max = NULL, ...)
 
-\method{residuals}{palasso}(object, model = "paired", s = "lambda.min",
-  max = NULL, ...)
+\method{residuals}{palasso}(object, model = "paired", s = "lambda.min", max = NULL, ...)
 
 \method{deviance}{palasso}(object, model = "paired", max = NULL, ...)
 
