@@ -63,7 +63,7 @@ object <- palasso(y=y,X=X,family="binomial",standard=TRUE)
 A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker,
 and MA van de Wiel (2019). "Sparse classification with paired covariates."
 \emph{Advances in Data Analysis and Classification}. In press.
-\href{https://doi.org/10.1007/s11634-019-00375-6}{doi: 10.1007/s11634-019-00375-6}
-\href{https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf}{pdf}
-\email{a.rauschenberger@vumc.nl}
+\href{https://doi.org/10.1007/s11634-019-00375-6}{doi: 10.1007/s11634-019-00375-6},
+\href{https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf}{pdf},
+\email{armin.rauschenberger@uni.lu}
 }

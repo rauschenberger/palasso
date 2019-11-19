@@ -1,3 +1,7 @@
+## palasso 0.0.7 (2019-11-19)
+
+* added reference
+
 ## palasso 0.0.6 (2019-11-12)
 
 * changed dependency (glmnet)

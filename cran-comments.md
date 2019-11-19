@@ -1,4 +1,5 @@
 
-## article in press
+## reason for update
 
-- added doi, link, reference, postprint
+- related article is now in press
+- added doi, link, reference and postprint
