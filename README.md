@@ -44,8 +44,8 @@ devtools::install_github("kkdey/CorShrink")
 
 A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA
 van de Wiel (2019). “Sparse classification with paired covariates”.
-Advances in Data Analysis and Classification. In press. (doi:
-10.1007/s11634-019-00375-6)
+*Advances in Data Analysis and Classification.* In press.
+[doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
 
 [![CRAN
 version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso)

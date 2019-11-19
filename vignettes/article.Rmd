@@ -8,8 +8,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The `palasso` manuscript is in preparation. Click [here](https://CRAN.R-project.org/package=palasso) for the R package.
+Click [here](https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf) to download article.
+
+<div>
+<object data="https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf" type="application/pdf" width="100%" height="500px">
+</object>
+</div>
+
 
 ## Reference
 
-A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2018). "Sparse regression with paired covariates". Manuscript in preparation.
+A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2019). "Sparse classification with paired covariates". *Advances in Data Analysis and Classification.* In press. [doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
