@@ -168,7 +168,7 @@ summary.palasso <- function(object,model="paired",...){
     frame[,1] <- vapply(id,function(i) x$lambda[i],numeric(1))
     frame[,2] <- vapply(id,function(i) x$nzero[i],integer(1))
     frame[,3] <- vapply(id,function(i) x$cvm[i],numeric(1))
-    rownames(frame) <- names(id) #c("min","1se")
+    if(length(id)>1){rownames(frame) <- names(id)} #c("min","1se")
     colnames(frame) <- c("lambda","nzero",x$name) # was names(x$name)
     base::print(round(frame,digits=2))
     return(invisible(NULL))
