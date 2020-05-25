@@ -50,7 +50,8 @@
 #' n <- 50; p <- 20
 #' y <- rbinom(n=n,size=1,prob=0.5)
 #' X <- lapply(1:2,function(x) matrix(rnorm(n*p),nrow=n,ncol=p))
-#' object <- palasso(y=y,X=X,family="binomial")
+#' object <- palasso(y=y,X=X,family="binomial") # adaptive=TRUE,standard=FALSE
+#' names(object)
 #' 
 palasso <- function(y=y,X=X,max=10,...){
     
