@@ -12,14 +12,7 @@
 \alias{summary.palasso}
 \title{Methods for class "palasso"}
 \usage{
-predict.palasso(
-  object,
-  newdata,
-  model = "paired",
-  s = "lambda.min",
-  max = NULL,
-  ...
-)
+\method{predict}{palasso}(object, newdata, model = "paired", s = "lambda.min", max = NULL, ...)
 
 \method{coef}{palasso}(object, model = "paired", s = "lambda.min", max = NULL, ...)
 

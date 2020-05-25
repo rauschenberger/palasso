@@ -184,7 +184,7 @@ used.</p>
 <p>Hidden arguments:
 Deactivate adaptive lasso by setting <code>adaptive</code> to <code>FALSE</code>,
 activate standard lasso by setting <code>standard</code> to <code>TRUE</code>,
-and deactivate shrinkage by setting <code>shrink</code> to <code>FALSE</code>.</p>
+and activate shrinkage by setting <code>shrink</code> to <code>TRUE</code>.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker,
@@ -199,7 +199,9 @@ and MA van de Wiel (2019). "Sparse classification with paired covariates."
 <span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fl'>50</span>; <span class='no'>p</span> <span class='kw'>&lt;-</span> <span class='fl'>20</span>
 <span class='no'>y</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Binomial.html'>rbinom</a></span>(<span class='kw'>n</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>size</span><span class='kw'>=</span><span class='fl'>1</span>,<span class='kw'>prob</span><span class='kw'>=</span><span class='fl'>0.5</span>)
 <span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span>(<span class='fl'>1</span>:<span class='fl'>2</span>,<span class='kw'>function</span>(<span class='no'>x</span>) <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span>(<span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>*<span class='no'>p</span>),<span class='kw'>nrow</span><span class='kw'>=</span><span class='no'>n</span>,<span class='kw'>ncol</span><span class='kw'>=</span><span class='no'>p</span>))
-<span class='no'>object</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>)</div></pre>
+<span class='no'>object</span> <span class='kw'>&lt;-</span> <span class='fu'>palasso</span>(<span class='kw'>y</span><span class='kw'>=</span><span class='no'>y</span>,<span class='kw'>X</span><span class='kw'>=</span><span class='no'>X</span>,<span class='kw'>family</span><span class='kw'>=</span><span class='st'>"binomial"</span>) <span class='co'># adaptive=TRUE,standard=FALSE</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span>(<span class='no'>object</span>)</div><div class='output co'>#&gt; [1] "adaptive_x"  "adaptive_z"  "adaptive_xz" "within_xz"  </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

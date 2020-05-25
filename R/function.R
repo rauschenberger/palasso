@@ -23,7 +23,7 @@
 #' Hidden arguments:
 #' Deactivate adaptive lasso by setting \code{adaptive} to \code{FALSE},
 #' activate standard lasso by setting \code{standard} to \code{TRUE},
-#' and deactivate shrinkage by setting \code{shrink} to \code{FALSE}.
+#' and activate shrinkage by setting \code{shrink} to \code{TRUE}.
 #' 
 #' @return
 #' This function returns an object of class \code{palasso}.
@@ -222,7 +222,7 @@ NULL
     
     # conditional usage of CorShrink
     if(args$shrink & (!"CorShrink" %in% .packages(all.available=TRUE))){
-      warning("Install \"CorShrink\" from CRAN archive, or shrink=FALSE.",call.=FALSE)
+      warning("Install \"CorShrink\", or shrink=FALSE.",call.=FALSE)
       args$shrink <- FALSE
     }
     
