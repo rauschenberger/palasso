@@ -154,7 +154,7 @@ summary.palasso <- function(object,model="paired",...){
     cat("\n")
     
     # non-zero weights
-    weights <- weights.palasso(object)
+    weights <- weights.palasso(object,model=model)
     name <- colnames(weights)
     number <- colSums(weights!=0)
     cat("non-zero weights:",paste(number,name,collapse=", "),"\n\n")
@@ -163,13 +163,13 @@ summary.palasso <- function(object,model="paired",...){
     x <- subset.palasso(x=object,model=model)
     id <- list()
     id$min <- which(x$lambda==x$lambda.min)
-    id$ose <- which(x$lambda==x$lambda.1se)
-    frame <- matrix(NA,nrow=2,ncol=3)
+    #id$ose <- which(x$lambda==x$lambda.1se)
+    frame <- matrix(NA,nrow=length(id),ncol=3)
     frame[,1] <- vapply(id,function(i) x$lambda[i],numeric(1))
     frame[,2] <- vapply(id,function(i) x$nzero[i],integer(1))
     frame[,3] <- vapply(id,function(i) x$cvm[i],numeric(1))
-    rownames(frame) <- c("min","1se")
-    colnames(frame) <- c("lambda","nzero",names(x$name))
+    rownames(frame) <- names(id) #c("min","1se")
+    colnames(frame) <- c("lambda","nzero",x$name) # was names(x$name)
     base::print(round(frame,digits=2))
     return(invisible(NULL))
 }

@@ -11,7 +11,7 @@ VignetteBuilder: knitr
 License: GPL-3
 Encoding: UTF-8
 Language: en-GB
-RoxygenNote: 7.0.0
+RoxygenNote: 7.1.0
 LazyData: false
 URL: https://github.com/rauschenberger/palasso
 BugReports: https://github.com/rauschenberger/palasso/issues
