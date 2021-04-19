@@ -1,4 +1,2 @@
 
-## reason for update
-
-- 
+- replaced https:://doi.org by \doi
