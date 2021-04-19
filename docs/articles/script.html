@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">palasso</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.8</span>
       </span>
     </div>
 
@@ -56,13 +56,13 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/rauschenberger/palasso">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
 <li>
   <a href="https://cran.r-project.org/package=palasso">
-    <span class="fa fa-download"></span>
+    <span class="fas fa-download"></span>
      
   </a>
 </li>
@@ -76,7 +76,7 @@
 
       
 
-      </header><div class="row">
+      </header><script src="script_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Sparse regression with paired covariates</h1>
@@ -313,12 +313,12 @@
 <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span>(<span class="kw">list</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"y"</span>,<span class="st">"X"</span>),<span class="kw">file</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">path</span>,<span class="st">"data"</span>,<span class="st">"gene_raw.RData"</span>))
 <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span>(<span class="no">path</span>,<span class="st">"data"</span>,<span class="st">"gene_raw.RData"</span>))
 
-<span class="no">genes</span> <span class="kw">&lt;-</span> <span class="kw pkg">SummarizedExperiment</span><span class="kw ns">::</span><span class="fu">rowData</span>(<span class="no">X</span><span class="kw">[[</span><span class="fl">1</span>]])
-<span class="no">mart</span> <span class="kw">&lt;-</span> <span class="kw pkg">biomaRt</span><span class="kw ns">::</span><span class="fu">useMart</span>(<span class="st">"ensembl"</span>,<span class="kw">dataset</span><span class="kw">=</span><span class="st">"hsapiens_gene_ensembl"</span>) <span class="co"># </span>
-<span class="no">char</span> <span class="kw">&lt;-</span> <span class="kw pkg">biomaRt</span><span class="kw ns">::</span><span class="fu">getBM</span>(<span class="kw">attributes</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ensembl_gene_id"</span>,<span class="st">"chromosome_name"</span>,<span class="st">"transcript_start"</span>,<span class="st">"gene_biotype"</span>),<span class="kw">filters</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"biotype"</span>,<span class="st">"chromosome_name"</span>),<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"protein_coding"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>:<span class="fl">22</span>,<span class="st">"X"</span>)),<span class="kw">mart</span><span class="kw">=</span><span class="no">mart</span>)
+<span class="no">genes</span> <span class="kw">&lt;-</span> <span class="kw pkg">SummarizedExperiment</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span>(<span class="no">X</span><span class="kw">[[</span><span class="fl">1</span>]])
+<span class="no">mart</span> <span class="kw">&lt;-</span> <span class="kw pkg">biomaRt</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/useMart.html">useMart</a></span>(<span class="st">"ensembl"</span>,<span class="kw">dataset</span><span class="kw">=</span><span class="st">"hsapiens_gene_ensembl"</span>) <span class="co"># </span>
+<span class="no">char</span> <span class="kw">&lt;-</span> <span class="kw pkg">biomaRt</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/biomaRt/man/getBM.html">getBM</a></span>(<span class="kw">attributes</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"ensembl_gene_id"</span>,<span class="st">"chromosome_name"</span>,<span class="st">"transcript_start"</span>,<span class="st">"gene_biotype"</span>),<span class="kw">filters</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"biotype"</span>,<span class="st">"chromosome_name"</span>),<span class="kw">values</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span>(<span class="st">"protein_coding"</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">1</span>:<span class="fl">22</span>,<span class="st">"X"</span>)),<span class="kw">mart</span><span class="kw">=</span><span class="no">mart</span>)
 <span class="no">select</span> <span class="kw">&lt;-</span> <span class="no">genes</span>$<span class="no">ensembl_gene_id</span>[<span class="no">genes</span>$<span class="no">ensembl_gene_id</span> <span class="kw">%in%</span> <span class="no">char</span>$<span class="no">ensembl_gene_id</span>]
 
-<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">X</span>,<span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw pkg">SummarizedExperiment</span><span class="kw ns">::</span><span class="fu">assays</span>(<span class="no">x</span>)$<span class="st">"HTSeq - Counts"</span>[<span class="no">select</span>,]))
+<span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span>(<span class="no">X</span>,<span class="kw">function</span>(<span class="no">x</span>) <span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span>(<span class="kw pkg">SummarizedExperiment</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">assays</a></span>(<span class="no">x</span>)$<span class="st">"HTSeq - Counts"</span>[<span class="no">select</span>,]))
 <span class="no">X</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="kw">what</span><span class="kw">=</span><span class="no">rbind</span>,<span class="kw">args</span><span class="kw">=</span><span class="no">X</span>)
 <span class="no">y</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span>(<span class="kw">what</span><span class="kw">=</span><span class="st">"c"</span>,<span class="kw">args</span><span class="kw">=</span><span class="no">y</span>)
 
