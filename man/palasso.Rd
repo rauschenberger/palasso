@@ -62,8 +62,8 @@ names(object)
 }
 \references{
 A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker,
-and MA van de Wiel (2019). "Sparse classification with paired covariates."
-\emph{Advances in Data Analysis and Classification}. In press.
+and MA van de Wiel (2020). "Sparse classification with paired covariates."
+\emph{Advances in Data Analysis and Classification}. 14:571-588.
 \href{https://doi.org/10.1007/s11634-019-00375-6}{doi: 10.1007/s11634-019-00375-6},
 \href{https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf}{pdf},
 \email{armin.rauschenberger@uni.lu}

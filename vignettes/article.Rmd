@@ -17,4 +17,4 @@ Click [here](https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pd
 
 ## Reference
 
-A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2019). "Sparse classification with paired covariates". *Advances in Data Analysis and Classification.* In press. [doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
+A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker, and MA van de Wiel (2020). "Sparse classification with paired covariates". *Advances in Data Analysis and Classification.* 14:571-588. [doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
