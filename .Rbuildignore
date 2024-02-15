@@ -1,7 +1,12 @@
-^Readme\.rmd$
-^\.travis\.yml$
 ^_pkgdown\.yml$
 ^docs$
+^pkgdown$
+license.md
+CONTRIBUTING.md
+\.Rhistory
+\.git
+appveyor.yml
+^\.github
+^\.github$
+^CRAN-SUBMISSION$
 ^cran-comments\.md$
-^appveyor\.yml$
-^\.Rhistory$
