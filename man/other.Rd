@@ -54,8 +54,6 @@ vector of length \eqn{n}}
 \item{index}{indices of causal covariates\strong{:}
 list of length \eqn{k},
 including vectors}
-
-\item{trial}{development option}
 }
 \description{
 Functions for the \code{palasso} manuscript.
