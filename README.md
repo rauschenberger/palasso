@@ -1,7 +1,3 @@
-palasso
-================
-
-<!-- Modify xxx.Rmd, not xxx.md! -->
 
 [![Travis-CI Build
 Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org/rauschenberger/palasso)
