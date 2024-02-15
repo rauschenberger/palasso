@@ -1,18 +1,14 @@
 citHeader("To cite palasso in publications use:")
 
-citEntry(entry="Article",
-    title = "Sparse classification with paired covariates",
-    author = personList(as.person("Armin Rauschenberger"),
-			as.person("Iuliana Ciocanea-Teodorescu"),
-			as.person("Renee X. Menezes"),
-			as.person("Marianne A. Jonker"),
-			as.person("Mark A. van de Wiel")),
-    journal = "Advances in Data Analysis and Classification",
-    volume= "In press",
-    year = 2019,
-    url = "https://doi.org/10.1007/s11634-019-00375-6",
-    textVersion = paste("Armin Rauschenberger, Iuliana Ciocanea-Teodorescu, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2019).",
+bibentry(
+  bibtype  = "Article",
+  title    = "Sparse classification with paired covariates",
+  author   = person("Rauschenberger, Armin [aut], Ciocanea-Teodorescu, Iuliana [aut], Menezes, Renee X. [aut], Jonker, Marianne A. [aut], van de Wiel, Mark A. [aut]"),
+  journal  = "Advances in Data Analysis and Classification",
+  year     = "2019",
+  doi      = "10.1007/s11634-019-00375-6",
+  textVersion = paste("Armin Rauschenberger, Iuliana Ciocanea-Teodorescu, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2019).",
 		"\"Sparse classification with paired covariates\",",
-		"Advances in Data Analysis and Classification, In press.",
+		"Advances in Data Analysis and Classification 14:571-588",
 		"https://doi.org/10.1007/s11634-019-00375-6")
 )
