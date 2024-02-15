@@ -537,8 +537,6 @@ plot_diff <- function(x,y,prob=0.95,ylab="",xlab="",...){
 #' @param nfolds.ext
 #' number of external folds
 #' 
-#' @param trial development option
-#' 
 #' @param ...
 #' arguments for \link[palasso]{palasso}
 #' 
