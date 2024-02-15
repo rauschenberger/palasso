@@ -1,10 +1,14 @@
 
+<!--
 [![Travis-CI Build
 Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org/rauschenberger/palasso)
 [![AppVeyor build
+-->
 status](https://ci.appveyor.com/api/projects/status/github/rauschenberger/palasso?svg=true)](https://ci.appveyor.com/project/rauschenberger/palasso)
 [![Coverage
+<!--
 Status](https://codecov.io/github/rauschenberger/palasso/coverage.svg?branch=master)](https://codecov.io/github/rauschenberger/palasso)
+-->
 
 ## Scope
 
