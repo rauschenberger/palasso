@@ -38,8 +38,14 @@
 #' and \code{\link[=summary.palasso]{summary}}.
 #' 
 #' @references
-#' A Rauschenberger, I Ciocanea-Teodorescu, RX Menezes, MA Jonker,
-#' and MA van de Wiel (2020). "Sparse classification with paired covariates."
+#' \href{https://orcid.org/0000-0001-6498-4801}{Armin Rauschenberger},
+#' \href{https://orcid.org/0000-0003-2489-9025}{Iiuliana Ciocanea-Teodorescu},
+#' \href{https://orcid.org/0000-0002-1378-2721}{Renee X. Menezes},
+#' \href{https://orcid.org/0000-0003-0134-8482}{Marianne A. Jonker},
+#' and
+#' \href{https://orcid.org/0000-0003-4780-8472}{Mark A. van de Wiel}
+#' (2020).
+#' "Sparse classification with paired covariates."
 #' \emph{Advances in Data Analysis and Classification}. 14:571-588.
 #' \doi{10.1007/s11634-019-00375-6},
 #' \href{https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf}{pdf},
