@@ -2,13 +2,11 @@
 <!--
 [![Travis-CI Build
 Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org/rauschenberger/palasso)
-[![AppVeyor build
 -->
-status](https://ci.appveyor.com/api/projects/status/github/rauschenberger/palasso?svg=true)](https://ci.appveyor.com/project/rauschenberger/palasso)
-[![Coverage
-<!--
-Status](https://codecov.io/github/rauschenberger/palasso/coverage.svg?branch=master)](https://codecov.io/github/rauschenberger/palasso)
--->
+
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/rauschenberger/palasso?svg=true)](https://ci.appveyor.com/project/rauschenberger/palasso)
+[![R-CMD-check](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/rauschenberger/palasso/graph/badge.svg)](https://app.codecov.io/gh/rauschenberger/palasso)
 
 ## Scope
 
