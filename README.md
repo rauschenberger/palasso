@@ -25,8 +25,8 @@ install.packages("palasso")
 ```
 
 ``` r
-#install.packages("devtools")
-devtools::install_github("rauschenberger/palasso")
+#install.packages("remotes")
+remotes::install_github("rauschenberger/palasso")
 ```
 
 Optionally, install [ashr](https://github.com/stephens999/ashr) and
@@ -34,8 +34,8 @@ Optionally, install [ashr](https://github.com/stephens999/ashr) and
 shrinkage:
 
 ``` r
-devtools::install_github("stephens999/ashr")
-devtools::install_github("kkdey/CorShrink")
+remotes::install_github("stephens999/ashr")
+remotes::install_github("kkdey/CorShrink")
 ```
 
 ## Reference
