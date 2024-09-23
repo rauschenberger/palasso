@@ -178,6 +178,8 @@ NULL
 
 #' @title Arguments
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' Checks the validity of the provided arguments.
 #' 
@@ -254,6 +256,8 @@ NULL
 #' @title
 #' Dimensionality
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' This function extracts the dimensions.
 #' 
@@ -315,6 +319,8 @@ NULL
 
 #' @title Cross-validation folds
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' Assigns samples to cross-validation folds,
 #' balancing the folds in the case of a binary or survival response.
@@ -341,6 +347,10 @@ NULL
 }
 
 #' @title Model bag
+#' 
+#' @keywords internal
+#' 
+#' @keywords internal
 #' 
 #' @description Fits all models from the chosen bag.
 #' 
@@ -496,6 +506,8 @@ NULL
 
 #' @title Correlation
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' Calculates the correlation between the response and the covariates.
 #' Shrinks the correlation coefficients for each covariate set separately.
@@ -583,6 +595,8 @@ NULL
 
 #' @title Cross-validation
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' Repeatedly leaves out samples, and predicts their response.
 #' 
@@ -628,6 +642,8 @@ NULL
 }
 
 #' @title Cross-validation loss
+#' 
+#' @keywords internal
 #' 
 #' @description
 #' Calculates mean cross-validated loss
@@ -709,6 +725,8 @@ NULL
 }
 
 #' @title Extraction
+#' 
+#' @keywords internal
 #' 
 #' @description
 #' Extracts \code{cv.glmnet}-like object.
