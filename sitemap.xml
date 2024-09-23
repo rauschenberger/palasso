@@ -1,0 +1,27 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/articles/article.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/script.html</loc></url>
+<url><loc>/articles/vignette.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/arguments.html</loc></url>
+<url><loc>/reference/dot-args.html</loc></url>
+<url><loc>/reference/dot-combine.html</loc></url>
+<url><loc>/reference/dot-cor.html</loc></url>
+<url><loc>/reference/dot-cv.html</loc></url>
+<url><loc>/reference/dot-dims.html</loc></url>
+<url><loc>/reference/dot-extract.html</loc></url>
+<url><loc>/reference/dot-fit.html</loc></url>
+<url><loc>/reference/dot-folds.html</loc></url>
+<url><loc>/reference/dot-loss.html</loc></url>
+<url><loc>/reference/dot-weight.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/methods.html</loc></url>
+<url><loc>/reference/other.html</loc></url>
+<url><loc>/reference/palasso.html</loc></url>
+<url><loc>/reference/plots.html</loc></url>
+</urlset>
+
