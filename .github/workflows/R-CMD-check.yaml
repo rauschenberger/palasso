@@ -26,9 +26,9 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, any::remotes
           needs: check
-          
+
       - name: Install GitHub
         run: remotes::install_github(c("stephens999/ashr","kkdey/CorShrink"))
         shell: Rscript {0}
