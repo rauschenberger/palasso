@@ -28,6 +28,10 @@ jobs:
           dependencies: '"hard"'
           extra-packages: any::rcmdcheck
           needs: check
+          
+      - name: Install GitHub
+        run: remotes::install_github(c("stephens999/ashr","kkdey/CorShrink"))
+        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
