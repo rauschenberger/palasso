@@ -35,7 +35,7 @@ jobs:
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           dependencies: '"hard"'
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::pkgdown, local::., any::remotes
           needs: website
 
       - name: Install GitHub
