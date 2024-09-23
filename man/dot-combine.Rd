@@ -43,4 +43,5 @@ Westfall, P. H. (2005). "Combining p-values".
 Encyclopedia of Biostatistics
 \doi{10.1002/0470011815.b2a15181}
 }
+\keyword{internal}
 \keyword{methods}

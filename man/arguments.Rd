@@ -62,3 +62,4 @@ vector of same length as \code{lambda}
 \description{
 This page lists the arguments for the (internal) "palasso" function(s).
 }
+\keyword{internal}

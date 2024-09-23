@@ -26,3 +26,4 @@ Calculates the weighting schemes.
 NA
 
 }
+\keyword{internal}
