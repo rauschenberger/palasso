@@ -52,7 +52,7 @@ and Mark A. van de Wiel
 [![MvdW](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-4780-8472)
 (2020). "Sparse classification with paired covariates".
 *Advances in Data Analysis and Classification* 14:571-588.
-[doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
+[doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6).
 
 [![CRAN
 version](https://www.r-pkg.org/badges/version/palasso)](https://CRAN.R-project.org/package=palasso)
