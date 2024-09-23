@@ -31,3 +31,4 @@ Extracts \code{cv.glmnet}-like object.
 NA
 
 }
+\keyword{internal}

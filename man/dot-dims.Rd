@@ -33,3 +33,4 @@ This function extracts the dimensions.
 NA
 
 }
+\keyword{internal}

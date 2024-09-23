@@ -21,3 +21,4 @@ Checks the validity of the provided arguments.
 NA
 
 }
+\keyword{internal}

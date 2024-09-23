@@ -26,3 +26,4 @@ Shrinks the correlation coefficients for each covariate set separately.
 NA
 
 }
+\keyword{internal}

@@ -27,3 +27,4 @@ Fits all models from the chosen bag.
 \examples{
 NA
 }
+\keyword{internal}
