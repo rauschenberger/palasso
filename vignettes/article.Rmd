@@ -1,6 +1,6 @@
 
 ---
-title: Sparse regression with paired covariates
+title: Article
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{article}
@@ -8,25 +8,30 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Click [here](https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf) to download article.
+#  Sparse classification with paired covariates
 
-<div>
-<object data="https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf" type="application/pdf" width="100%" height="500px">
-</object>
-</div>
-
-## Reference
-
-Armin Rauschenberger
-[![AR](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-6498-4801),
-Iuliana Ciocănea-Teodorescu
-[![ICT](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-2489-9025),
-Renée X. Menezes
-[![RXM](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-1378-2721),
-Marianne A. Jonker
-[![MAJ](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-0134-8482),
-and Mark A. van de Wiel
+**Armin Rauschenberger**$^{1,2}$
+[![AR](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-6498-4801), **Iuliana Ciocănea-Teodorescu**$^1$
+[![ICT](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-2489-9025), **Marianne A. Jonker**$^3$
+[![MAJ](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-0134-8482), **Renée X. Menezes**$^1$
+[![RXM](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-1378-2721), and **Mark A. van de Wiel**$^{1,4}$
 [![MvdW](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-4780-8472)
-(2020). "Sparse classification with paired covariates".
+
+$^1$ Department of Epidemiology and Biostatistics, Amsterdam UMC, VU University Amsterdam, Amsterdam, The Netherlands
+
+$^2$ Luxembourg Centre for Systems Biomedicine, University of Luxembourg, Esch-sur-Alzette, Luxembourg
+
+$^3$ Department for Health Evidence, Radboud University Medical Center, Nijmegen,
+The Netherlands
+
+$^4$ MRC Biostatistics Unit, University of Cambridge, Cambridge, UK
+
+## Abstract
+
+This paper introduces the paired lasso: a generalisation of the lasso for paired covariate settings. Our aim is to predict a single response from two high-dimensional covariate sets. We assume a one-to-one correspondence between the covariate sets, with each covariate in one set forming a pair with a covariate in the other set. Paired covariates arise, for example, when two transformations of the same data are available. It is often unknown which of the two covariate sets leads to better predictions, or whether the two covariate sets complement each other. The paired lasso addresses this problem by weighting the covariates to improve the selection from the covariate sets and the covariate pairs. It thereby combines information from both covariate sets and accounts for the paired structure. We tested the paired lasso on more than 2000 classification problems with experimental genomics data, and found that for estimating sparse but predictive models, the paired lasso outperforms the standard and the adaptive lasso. The R package palasso is available from CRAN.
+
+## Full text (open access)
+
+Rauschenberger et al. (2020). "Sparse classification with paired covariates".
 *Advances in Data Analysis and Classification* 14:571-588.
-[doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6)
+[doi: 10.1007/s11634-019-00375-6](https://doi.org/10.1007/s11634-019-00375-6). (Click [here](https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf) to access PDF.)
