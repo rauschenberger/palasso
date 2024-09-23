@@ -4,8 +4,7 @@ Title: Paired Lasso Regression
 Description: Implements sparse regression with paired covariates (Rauschenberger et al. 2020 <doi:10.1007/s11634-019-00375-6>). For the optional shrinkage, install ashr (<https://github.com/stephens999/ashr>) and CorShrink (<https://github.com/kkdey/CorShrink>) from GitHub (see README).
 Depends: R (>= 3.0.0)
 Imports: glmnet, Matrix, survival
-Suggests: knitr, testthat, rmarkdown
-Enhances: ashr, CorShrink, pROC, edgeR
+Suggests: knitr, testthat, rmarkdown, ashr, CorShrink, pROC, edgeR
 Additional_repositories: https://github.com/stephens999/ashr, https://github.com/kkdey/CorShrink
 Authors@R: person("Armin","Rauschenberger",,"armin.rauschenberger@uni.lu",role=c("aut","cre"),comment=c(ORCID="0000-0001-6498-4801"))
 VignetteBuilder: knitr
