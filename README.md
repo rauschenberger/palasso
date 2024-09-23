@@ -63,7 +63,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://CRAN.
 
 # Disclaimer
 
-The R package `palasso` implements spare regression with paired covariates ([Rauschenberger et al., 2020](https://doi.org/10.1007/s11634-019-00375-6)).
+The R package `palasso` implements sparse regression with paired covariates ([Rauschenberger et al., 2020](https://doi.org/10.1007/s11634-019-00375-6)).
 
 Copyright &copy; 2017 Armin Rauschenberger, Department of Epidemiology and Biostatistics, Amsterdam UMC, VU University Amsterdam, Amsterdam, The Netherlands
 
