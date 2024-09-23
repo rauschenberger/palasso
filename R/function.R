@@ -103,6 +103,8 @@ palasso <- function(y=y,X=X,max=10,...){
 #' 
 #' @name arguments
 #' 
+#' @keywords internal
+#' 
 #' @description
 #' This page lists the arguments for the (internal) "palasso" function(s).
 #' 
@@ -544,6 +546,9 @@ NULL
 }
 
 #' @title Weighting schemes
+#' 
+#' @keywords internal
+#' 
 #' @description
 #' Calculates the weighting schemes.
 #' 

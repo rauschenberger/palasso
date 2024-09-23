@@ -966,6 +966,8 @@ cat("
 
 #' @title
 #' Combining p-values
+#' 
+#' @keywords internal
 #'
 #' @description
 #' This function combines local \eqn{p}-values to a global \eqn{p}-value.
