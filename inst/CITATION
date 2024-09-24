@@ -16,5 +16,5 @@ bibentry(
   textVersion = paste("Armin Rauschenberger, Iuliana Ciocanea-Teodorescu, Marianne A. Jonker, Renee X. Menezes, and Mark A. van de Wiel (2020).",
 		"\"Sparse classification with paired covariates\".",
 		"Advances in Data Analysis and Classification 14:571-588.",
-		"doi: 10.1007/s11634-019-00375-6")
+		"https://doi.org/10.1007/s11634-019-00375-6")
 )
