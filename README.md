@@ -44,10 +44,10 @@ Armin Rauschenberger
 [![AR](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0001-6498-4801),
 Iuliana Ciocănea-Teodorescu
 [![ICT](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-2489-9025),
-Renée X. Menezes
-[![RXM](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-1378-2721),
 Marianne A. Jonker
 [![MAJ](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-0134-8482),
+Renée X. Menezes
+[![RXM](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0002-1378-2721),
 and Mark A. van de Wiel
 [![MvdW](https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png)](https://orcid.org/0000-0003-4780-8472)
 (2020). "Sparse classification with paired covariates".
