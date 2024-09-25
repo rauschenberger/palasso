@@ -29,9 +29,9 @@ jobs:
           extra-packages: any::rcmdcheck, any::remotes
           needs: check
 
-      - name: Install GitHub
-        run: remotes::install_github(c("stephens999/ashr","kkdey/CorShrink"))
-        shell: Rscript {0}
+#      - name: Install GitHub
+#        run: remotes::install_github(c("stephens999/ashr","kkdey/CorShrink"))
+#        shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
         with:
