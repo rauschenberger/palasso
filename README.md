@@ -8,7 +8,7 @@ Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org
 [![R-CMD-check](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/rauschenberger/palasso/graph/badge.svg)](https://app.codecov.io/gh/rauschenberger/palasso)
 
-## Sparse regression with paired covariates
+# Sparse regression with paired covariates
 
 The paired lasso is designed for situations where each covariate in one set forms a pair with a covariate in the other set (i.e., settings with a one-to-one correspondence between two covariate sets).
 
@@ -60,7 +60,7 @@ downloads](https://cranlogs.r-pkg.org/badges/palasso)](https://CRAN.R-project.or
 [![Total CRAN
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/palasso)](https://CRAN.R-project.org/package=palasso)
 
-# Disclaimer
+## Disclaimer
 
 The R package `palasso` implements sparse regression with paired covariates ([Rauschenberger et al., 2020](https://doi.org/10.1007/s11634-019-00375-6)).
 
