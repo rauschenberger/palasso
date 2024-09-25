@@ -27,7 +27,7 @@ jobs:
         with:
           dependencies: '"Imports"'
           packages: glmnet, Matrix, survival
-          extra-packages: any::rcmdcheck, any::remotes
+#          extra-packages: any::rcmdcheck, any::remotes
           needs: check
 
 #      - name: Install GitHub
