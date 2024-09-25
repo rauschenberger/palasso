@@ -25,7 +25,8 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          dependencies: '"soft"'
+          dependencies: '"hard"'
+          packages: palasso, glmnet, Matrix, survival
           extra-packages: any::rcmdcheck, any::remotes
           needs: check
 
