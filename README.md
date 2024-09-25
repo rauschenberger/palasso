@@ -8,10 +8,9 @@ Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org
 [![R-CMD-check](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/rauschenberger/palasso/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/rauschenberger/palasso/graph/badge.svg)](https://app.codecov.io/gh/rauschenberger/palasso)
 
-## Scope
+## Sparse regression with paired covariates
 
-Sparse regression with paired covariates (extending
-[glmnet](https://CRAN.R-project.org/package=glmnet)).
+The paired lasso is designed for settings where each covariate in one set is paired with a covariate in the other set (leading to a one-to-one correspondence between two covariate sets).
 
 ## Installation
 
