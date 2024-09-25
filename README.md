@@ -10,7 +10,7 @@ Status](https://travis-ci.org/rauschenberger/palasso.svg)](https://travis-ci.org
 
 ## Sparse regression with paired covariates
 
-The paired lasso is designed for settings where each covariate in one set is paired with a covariate in the other set (leading to a one-to-one correspondence between two covariate sets).
+The paired lasso is designed for situations where each covariate in one set forms a pair with a covariate in the other set (i.e., settings with a one-to-one correspondence between two covariate sets).
 
 ## Installation
 
