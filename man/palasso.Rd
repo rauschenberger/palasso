@@ -71,7 +71,7 @@ and
 "Sparse classification with paired covariates."
 \emph{Advances in Data Analysis and Classification}
 14:571-588.
-\href{https://doi.org/10.1007/s11634-019-00375-6}{doi: 10.1007/s11634-019-00375-6}.
+\doi{10.1007/s11634-019-00375-6}.
 (Click 
 \href{https://link.springer.com/content/pdf/10.1007/s11634-019-00375-6.pdf}{here}
 to access PDF.
